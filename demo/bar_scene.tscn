@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://xvh17tek7uhl"]
+[gd_scene load_steps=7 format=3 uid="uid://xvh17tek7uhl"]
 
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://demo/bar_scene.gd" id="1_5fes1"]
 [ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="1_h2ean"]
 [ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://demo/glass.tscn" id="2_o6q0j"]
+[ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="4_qbc78"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qbc78"]
 content_margin_left = 25.0
@@ -25,10 +26,10 @@ bg_color = Color(0.56797165, 0.6053601, 0.64466166, 1)
 [node name="BarScene" type="Node2D"]
 script = ExtResource("1_5fes1")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Background" type="CanvasLayer" parent="."]
 layer = -1
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+[node name="BackgroundImage" type="TextureRect" parent="Background"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,13 +39,9 @@ texture = ExtResource("1_h2ean")
 expand_mode = 2
 metadata/_edit_lock_ = true
 
-[node name="Glass" parent="." instance=ExtResource("2_o6q0j")]
-unique_name_in_owner = true
-position = Vector2(1145, 912.99994)
+[node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="CanvasLayer2" type="CanvasLayer" parent="."]
-
-[node name="Control" type="Control" parent="CanvasLayer2"]
+[node name="Control" type="Control" parent="HUD"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,7 +49,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer2/Control"]
+[node name="PanelContainer" type="PanelContainer" parent="HUD/Control"]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -68,15 +65,24 @@ grow_vertical = 2
 scale = Vector2(2, 2)
 theme_override_styles/panel = SubResource("StyleBoxFlat_qbc78")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/Control/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/Control/PanelContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="Label" type="Label" parent="CanvasLayer2/Control/PanelContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="HUD/Control/PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "Liquid Amount"
 
-[node name="LiquidAmountEdit" type="SpinBox" parent="CanvasLayer2/Control/PanelContainer/VBoxContainer"]
+[node name="LiquidAmountEdit" type="SpinBox" parent="HUD/Control/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/field_and_buttons_separator = SubResource("StyleBoxFlat_5fes1")
+
+[node name="Glass" parent="." instance=ExtResource("2_o6q0j")]
+unique_name_in_owner = true
+position = Vector2(1145, 912.99994)
+
+[node name="Jigger" type="Sprite2D" parent="."]
+position = Vector2(852.99994, 935)
+scale = Vector2(0.09, 0.09)
+texture = ExtResource("4_qbc78")

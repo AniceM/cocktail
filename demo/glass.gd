@@ -28,9 +28,11 @@ func _ready() -> void:
 
 	# Set the initial values
 	set_liquid_amount(1)
-	print("Ready")
 
 func set_liquid_amount(amount: int, animate: bool = false) -> void:
+	if amount == liquid_amount:
+		return
+
 	liquid_amount = amount
 
 	var target_y = first_liquid_y + (add_liquid_y_increment * (amount - 1))
