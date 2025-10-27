@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8h04r4j66owc"]
+
+[ext_resource type="Script" uid="uid://bk3v6bwlcwbhb" path="res://hand_made/3d/container_3d.gd" id="1_container"]
+[ext_resource type="Script" uid="uid://e3k8uiofg6da" path="res://hand_made/3d/sphere.gd" id="2_sphere"]
+
+[node name="Liquid3D" type="Node3D"]
+
+[node name="Container3D" type="Node3D" parent="."]
+script = ExtResource("1_container")
+
+[node name="Sphere" type="Node3D" parent="Container3D"]
+script = ExtResource("2_sphere")
+gravity = 20.0
+velocity = Vector3(0, 0.059257187, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, -8, 15)
+fov = 60.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75, 0.433013, 0, 10, 0)
+light_energy = 1.5
+shadow_enabled = true

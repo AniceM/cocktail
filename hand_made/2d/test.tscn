@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6vf1aji6dy38"]
+
+[ext_resource type="Script" uid="uid://bt0s53ealwrrb" path="res://hand_made/2d/container.gd" id="1_2067s"]
+[ext_resource type="Script" uid="uid://cvppt137xoaik" path="res://hand_made/2d/circle.gd" id="2_a1nox"]
+
+[node name="Container" type="Node2D"]
+script = ExtResource("1_2067s")
+
+[node name="Circle" type="Node2D" parent="."]
+position = Vector2(0, 274.02222)
+script = ExtResource("2_a1nox")
+gravity = 1500.0
+velocity = Vector2(0, -128.56773)
+collision_damping = 0.6

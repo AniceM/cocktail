@@ -1,0 +1,34 @@
+[gd_scene load_steps=5 format=3 uid="uid://lt6tsc5yt70a"]
+
+[sub_resource type="Gradient" id="Gradient_0mhah"]
+offsets = PackedFloat32Array(0.14971209, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_37kl0"]
+gradient = SubResource("Gradient_0mhah")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mdikb"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 98, 0)
+scale_min = 5.0
+scale_max = 15.0
+color_ramp = SubResource("GradientTexture1D_37kl0")
+collision_mode = 2
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_ffaaq"]
+closed = false
+polygon = PackedVector2Array(0, 0, 0, -100, 75, 0, 75, -100)
+
+[node name="Pouring" type="Node2D"]
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+position = Vector2(300, 139)
+emitting = false
+amount = 300
+lifetime = 2.09
+speed_scale = 1.5
+trail_sections = 15
+process_material = SubResource("ParticleProcessMaterial_mdikb")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+position = Vector2(263, 301)
+occluder = SubResource("OccluderPolygon2D_ffaaq")
