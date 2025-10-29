@@ -3,7 +3,8 @@ extends Node2D
 signal animation_started()
 signal animation_finished()
 
-@onready var liquid = %Liquid
+@onready var liquid: Sprite2D = %Liquid
+@onready var bubbles: GPUParticles2D = %Bubbles
 
 @export var full_glass_y: float = 0
 @export var full_glass_scaling: float = 1
@@ -35,12 +36,20 @@ func set_liquid_amount(amount: int, animate: bool = false) -> void:
 
 	liquid_amount = amount
 
+	# Update bubbles
+	if amount > 1:
+		bubbles.emitting = true
+	else:
+		bubbles.emitting = false
+
+	# Calculate target y and scale
 	var target_y = first_liquid_y + (add_liquid_y_increment * (amount - 1))
 	var target_scale = Vector2.ZERO if amount == 0 else Vector2(
 		first_liquid_scaling + (add_liquid_scaling * (amount - 1)),
 		first_liquid_scaling + (add_liquid_scaling * (amount - 1))
 	)
 
+	# Animate the liquid change when needed
 	if animate:
 		# Kill any existing tween
 		if tween:

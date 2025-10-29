@@ -15,7 +15,7 @@ func set_liquid_amount(amount: float) -> void:
 	if amount > glass.glass_max_liquids:
 		amount = float(glass.glass_max_liquids)
 		liquid_amount_edit.value = amount
-	glass.set_liquid_amount(int(amount), true)  # Animate the change
+	glass.set_liquid_amount(int(amount), true) # Animate the change
 
 func _on_glass_animation_started() -> void:
 	liquid_amount_edit.editable = false
