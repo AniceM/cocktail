@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SecretType" load_steps=2 format=3 uid="uid://krf3glt47uou"]
+
+[ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_e7oy1"]
+
+[resource]
+script = ExtResource("1_e7oy1")
+name = "Omission"
+category = 1
+color = Color(0, 0.75686276, 0.5803922, 1)
+metadata/_custom_type_script = "uid://bbc0rsqg0ecwd"

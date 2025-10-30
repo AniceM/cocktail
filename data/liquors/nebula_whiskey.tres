@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://ca50mnjdw3rx5"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_fe0cs"]
+
+[resource]
+script = ExtResource("1_fe0cs")
+name = "Nebula Whiskey"
+color = Color(0.5659682, 0.00023718835, 0.5674627, 1)
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

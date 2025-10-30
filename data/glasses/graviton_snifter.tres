@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://dg0076rxo0j16"]
+
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_c8gxn"]
+
+[resource]
+script = ExtResource("1_c8gxn")
+name = "Graviton Snifter"
+capacity = 4
+description = "Graviton Snifter"
+metadata/_custom_type_script = "uid://duqlr7id17gbq"

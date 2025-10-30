@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://cfc21p4gy7c1c"]
+
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_451po"]
+
+[resource]
+script = ExtResource("1_451po")
+name = "The Relay"
+capacity = 2
+description = "Mixing glass."
+metadata/_custom_type_script = "uid://duqlr7id17gbq"

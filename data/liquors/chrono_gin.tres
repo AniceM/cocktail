@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://dpyy7l7evk6bl"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_76ndt"]
+
+[resource]
+script = ExtResource("1_76ndt")
+name = "Chrono Gin"
+color = Color(0.0009941888, 0.23284051, 0.8114478, 1)
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

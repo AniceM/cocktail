@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SecretType" load_steps=2 format=3 uid="uid://cwa0mwjnm0nxd"]
+
+[ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_rr754"]
+
+[resource]
+script = ExtResource("1_rr754")
+name = "Emotion"
+category = 2
+color = Color(1, 0.08235294, 1, 1)
+metadata/_custom_type_script = "uid://bbc0rsqg0ecwd"

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Flavor" load_steps=3 format=3 uid="uid://dqq43sfhndaps"]
+
+[ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_tagnm"]
+[ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_apay5"]
+
+[resource]
+script = ExtResource("2_apay5")
+name = "Caustic"
+metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

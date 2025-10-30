@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://dy0nd64vu078m"]
+
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_b1u2h"]
+
+[resource]
+script = ExtResource("1_b1u2h")
+name = "Signal Glass"
+description = "Beginner Glass. Focused Flavor."
+bonus_type = 1
+bonus_description = "Amplifies dominant flavor"
+metadata/_custom_type_script = "uid://duqlr7id17gbq"

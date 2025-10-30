@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://dixhqvply88mq"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_37x4x"]
+
+[resource]
+script = ExtResource("1_37x4x")
+name = "Void Rum"
+color = Color(0.12955844, 0.12955847, 0.12955844, 1)
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

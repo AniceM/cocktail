@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SecretType" load_steps=2 format=3 uid="uid://bj350oxh1wbxo"]
+
+[ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_sdyex"]
+
+[resource]
+script = ExtResource("1_sdyex")
+name = "Trigger"
+category = 2
+metadata/_custom_type_script = "uid://bbc0rsqg0ecwd"

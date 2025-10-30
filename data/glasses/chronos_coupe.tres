@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://bmih0fbkyl0py"]
+
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_ycvi4"]
+
+[resource]
+script = ExtResource("1_ycvi4")
+name = "Chronos Coupe"
+capacity = 4
+description = "The perfect cocktail glass."
+metadata/_custom_type_script = "uid://duqlr7id17gbq"

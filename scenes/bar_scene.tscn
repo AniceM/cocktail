@@ -1,0 +1,231 @@
+[gd_scene load_steps=13 format=3 uid="uid://xvh17tek7uhl"]
+
+[ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/bar_scene.gd" id="1_5fes1"]
+[ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="1_h2ean"]
+[ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://scenes/glass.tscn" id="2_o6q0j"]
+[ext_resource type="Theme" uid="uid://c7p7hpokiwc17" path="res://resources/theme.tres" id="3_8nlqj"]
+[ext_resource type="StyleBox" uid="uid://cbraa3kl10phb" path="res://resources/ingredient_panel.tres" id="4_ilsib"]
+[ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="4_qbc78"]
+[ext_resource type="Texture2D" uid="uid://c18f5tbtxj21e" path="res://assets/utensils/bottle.png" id="5_1joxu"]
+[ext_resource type="Texture2D" uid="uid://bxkq40exfmj3c" path="res://references/ai_star_rails.png" id="6_qk3e7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5fes1"]
+bg_color = Color(0.56797165, 0.6053601, 0.64466166, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ilsib"]
+content_margin_top = 25.0
+content_margin_bottom = 25.0
+bg_color = Color(0, 0.050708726, 0.03876, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3137255, 0.25490198, 0.19215687, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hg0ss"]
+content_margin_left = 15.0
+content_margin_top = 5.0
+content_margin_right = 15.0
+content_margin_bottom = 5.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.24705882, 0.19215687, 0.14117648, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="FontVariation" id="FontVariation_eqlga"]
+spacing_top = -10
+spacing_bottom = -10
+
+[node name="BarScene" type="Node2D"]
+script = ExtResource("1_5fes1")
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="BackgroundImage" type="TextureRect" parent="Background"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_h2ean")
+expand_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="FullScreenControl" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LiquidAmountSelection" type="PanelContainer" parent="HUD/FullScreenControl"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -898.0
+offset_top = -96.0
+offset_right = -570.5
+offset_bottom = 60.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(2, 2)
+theme = ExtResource("3_8nlqj")
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/FullScreenControl/LiquidAmountSelection"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/FullScreenControl/LiquidAmountSelection/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Label" type="Label" parent="HUD/FullScreenControl/LiquidAmountSelection/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Liquid Amount"
+
+[node name="LiquidAmountEdit" type="SpinBox" parent="HUD/FullScreenControl/LiquidAmountSelection/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/field_and_buttons_separator = SubResource("StyleBoxFlat_5fes1")
+
+[node name="IngredientsOuterPanel" type="PanelContainer" parent="HUD/FullScreenControl"]
+layout_mode = 0
+offset_left = 1607.0
+offset_top = -1030.0
+offset_right = 2107.0
+offset_bottom = -230.0
+theme = ExtResource("3_8nlqj")
+
+[node name="CenterContainer" type="CenterContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel"]
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="IngredientsInnerPanel" type="PanelContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer"]
+custom_minimum_size = Vector2(470, 770)
+layout_mode = 2
+theme = ExtResource("3_8nlqj")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ilsib")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="IngredientsLabel" type="Label" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("3_8nlqj")
+text = "Ingredients"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="IngredientsContainer" type="VBoxContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="IngredientPanel" type="PanelContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("4_ilsib")
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer"]
+self_modulate = Color(0.8533072, 0.3540417, 0, 1)
+custom_minimum_size = Vector2(50, 100)
+layout_mode = 2
+texture = ExtResource("5_1joxu")
+expand_mode = 3
+
+[node name="CenterContainer" type="MarginContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer/CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="IngredientName" type="Label" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Chrono Gin"
+
+[node name="StatsContainer" type="HBoxContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Stat" type="PanelContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer/CenterContainer/VBoxContainer/StatsContainer"]
+custom_minimum_size = Vector2(90, 45)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hg0ss")
+
+[node name="CenterContainer" type="CenterContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer/CenterContainer/VBoxContainer/StatsContainer/Stat"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer/CenterContainer/VBoxContainer/StatsContainer/Stat/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 17
+
+[node name="ColorRect" type="ColorRect" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer/CenterContainer/VBoxContainer/StatsContainer/Stat/CenterContainer/HBoxContainer"]
+custom_minimum_size = Vector2(15, 15)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(0.7372549, 0.627451, 0.38431373, 1)
+
+[node name="Label" type="Label" parent="HUD/FullScreenControl/IngredientsOuterPanel/CenterContainer/IngredientsInnerPanel/VBoxContainer/MarginContainer/IngredientsContainer/IngredientPanel/MarginContainer/HBoxContainer/CenterContainer/VBoxContainer/StatsContainer/Stat/CenterContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.3372549, 0.54901963, 0.5411765, 1)
+theme_override_fonts/font = SubResource("FontVariation_eqlga")
+text = "2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Glass" parent="." instance=ExtResource("2_o6q0j")]
+unique_name_in_owner = true
+position = Vector2(1145, 912.99994)
+
+[node name="Jigger" type="Sprite2D" parent="."]
+position = Vector2(852.99994, 935)
+scale = Vector2(0.09, 0.09)
+texture = ExtResource("4_qbc78")
+
+[node name="AiStarRails" type="Sprite2D" parent="."]
+position = Vector2(1004, -685)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("6_qk3e7")

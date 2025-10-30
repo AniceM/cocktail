@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SecretType" load_steps=2 format=3 uid="uid://dvxri18pfnhjn"]
+
+[ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_mi3vi"]
+
+[resource]
+script = ExtResource("1_mi3vi")
+name = "Deflection"
+color = Color(0.61, 0.22366668, 0, 1)
+metadata/_custom_type_script = "uid://bbc0rsqg0ecwd"

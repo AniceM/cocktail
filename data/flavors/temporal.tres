@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Flavor" load_steps=3 format=3 uid="uid://coifug6hj7rfw"]
+
+[ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_iv0hy"]
+[ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_5xixv"]
+
+[resource]
+script = ExtResource("2_5xixv")
+name = "Temporal"
+metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

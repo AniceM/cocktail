@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://cpww1axobawox"]
+
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_gr8f8"]
+
+[resource]
+script = ExtResource("1_gr8f8")
+name = "Meridian Tumbler"
+capacity = 6
+description = "Meridian Tumbler."
+metadata/_custom_type_script = "uid://duqlr7id17gbq"

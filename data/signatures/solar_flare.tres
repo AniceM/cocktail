@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Signature" load_steps=3 format=3 uid="uid://c45qbo5d2vfeu"]
+
+[ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_l7kqt"]
+[ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="2_ptoxd"]
+
+[resource]
+script = ExtResource("2_ptoxd")
+metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

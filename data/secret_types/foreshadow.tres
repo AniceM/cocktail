@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SecretType" load_steps=2 format=3 uid="uid://dm1h2eg2mgpkl"]
+
+[ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_dupqw"]
+
+[resource]
+script = ExtResource("1_dupqw")
+name = "Foreshadow"
+category = 4
+color = Color(0.70941347, 0.70941335, 0, 1)
+metadata/_custom_type_script = "uid://bbc0rsqg0ecwd"
