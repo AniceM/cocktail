@@ -6,4 +6,5 @@
 [resource]
 script = ExtResource("2_ygh01")
 name = "Volatile"
+color = Color(0.7149559, 0.13386956, 0.4204501, 1)
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

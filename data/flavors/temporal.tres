@@ -6,4 +6,5 @@
 [resource]
 script = ExtResource("2_5xixv")
 name = "Temporal"
+color = Color(0.0030904755, 0.20522198, 0.8248278, 1)
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

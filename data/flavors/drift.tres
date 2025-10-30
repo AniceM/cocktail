@@ -6,4 +6,5 @@
 [resource]
 script = ExtResource("2_55vri")
 name = "Drift"
+color = Color(0.7539839, 0.75398386, 0.75398386, 1)
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

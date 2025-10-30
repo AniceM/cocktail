@@ -6,4 +6,7 @@
 script = ExtResource("1_sjl3s")
 name = "Solar Mead"
 color = Color(0.7245006, 0.7245004, 0, 1)
+caustic = 4
+temporal = 2
+abyss = -3
 metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

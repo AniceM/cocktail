@@ -6,4 +6,5 @@
 [resource]
 script = ExtResource("2_etmv4")
 name = "Resonant"
+color = Color(0, 0.41101435, 0.11653531, 1)
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

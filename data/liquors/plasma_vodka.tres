@@ -6,4 +6,7 @@
 script = ExtResource("1_ttkbb")
 name = "Plasma Vodka"
 color = Color(0.65891117, 1.9131974e-06, 5.2943824e-07, 1)
+caustic = 1
+volatile = 5
+drift = -3
 metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SpecialIngredient" load_steps=2 format=3 uid="uid://dt8e8153g8nkx"]
+
+[ext_resource type="Script" uid="uid://pffd1ul8pk1j" path="res://scripts/resources/special_ingredient.gd" id="1_c7hsv"]
+
+[resource]
+script = ExtResource("1_c7hsv")
+name = "Stardust Bitters"
+caustic = 3
+volatile = -1
+resonant = -1
+drift = -1
+temporal = -1
+abyss = -1
+metadata/_custom_type_script = "uid://pffd1ul8pk1j"

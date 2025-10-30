@@ -6,4 +6,5 @@
 [resource]
 script = ExtResource("2_ulhed")
 name = "Void"
+color = Color(0, 0, 0, 1)
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

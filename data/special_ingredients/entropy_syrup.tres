@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SpecialIngredient" load_steps=2 format=3 uid="uid://8srf1wax26sm"]
+
+[ext_resource type="Script" uid="uid://pffd1ul8pk1j" path="res://scripts/resources/special_ingredient.gd" id="1_y2q54"]
+
+[resource]
+script = ExtResource("1_y2q54")
+name = "Entropy Syrup"
+caustic = -2
+volatile = 2
+resonant = -2
+drift = -2
+temporal = 1
+abyss = 2
+metadata/_custom_type_script = "uid://pffd1ul8pk1j"

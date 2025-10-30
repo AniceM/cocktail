@@ -6,4 +6,7 @@
 script = ExtResource("1_ngebw")
 name = "Comet Tail"
 color = Color(0.639888, 0.639888, 0.6398879, 1)
+volatile = -4
+drift = 5
+abyss = 1
 metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

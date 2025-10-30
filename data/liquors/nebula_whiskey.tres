@@ -6,4 +6,7 @@
 script = ExtResource("1_fe0cs")
 name = "Nebula Whiskey"
 color = Color(0.5659682, 0.00023718835, 0.5674627, 1)
+volatile = 3
+resonant = 3
+temporal = -2
 metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

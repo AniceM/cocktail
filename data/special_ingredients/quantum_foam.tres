@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SpecialIngredient" load_steps=2 format=3 uid="uid://dxq760k3hkhun"]
+
+[ext_resource type="Script" uid="uid://pffd1ul8pk1j" path="res://scripts/resources/special_ingredient.gd" id="1_kjsn1"]
+
+[resource]
+script = ExtResource("1_kjsn1")
+name = "Quantum Foam"
+abyss = 4
+metadata/_custom_type_script = "uid://pffd1ul8pk1j"

@@ -6,4 +6,5 @@
 [resource]
 script = ExtResource("2_apay5")
 name = "Caustic"
+color = Color(0.7059392, 3.5376102e-06, 3.85046e-07, 1)
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"
