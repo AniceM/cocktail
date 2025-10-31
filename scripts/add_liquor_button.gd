@@ -4,7 +4,7 @@ const FlavorStatInfo = preload("uid://dthjdr2uef2ib")
 
 @onready var liquor_icon: TextureRect = %LiquorIcon
 @onready var liquor_name: Label = %LiquorName
-@onready var flavor_stats_container: HBoxContainer = %FlavorStatsContainer
+@onready var flavor_stats_container: VBoxContainer = %FlavorStatsContainer
 
 # Associated liquor
 var liquor: Liquor:
@@ -34,5 +34,6 @@ func _update_ui() -> void:
 			continue
 		var flavor_stat_info = FlavorStatInfo.instantiate()
 		flavor_stat_info.color = flavor.color
+		flavor_stat_info.flavor_name = flavor.name
 		flavor_stat_info.value = str(flavor_stats[flavor])
 		flavor_stats_container.add_child(flavor_stat_info)

@@ -1,12 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://xvh17tek7uhl"]
+[gd_scene load_steps=8 format=3 uid="uid://xvh17tek7uhl"]
 
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/bar_scene.gd" id="1_5fes1"]
 [ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="1_h2ean"]
 [ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://scenes/glass.tscn" id="2_o6q0j"]
 [ext_resource type="Theme" uid="uid://c7p7hpokiwc17" path="res://resources/theme.tres" id="3_8nlqj"]
 [ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="4_qbc78"]
-[ext_resource type="PackedScene" uid="uid://d1pifdvndfi24" path="res://scenes/add_ingredients_panel.tscn" id="4_s7bno"]
-[ext_resource type="Texture2D" uid="uid://bxkq40exfmj3c" path="res://references/ai_star_rails.png" id="6_qk3e7"]
+[ext_resource type="PackedScene" uid="uid://d1pifdvndfi24" path="res://scenes/add_ingredients_menu.tscn" id="4_s7bno"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5fes1"]
 bg_color = Color(0.56797165, 0.6053601, 0.64466166, 1)
@@ -14,8 +13,17 @@ bg_color = Color(0.56797165, 0.6053601, 0.64466166, 1)
 [node name="BarScene" type="Node2D"]
 script = ExtResource("1_5fes1")
 
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="Background" type="CanvasLayer" parent="."]
 layer = -1
+follow_viewport_enabled = true
 
 [node name="BackgroundImage" type="TextureRect" parent="Background"]
 anchors_preset = 15
@@ -24,8 +32,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_h2ean")
-expand_mode = 2
-metadata/_edit_lock_ = true
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
@@ -39,16 +45,13 @@ grow_vertical = 2
 
 [node name="LiquidAmountSelection" type="PanelContainer" parent="HUD/FullScreenControl"]
 layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
+anchors_preset = 4
 anchor_top = 0.5
-anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -898.0
-offset_top = -96.0
-offset_right = -570.5
-offset_bottom = 60.0
-grow_horizontal = 0
+offset_left = 200.0
+offset_top = -78.0
+offset_right = 527.5
+offset_bottom = 78.0
 grow_vertical = 2
 scale = Vector2(2, 2)
 theme = ExtResource("3_8nlqj")
@@ -76,7 +79,22 @@ size_flags_horizontal = 4
 theme_override_styles/field_and_buttons_separator = SubResource("StyleBoxFlat_5fes1")
 
 [node name="AddIngredientsPanel" parent="HUD/FullScreenControl" instance=ExtResource("4_s7bno")]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -604.0
+offset_top = -385.0
+offset_right = -133.99072
+offset_bottom = 385.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(1147, 754)
+zoom = Vector2(2, 2)
 
 [node name="Glass" parent="." instance=ExtResource("2_o6q0j")]
 unique_name_in_owner = true
@@ -86,8 +104,3 @@ position = Vector2(1145, 912.99994)
 position = Vector2(852.99994, 935)
 scale = Vector2(0.09, 0.09)
 texture = ExtResource("4_qbc78")
-
-[node name="AiStarRails" type="Sprite2D" parent="."]
-position = Vector2(1004, -685)
-scale = Vector2(0.7, 0.7)
-texture = ExtResource("6_qk3e7")

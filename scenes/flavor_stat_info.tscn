@@ -1,42 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://dthjdr2uef2ib"]
+[gd_scene load_steps=3 format=3 uid="uid://dthjdr2uef2ib"]
 
 [ext_resource type="Script" uid="uid://xs60t7n34qyi" path="res://scripts/flavor_stat_info.gd" id="1_ci7v3"]
-[ext_resource type="Theme" uid="uid://c7p7hpokiwc17" path="res://resources/theme.tres" id="1_fy148"]
+[ext_resource type="FontFile" uid="uid://q8bvteuqbi7u" path="res://assets/fonts/Courier_Prime/CourierPrime-Regular.ttf" id="2_fy148"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hg0ss"]
-content_margin_left = 15.0
-content_margin_top = 5.0
-content_margin_right = 15.0
-content_margin_bottom = 5.0
-bg_color = Color(0.6, 0.6, 0.6, 0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.24705882, 0.19215687, 0.14117648, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
-
-[sub_resource type="FontVariation" id="FontVariation_eqlga"]
-spacing_top = -10
-spacing_bottom = -10
-
-[node name="FlavorStatInfo" type="PanelContainer"]
-custom_minimum_size = Vector2(90, 45)
-theme = ExtResource("1_fy148")
-theme_override_styles/panel = SubResource("StyleBoxFlat_hg0ss")
+[node name="FlavorStatInfo" type="MarginContainer"]
+offset_right = 131.0
+offset_bottom = 18.0
 script = ExtResource("1_ci7v3")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
-layout_mode = 2
-theme_override_constants/separation = 17
-
-[node name="ColorRect" type="ColorRect" parent="CenterContainer/HBoxContainer"]
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
@@ -44,12 +20,11 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 color = Color(0.7372549, 0.627451, 0.38431373, 1)
 
-[node name="FlavorStatValue" type="Label" parent="CenterContainer/HBoxContainer"]
+[node name="FlavorStatLabel" type="Label" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_colors/font_color = Color(0.3372549, 0.54901963, 0.5411765, 1)
-theme_override_fonts/font = SubResource("FontVariation_eqlga")
-text = "2"
-horizontal_alignment = 1
-vertical_alignment = 1
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.101960786, 0.08235294, 0.05882353, 1)
+theme_override_fonts/font = ExtResource("2_fy148")
+theme_override_font_sizes/font_size = 18
+text = "Temporal +4"
