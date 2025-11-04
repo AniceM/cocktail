@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://d1pifdvndfi24"]
 
-[ext_resource type="Script" uid="uid://cd7rpw5e7f6jd" path="res://scripts/add_ingredients_menu.gd" id="1_bcbpr"]
+[ext_resource type="Script" uid="uid://cd7rpw5e7f6jd" path="res://scripts/ui/add_ingredients_menu.gd" id="1_bcbpr"]
 [ext_resource type="PackedScene" uid="uid://33qrbtnnfjbg" path="res://scenes/add_liquor_button.tscn" id="3_1me88"]
 [ext_resource type="Texture2D" uid="uid://g6xoir61ly83" path="res://assets/ui/liquor_menu.png" id="4_wrjbj"]
 [ext_resource type="Theme" uid="uid://vxihg5pg2oef" path="res://resources/add_ingredients_menu.tres" id="5_iukm6"]

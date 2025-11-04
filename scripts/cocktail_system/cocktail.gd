@@ -9,15 +9,29 @@ var signatures: Array[Signature] = []
 func _init(glass_type: GlassType) -> void:
 	glass = glass_type
 
-func add_liquor(liquor: Liquor) -> bool:
+func reset() -> void:
+	layers.clear()
+	special_ingredient = null
+	signatures.clear()
+
+# Add a liquor to the cocktail
+# Returns [success, is_new_layer]
+func add_liquor(liquor: Liquor) -> Array[bool]:
 	if get_total_liquor_count() >= glass.capacity:
-		return false
+		print("Glass is full!")
+		return [false, false]
 	
-	# Create a new layer with just this liquor
-	var new_layer = CocktailLayer.new()
-	new_layer.add_liquor(liquor)
-	layers.append(new_layer)
-	return true
+	# If the liquor is different from the last one, create a new layer
+	if layers.size() == 0 or !layers[-1].is_unique_liquor(liquor):
+		var new_layer = CocktailLayer.new()
+		layers.append(new_layer)
+		new_layer.add_liquor(liquor)
+		print("Adding liquor: %s to new layer" % liquor.name)
+		return [true, true]
+	else:
+		layers[-1].add_liquor(liquor)
+		print("Adding liquor: %s to last layer" % liquor.name)
+		return [true, false]
 
 func mix() -> void:
 	if layers.is_empty():

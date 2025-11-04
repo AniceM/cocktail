@@ -14,3 +14,9 @@ func add_liquor(liquor: Liquor) -> void:
 func blend_color(base: Color, new_color: Color) -> Color:
 	# Simple average for now
 	return base.lerp(new_color, 0.5)
+
+func is_unique_liquor(liquor: Liquor) -> bool:
+	for liq in liquors:
+		if liq != liquor:
+			return false
+	return true

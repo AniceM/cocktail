@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dthjdr2uef2ib"]
 
-[ext_resource type="Script" uid="uid://xs60t7n34qyi" path="res://scripts/flavor_stat_info.gd" id="1_ci7v3"]
+[ext_resource type="Script" uid="uid://xs60t7n34qyi" path="res://scripts/ui/flavor_stat_info.gd" id="1_ci7v3"]
 [ext_resource type="FontFile" uid="uid://q8bvteuqbi7u" path="res://assets/fonts/Courier_Prime/CourierPrime-Regular.ttf" id="2_fy148"]
 
 [node name="FlavorStatInfo" type="MarginContainer"]
