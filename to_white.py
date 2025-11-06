@@ -34,7 +34,7 @@ def make_non_transparent_white(input_path, output_path):
 
 # Example usage
 if __name__ == "__main__":
-    input_file = "assets/utensils/test-glass_0000s_0005_Liquid.png"
+    input_file = "assets/utensils/glass_liquid_bottom.png"
     output_file = "output.png"
     
     make_non_transparent_white(input_file, output_file)

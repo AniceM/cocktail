@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bqn8ym5xqqjwx"]
 
-[ext_resource type="Script" path="res://claude/cocktail_mixer.gd" id="1_mixer"]
-[ext_resource type="Script" path="res://claude/liquid_container.gd" id="2_container"]
-[ext_resource type="Script" path="res://claude/liquid_layer.gd" id="3_layer"]
+[ext_resource type="Script" uid="uid://bu0hq2t0bqiwy" path="res://experiments/claude/cocktail_mixer.gd" id="1_mixer"]
+[ext_resource type="Script" uid="uid://cvtw0crr3kt5d" path="res://experiments/claude/liquid_container.gd" id="2_container"]
+[ext_resource type="Script" uid="uid://cbnqj1yj7w0ha" path="res://experiments/claude/liquid_layer.gd" id="3_layer"]
 
 [node name="CocktailMixer" type="Node2D"]
 script = ExtResource("1_mixer")

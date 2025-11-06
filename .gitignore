@@ -42,5 +42,8 @@ dist/
 .coverage
 htmlcov/
 
+# AI
+.claude_context.md
+
 # Logs
 *.log

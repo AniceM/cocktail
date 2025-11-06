@@ -1,12 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://bt2ltrb4erqxi"]
+[gd_scene load_steps=11 format=3 uid="uid://bt2ltrb4erqxi"]
 
 [ext_resource type="Script" uid="uid://blsnwivy3x00f" path="res://scripts/scenes/glass_scene.gd" id="1_8267a"]
 [ext_resource type="Texture2D" uid="uid://bp0jykxdbg5qs" path="res://assets/utensils/glass_back.png" id="1_rosuk"]
 [ext_resource type="Texture2D" uid="uid://buc6gl6bvv1c6" path="res://assets/utensils/glass_liquid.png" id="2_8267a"]
-[ext_resource type="Texture2D" uid="uid://uc45o4pa7u80" path="res://assets/utensils/glass_liquid_rim_bottom.png" id="3_f76i7"]
-[ext_resource type="Texture2D" uid="uid://dnp1wlaymvvy6" path="res://assets/utensils/glass_liquid_rim_top.png" id="4_qgdo6"]
+[ext_resource type="Texture2D" uid="uid://ct7mqplh3lykn" path="res://assets/utensils/glass_liquid_bottom.png" id="4_01sys"]
 [ext_resource type="Texture2D" uid="uid://cekhkbcj6q2fy" path="res://assets/utensils/glass_front.png" id="5_15roq"]
+[ext_resource type="Texture2D" uid="uid://lsbc358j6bwe" path="res://assets/utensils/glass_liquid_top.png" id="5_qq2fo"]
 [ext_resource type="Texture2D" uid="uid://4gss8fy7ukhn" path="res://assets/utensils/glass_highlights.png" id="6_fao6a"]
+[ext_resource type="Texture2D" uid="uid://t51f3ey2633i" path="res://assets/utensils/glass_liquid_rim_top.png" id="6_ooemy"]
+[ext_resource type="Texture2D" uid="uid://j3uqy2tx1b2h" path="res://assets/utensils/glass_liquid_rim_bottom.png" id="7_ti24x"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8267a"]
 particle_flag_disable_z = true
@@ -21,7 +23,7 @@ radial_accel_min = -2.2351742e-06
 radial_accel_max = 24.999998
 scale_max = 4.0
 
-[node name="Glass" type="Node2D"]
+[node name="GlassScene" type="Node2D"]
 scale = Vector2(0.13, 0.13)
 script = ExtResource("1_8267a")
 
@@ -31,28 +33,38 @@ texture = ExtResource("1_rosuk")
 metadata/_edit_lock_ = true
 
 [node name="LiquidMask" type="Sprite2D" parent="."]
-self_modulate = Color(0, 0, 0, 1)
 clip_children = 1
 position = Vector2(0, -575)
 texture = ExtResource("2_8267a")
 metadata/_edit_lock_ = true
 
-[node name="Liquid" type="Sprite2D" parent="LiquidMask"]
+[node name="Liquid" type="Node2D" parent="LiquidMask"]
 unique_name_in_owner = true
-self_modulate = Color(0.5372549, 0, 0.54509807, 0.74509805)
-texture = ExtResource("2_8267a")
+
+[node name="LiquidBottom" type="Sprite2D" parent="LiquidMask/Liquid"]
+position = Vector2(10.05, 424.98)
+scale = Vector2(0.99, 0.99)
+texture = ExtResource("4_01sys")
 metadata/_edit_lock_ = true
 
-[node name="LiquidRimTop" type="Sprite2D" parent="LiquidMask/Liquid"]
+[node name="LiquidTop" type="Sprite2D" parent="LiquidMask/Liquid"]
+unique_name_in_owner = true
+position = Vector2(0, -148.15009)
+texture = ExtResource("5_qq2fo")
+
+[node name="Rim" type="Node2D" parent="LiquidMask/Liquid"]
+
+[node name="LiquidRimTop" type="Sprite2D" parent="LiquidMask/Liquid/Rim"]
+unique_name_in_owner = true
 self_modulate = Color(0, 0, 0, 1)
-position = Vector2(0, -260)
-texture = ExtResource("3_f76i7")
+position = Vector2(0, -238.33008)
+texture = ExtResource("6_ooemy")
 metadata/_edit_lock_ = true
 
-[node name="LiquidRimBottom" type="Sprite2D" parent="LiquidMask/Liquid"]
+[node name="LiquidRimBottom" type="Sprite2D" parent="LiquidMask/Liquid/Rim"]
 self_modulate = Color(0, 0, 0, 1)
-position = Vector2(0, -68.48999)
-texture = ExtResource("4_qgdo6")
+position = Vector2(0, -41.57)
+texture = ExtResource("7_ti24x")
 metadata/_edit_lock_ = true
 
 [node name="Bubbles" type="GPUParticles2D" parent="."]

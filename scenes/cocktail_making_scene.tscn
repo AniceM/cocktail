@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/scenes/cocktail_making_scene.gd" id="1_ac75x"]
 [ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="2_slgu4"]
 [ext_resource type="PackedScene" uid="uid://d1pifdvndfi24" path="res://scenes/add_ingredients_menu.tscn" id="4_fcfq3"]
-[ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://scenes/glass.tscn" id="5_b2ome"]
+[ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://scenes/glass_scene.tscn" id="5_b2ome"]
 [ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="6_vlt8w"]
 
 [node name="CocktailMakingScene" type="Node2D"]
@@ -54,22 +54,6 @@ offset_bottom = 385.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="ResetButton" type="Button" parent="HUD/FullScreenControl"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -50.0
-offset_top = -100.0
-offset_right = 50.0
-grow_horizontal = 2
-grow_vertical = 0
-text = "Reset"
-
 [node name="DebugPanel" type="PanelContainer" parent="HUD/FullScreenControl"]
 layout_mode = 0
 offset_right = 407.0
@@ -89,6 +73,31 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/FullScreenControl"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -102.0
+offset_top = -100.0
+offset_right = 102.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ResetButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+text = "Reset"
+
+[node name="MixButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+text = "Mix"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 unique_name_in_owner = true

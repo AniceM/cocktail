@@ -13,6 +13,7 @@ var state_machine: CocktailMakingStateMachine
 # UI
 @onready var add_ingredients_menu: Control = %AddIngredientsMenu
 @onready var reset_button: Button = %ResetButton
+@onready var mix_button: Button = %MixButton
 
 # Debug
 @onready var debug_label: RichTextLabel = %DebugLabel
@@ -23,6 +24,7 @@ func _ready() -> void:
 	glass_scene.animation_finished.connect(_on_glass_animation_finished)
 	add_ingredients_menu.add_liquor.connect(_on_add_liquor)
 	reset_button.pressed.connect(_on_reset_button_pressed)
+	mix_button.pressed.connect(_on_mix_button_pressed)
 
 	# Create State Machine
 	state_machine = CocktailMakingStateMachine.new(self)
@@ -30,7 +32,7 @@ func _ready() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
 
 	# Create Cocktail object
-	cocktail = Cocktail.new(CocktailData.glasses[1])
+	cocktail = Cocktail.new(CocktailData.get_glass_by_name("Chronos Coupe"))
 
 	# Animate camera zoom from 1 to 2
 	var tween = create_tween()
@@ -88,3 +90,7 @@ func _on_add_liquor(liquor: Liquor) -> void:
 func _on_reset_button_pressed() -> void:
 	cocktail.reset()
 	glass_scene.reset()
+
+func _on_mix_button_pressed() -> void:
+	cocktail.mix()
+	glass_scene.mix(true)

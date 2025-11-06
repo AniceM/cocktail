@@ -27,7 +27,7 @@ func load_resources(path: String, target_array: Array) -> void:
 	if not dir:
 		push_error("Failed to open directory: " + path)
 		return
-	
+
 	dir.list_dir_begin()
 	var file_name = dir.get_next()
 	while file_name != "":
@@ -37,3 +37,10 @@ func load_resources(path: String, target_array: Array) -> void:
 				target_array.append(resource)
 		file_name = dir.get_next()
 	dir.list_dir_end()
+
+func get_glass_by_name(glass_name: String) -> GlassType:
+	for glass in glasses:
+		if glass.name == glass_name:
+			return glass
+	push_error("Glass not found: " + glass_name)
+	return null
