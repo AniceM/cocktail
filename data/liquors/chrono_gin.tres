@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_76ndt")
 name = "Chrono Gin"
-color = Color(0.0009941888, 0.23284051, 0.8114478, 1)
+color = Color(0.11400048, 0.37481806, 0.9999928, 1)
 caustic = -2
 resonant = 2
 temporal = 4

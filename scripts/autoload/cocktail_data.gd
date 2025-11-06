@@ -4,6 +4,7 @@ var liquors: Array[Liquor] = []
 var glasses: Array[GlassType] = []
 var signatures: Array[Signature] = []
 var special_ingredients: Array[SpecialIngredient] = []
+var secret_types: Array[SecretType] = []
 
 func _ready() -> void:
 	load_all_data()
