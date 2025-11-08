@@ -1,10 +1,12 @@
-[gd_resource type="Resource" script_class="Flavor" load_steps=3 format=3 uid="uid://ch4po4u8501bh"]
+[gd_resource type="Resource" script_class="Flavor" load_steps=4 format=3 uid="uid://ch4po4u8501bh"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_pl0ht"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_55vri"]
+[ext_resource type="Resource" uid="uid://dvxri18pfnhjn" path="res://data/secret_types/deflection.tres" id="3_deflection"]
 
 [resource]
 script = ExtResource("2_55vri")
 name = "Drift"
 color = Color(0.7539839, 0.75398386, 0.75398386, 1)
+boosted_secret_types = Array[Resource("res://scripts/resources/secret_type.gd")]([ExtResource("3_deflection")])
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_37x4x")
 name = "Void Rum"
-color = Color(0.12955844, 0.12955847, 0.12955844, 1)
+color = Color(0.15, 0.12, 0.25, 1)
 resonant = -2
 abyss = 6
 metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

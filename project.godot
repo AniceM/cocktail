@@ -18,7 +18,10 @@ config/icon="res://icon.svg"
 [autoload]
 
 FlavorRegistry="*res://scripts/autoload/flavor_registry.gd"
-CocktailData="*res://scripts/autoload/cocktail_data.gd"
+SecretTypeRegistry="*res://scripts/autoload/secret_type_registry.gd"
+GameDataRegistry="*res://scripts/autoload/game_data_registry.gd"
+PlayerProgression="*res://scripts/autoload/player_progression.gd"
+GameSession="*res://scripts/autoload/game_session.gd"
 
 [display]
 

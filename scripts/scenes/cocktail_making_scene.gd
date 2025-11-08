@@ -32,7 +32,7 @@ func _ready() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
 
 	# Create Cocktail object
-	cocktail = Cocktail.new(CocktailData.get_glass_by_name("Chronos Coupe"))
+	cocktail = Cocktail.new(GameDataRegistry.get_glass("Chronos Coupe"))
 
 	# Animate camera zoom from 1 to 2
 	var tween = create_tween()
@@ -45,17 +45,31 @@ func _process(_delta: float) -> void:
 func update_debug_info() -> void:
 	debug_label.text = ""
 	if state_machine:
-		debug_label.text += "[b][u]State Machine[/u][/b]\n"
-		debug_label.text += "[b]State[/b]: %s\n" % CocktailMakingStateMachine.StateName.keys()[state_machine.current_state]
+		debug_label.text += "[color=#00FFFF][b][u]State Machine[/u][/b][/color]\n"
+		debug_label.text += "[color=#AAAAAA]State:[/color] %s\n" % CocktailMakingStateMachine.StateName.keys()[state_machine.current_state]
 		debug_label.text += "\n"
 	if cocktail:
-		debug_label.text += "[b][u]Cocktail[/u][/b]\n"
-		debug_label.text += "[b]Glass[/b]: %s\n" % cocktail.glass.name
-		debug_label.text += "[b]Capacity[/b]: %s / %s\n" % [cocktail.get_total_liquor_count(), cocktail.glass.capacity]
+		debug_label.text += "[color=#00FFFF][b][u]Cocktail[/u][/b][/color]\n"
+		debug_label.text += "[color=#AAAAAA]Glass:[/color] %s\n" % cocktail.glass.name
+		debug_label.text += "[color=#AAAAAA]Capacity:[/color] %s / %s\n" % [cocktail.get_total_liquor_count(), cocktail.glass.capacity]
+
+		debug_label.text += "[color=#AAAAAA]Flavor Stats:[/color]\n"
+		for flavor in cocktail.flavor_stats.stats:
+			var value = cocktail.flavor_stats.get_value(flavor)
+			if value != 0:
+				var color = "#00FF00" if value > 0 else "#FF0000"
+				debug_label.text += "  [color=%s]%s: %+d[/color]\n" % [color, flavor.name, value]
+
+		debug_label.text += "\n[color=#AAAAAA]Secret Reveal Rates:[/color]\n"
+		for secret_type in SecretTypeRegistry.get_all_secret_types():
+			var reveal_rate = cocktail.get_reveal_rate(secret_type)
+			if reveal_rate > 0:
+				debug_label.text += "  [color=#FFAA00]%s: %.0f%%[/color]\n" % [secret_type.name, reveal_rate * 100]
+
 		debug_label.text += "\n"
 	if glass_scene:
-		debug_label.text += "[b][u]Glass Scene[/u][/b]\n"
-		debug_label.text += "[b]Liquid Amount[/b]: %s / %s\n" % [glass_scene.liquid_amount, glass_scene.glass_max_liquids]
+		debug_label.text += "[color=#00FFFF][b][u]Glass Scene[/u][/b][/color]\n"
+		debug_label.text += "[color=#AAAAAA]Liquid Amount:[/color] %s / %s\n" % [glass_scene.liquid_amount, glass_scene.glass_max_liquids]
 		debug_label.text += "\n"
 
 # Route unhandled input event to the state machine

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_fe0cs")
 name = "Nebula Whiskey"
-color = Color(0.5659682, 0.00023718835, 0.5674627, 1)
+color = Color(0.7, 0.3, 0.9, 1)
 volatile = 3
 resonant = 3
 temporal = -2

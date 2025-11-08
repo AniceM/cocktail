@@ -17,7 +17,7 @@ func _ready() -> void:
 	# Remove the fake liquor list and replace it with the real one
 	for child in add_liquor_list.get_children():
 		child.queue_free()
-	for liquor in CocktailData.liquors:
+	for liquor in PlayerProgression.get_liquors():
 		var add_liquor_button: Button = AddLiquorButton.instantiate()
 		add_liquor_button.liquor = liquor
 		add_liquor_button.pressed.connect(_on_add_liquor_button_pressed.bind(liquor))

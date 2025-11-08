@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_sjl3s")
 name = "Solar Mead"
-color = Color(0.7245006, 0.7245004, 0, 1)
+color = Color(1.0, 0.85, 0.3, 1)
 caustic = 4
 temporal = 2
 abyss = -3

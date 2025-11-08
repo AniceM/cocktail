@@ -1,10 +1,12 @@
-[gd_resource type="Resource" script_class="Flavor" load_steps=3 format=3 uid="uid://coifug6hj7rfw"]
+[gd_resource type="Resource" script_class="Flavor" load_steps=4 format=3 uid="uid://coifug6hj7rfw"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_iv0hy"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_5xixv"]
+[ext_resource type="Resource" uid="uid://dm1h2eg2mgpkl" path="res://data/secret_types/foreshadow.tres" id="3_foreshadow"]
 
 [resource]
 script = ExtResource("2_5xixv")
 name = "Temporal"
 color = Color(0.0030904755, 0.20522198, 0.8248278, 1)
+boosted_secret_types = Array[Resource("res://scripts/resources/secret_type.gd")]([ExtResource("3_foreshadow")])
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

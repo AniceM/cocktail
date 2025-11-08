@@ -1,10 +1,13 @@
-[gd_resource type="Resource" script_class="Flavor" load_steps=3 format=3 uid="uid://b6nuv127qfro5"]
+[gd_resource type="Resource" script_class="Flavor" load_steps=5 format=3 uid="uid://b6nuv127qfro5"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_lchov"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_ygh01"]
+[ext_resource type="Resource" uid="uid://cwa0mwjnm0nxd" path="res://data/secret_types/emotion.tres" id="3_emotion"]
+[ext_resource type="Resource" uid="uid://crkjsyw58hdb5" path="res://data/secret_types/anomaly.tres" id="4_anomaly"]
 
 [resource]
 script = ExtResource("2_ygh01")
 name = "Volatile"
 color = Color(0.7149559, 0.13386956, 0.4204501, 1)
+boosted_secret_types = Array[Resource("res://scripts/resources/secret_type.gd")]([ExtResource("3_emotion"), ExtResource("4_anomaly")])
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"
