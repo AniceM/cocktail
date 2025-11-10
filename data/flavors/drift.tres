@@ -7,6 +7,6 @@
 [resource]
 script = ExtResource("2_55vri")
 name = "Drift"
-color = Color(0.7539839, 0.75398386, 0.75398386, 1)
-boosted_secret_types = Array[Resource("res://scripts/resources/secret_type.gd")]([ExtResource("3_deflection")])
+color = Color(1, 0.7176471, 0, 1)
+boosted_secret_types = Array[ExtResource("1_pl0ht")]([ExtResource("3_deflection")])
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

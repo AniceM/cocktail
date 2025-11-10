@@ -8,6 +8,6 @@
 [resource]
 script = ExtResource("2_etmv4")
 name = "Resonant"
-color = Color(0, 0.41101435, 0.11653531, 1)
-boosted_secret_types = Array[Resource("res://scripts/resources/secret_type.gd")]([ExtResource("3_echo"), ExtResource("4_trigger")])
+color = Color(0.6156863, 0.30588236, 0.8666667, 1)
+boosted_secret_types = Array[ExtResource("1_hora7")]([ExtResource("3_echo"), ExtResource("4_trigger")])
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

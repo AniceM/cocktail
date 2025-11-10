@@ -12,6 +12,7 @@ var state_machine: CocktailMakingStateMachine
 
 # UI
 @onready var add_ingredients_menu: Control = %AddIngredientsMenu
+@onready var flavor_profile_chart: Control = %FlavorProfileChart
 @onready var reset_button: Button = %ResetButton
 @onready var mix_button: Button = %MixButton
 
@@ -78,12 +79,7 @@ func update_debug_info() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	state_machine.handle_input(event)
 
-func set_liquid_amount(amount: float) -> void:
-	if amount > glass_scene.glass_max_liquids:
-		amount = float(glass_scene.glass_max_liquids)
-		# liquid_amount_edit.value = amount
-	glass_scene.set_liquid_amount(int(amount), true) # Animate the change
-
+# Block / Unlock interactivity while animations are running
 func _on_glass_animation_started() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.ADDING_INGREDIENT)
 	add_ingredients_menu.set_disabled(true)
@@ -92,6 +88,7 @@ func _on_glass_animation_finished() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
 	add_ingredients_menu.set_disabled(false)
 
+# Add a liquor to the cocktail
 func _on_add_liquor(liquor: Liquor) -> void:
 	var result = cocktail.add_liquor(liquor)
 	var success = result[0]
@@ -100,10 +97,12 @@ func _on_add_liquor(liquor: Liquor) -> void:
 	if success:
 		# Update UI
 		glass_scene.add_liquid(liquor.color, is_new_layer, true)
+		flavor_profile_chart.update_flavor_profile(cocktail.flavor_stats, true)
 
 func _on_reset_button_pressed() -> void:
 	cocktail.reset()
 	glass_scene.reset()
+	flavor_profile_chart.reset()
 
 func _on_mix_button_pressed() -> void:
 	cocktail.mix()

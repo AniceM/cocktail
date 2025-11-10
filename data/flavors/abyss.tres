@@ -8,6 +8,6 @@
 [resource]
 script = ExtResource("2_ulhed")
 name = "Void"
-color = Color(0, 0, 0, 1)
-boosted_secret_types = Array[Resource("res://scripts/resources/secret_type.gd")]([ExtResource("3_omission"), ExtResource("4_fragment")])
+color = Color(0.3019608, 0.3019608, 1, 1)
+boosted_secret_types = Array[ExtResource("1_77xxk")]([ExtResource("3_omission"), ExtResource("4_fragment")])
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

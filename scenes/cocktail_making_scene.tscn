@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://xvh17tek7uhl"]
+[gd_scene load_steps=7 format=3 uid="uid://xvh17tek7uhl"]
 
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/scenes/cocktail_making_scene.gd" id="1_ac75x"]
 [ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="2_slgu4"]
+[ext_resource type="PackedScene" uid="uid://rubxbrjldnjr" path="res://scenes/flavor_profile_chart.tscn" id="4_ac75x"]
 [ext_resource type="PackedScene" uid="uid://d1pifdvndfi24" path="res://scenes/add_ingredients_menu.tscn" id="4_fcfq3"]
 [ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://scenes/glass_scene.tscn" id="5_b2ome"]
 [ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="6_vlt8w"]
@@ -53,6 +54,19 @@ offset_right = -133.99072
 offset_bottom = 385.0
 grow_horizontal = 0
 grow_vertical = 2
+
+[node name="FlavorProfileChart" parent="HUD/FullScreenControl" instance=ExtResource("4_ac75x")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_right = 0.0
+anchor_bottom = 0.5
+offset_left = 75.0
+offset_top = 37.565002
+offset_right = 75.0
+offset_bottom = 37.565002
+grow_horizontal = 1
 
 [node name="DebugPanel" type="PanelContainer" parent="HUD/FullScreenControl"]
 layout_mode = 0

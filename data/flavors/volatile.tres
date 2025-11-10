@@ -8,6 +8,6 @@
 [resource]
 script = ExtResource("2_ygh01")
 name = "Volatile"
-color = Color(0.7149559, 0.13386956, 0.4204501, 1)
-boosted_secret_types = Array[Resource("res://scripts/resources/secret_type.gd")]([ExtResource("3_emotion"), ExtResource("4_anomaly")])
+color = Color(0.22352941, 1, 0.078431375, 1)
+boosted_secret_types = Array[ExtResource("1_lchov")]([ExtResource("3_emotion"), ExtResource("4_anomaly")])
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

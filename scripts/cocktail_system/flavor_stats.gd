@@ -1,6 +1,7 @@
 class_name FlavorStats
 extends RefCounted
 
+# Every flavor has a value that goes from -inf to 10 (clamped)
 var stats: Dictionary = {} # Flavor -> int
 
 func _init() -> void:
@@ -12,10 +13,10 @@ func get_value(flavor: Flavor) -> int:
 	return stats.get(flavor, 0)
 
 func set_value(flavor: Flavor, value: int) -> void:
-	stats[flavor] = value
+	stats[flavor] = min(value, 10)
 
 func add_value(flavor: Flavor, amount: int) -> void:
-	stats[flavor] = stats.get(flavor, 0) + amount
+	stats[flavor] = min(stats.get(flavor, 0) + amount, 10)
 
 func add_stats(other_stats: FlavorStats) -> void:
 	for flavor in other_stats.stats:
