@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("2_5xixv")
 name = "Temporal"
-color = Color(0.9137255, 0.11764706, 0.3882353, 1)
+color = Color(0.9607843, 0.9607843, 0.9607843, 1)
+description = "Timeless white-silver - ancient, heavy, prophetic"
 boosted_secret_types = Array[ExtResource("1_iv0hy")]([ExtResource("3_foreshadow")])
 metadata/_custom_type_script = "uid://dfjvtr5kacxk6"

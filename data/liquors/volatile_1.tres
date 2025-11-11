@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://bx8u8vs6wx2va"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_31x6s"]
+
+[resource]
+script = ExtResource("1_31x6s")
+name = "Plasma Vodka"
+color = Color(0.9019608, 0.22352941, 0.27450982, 1)
+description = "Crimson with dancing energy sparks"
+caustic = 2
+volatile = 3
+drift = -1
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

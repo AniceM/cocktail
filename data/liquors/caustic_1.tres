@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://dptvlq3x2wtp0"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_yb1ga"]
+
+[resource]
+script = ExtResource("1_yb1ga")
+name = "Supernova Rye"
+color = Color(0.2901961, 0.5647059, 0.8862745, 1)
+description = "Electric blue with explosive white sparks"
+caustic = 3
+volatile = 2
+resonant = -1
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

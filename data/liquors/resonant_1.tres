@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://c18n62yj2dy0r"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_wh84l"]
+
+[resource]
+script = ExtResource("1_wh84l")
+name = "Nebula Whiskey"
+color = Color(0.60784316, 0.34901962, 0.7137255, 1)
+description = "Swirling purple-pink nebula clouds"
+volatile = 2
+resonant = 3
+temporal = -1
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

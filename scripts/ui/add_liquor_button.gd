@@ -28,6 +28,7 @@ func _update_ui() -> void:
 
 	# Add the flavor stats to the liquor panel
 	var flavor_stats = liquor.get_flavor_stats().stats
+	var flavor_stat_info_instances = []
 	for flavor in flavor_stats:
 		# If the flavor stat is 0, no need to show it
 		if flavor_stats[flavor] == 0:
@@ -36,4 +37,9 @@ func _update_ui() -> void:
 		flavor_stat_info.color = flavor.color
 		flavor_stat_info.flavor_name = flavor.name
 		flavor_stat_info.value = str(flavor_stats[flavor])
+		flavor_stat_info_instances.append(flavor_stat_info)
+
+	# Add in order of biggest to smallest value
+	flavor_stat_info_instances.sort_custom(func(a, b): return a.value > b.value)
+	for flavor_stat_info in flavor_stat_info_instances:
 		flavor_stats_container.add_child(flavor_stat_info)

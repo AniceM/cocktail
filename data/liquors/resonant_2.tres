@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://dxuwdks4oaslv"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_2j8dc"]
+
+[resource]
+script = ExtResource("1_2j8dc")
+name = "Reverie Wine"
+color = Color(0.7647059, 0.60784316, 0.827451, 1)
+description = "Dreamy lavender with golden shimmer"
+resonant = 4
+drift = -1
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

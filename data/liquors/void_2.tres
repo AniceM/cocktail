@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://djpfjc5beibl6"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_h8euh"]
+
+[resource]
+script = ExtResource("1_h8euh")
+name = "Void Rum"
+color = Color(0.10980392, 0.15686275, 0.2, 1)
+description = "Absolute darkness, light cannot escape"
+resonant = -2
+abyss = 4
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

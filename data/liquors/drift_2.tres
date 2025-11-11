@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://ce2g15xf1od3d"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_01l6c"]
+
+[resource]
+script = ExtResource("1_01l6c")
+name = "Astral Absinthe"
+color = Color(0.18039216, 0.8, 0.44313726, 1)
+description = "Luminous green with ghostly trails"
+caustic = 2
+volatile = -1
+drift = 3
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

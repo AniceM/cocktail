@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://ce811us0vj7n2"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_n1pex"]
+
+[resource]
+script = ExtResource("1_n1pex")
+name = "Eventide Sake"
+color = Color(0.28235295, 0.7882353, 0.6901961, 1)
+description = "Translucent teal with twilight gradient"
+resonant = 2
+drift = 3
+abyss = -1
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

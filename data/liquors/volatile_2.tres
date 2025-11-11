@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://bhlph4ee2tchq"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_ib3v2"]
+
+[resource]
+script = ExtResource("1_ib3v2")
+name = "Aurora Tequila"
+color = Color(1, 0.41960785, 0.41960785, 1)
+description = "Shimmering coral-red with aurora-like swirls"
+caustic = -1
+volatile = 3
+drift = 2
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"

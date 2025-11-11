@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Liquor" load_steps=2 format=3 uid="uid://bf8gh7kgkt8s1"]
+
+[ext_resource type="Script" uid="uid://dp5he7ap0p2wb" path="res://scripts/resources/liquor.gd" id="1_o2aud"]
+
+[resource]
+script = ExtResource("1_o2aud")
+name = "Eclipse Brandy"
+color = Color(0.20392157, 0.28627452, 0.36862746, 1)
+description = "Deep twilight blue, absorbs surrounding light"
+resonant = -1
+drift = 2
+abyss = 2
+metadata/_custom_type_script = "uid://dp5he7ap0p2wb"
