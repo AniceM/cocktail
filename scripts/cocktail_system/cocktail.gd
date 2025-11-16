@@ -1,11 +1,23 @@
 class_name Cocktail
 extends RefCounted
 
+# Type of glass the cocktail is served in
+# Some glasses can hold more liquors than others
+# Some glasses have special effects
 var glass: GlassType
+
+# Current layers currently in the cocktail
+# A layer is a collection of liquors mixed together
 var layers: Array[CocktailLayer] = []
+
+# Special ingredient added to the cocktail, if any
 var special_ingredient: SpecialIngredient = null
+
+# List of signatures unlocked by the current composition of the cocktail
 var signatures: Array[Signature] = []
-var flavor_stats: FlavorStats = FlavorStats.new() # Cached flavor calculation
+
+# Cached flavor stats calculation (sum of all liquors' stats + special ingredient + glass bonuses)
+var flavor_stats: FlavorStats = FlavorStats.new()
 
 func _init(glass_type: GlassType) -> void:
 	glass = glass_type
