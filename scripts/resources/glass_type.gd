@@ -15,8 +15,14 @@ enum BonusType {
 
 @export var name: String = ""
 @export var icon: Texture2D
-@export var capacity: int = 3
 @export_multiline var description: String = ""
+@export var capacity: int = 3
+
+# Liquid positioning checkpoints for non-linear glass shapes
+# Each checkpoint: x=center_y, y=scale
+@export var liquid_checkpoints: Array[Vector2] = []
+
+# Type of bonus this GlassType provides, if any
 @export var bonus_type: BonusType = BonusType.NONE
 # @export_multiline var bonus_description: String = ""
 @export var suspicion_bonus: int = 0 # Extra suspicion slots

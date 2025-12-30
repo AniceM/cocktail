@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bt2ltrb4erqxi"]
+[gd_scene load_steps=11 format=3 uid="uid://bt2ltrb4erqxi"]
 
 [ext_resource type="Script" uid="uid://blsnwivy3x00f" path="res://scripts/scenes/glass_scene.gd" id="1_8267a"]
 [ext_resource type="Texture2D" uid="uid://bp0jykxdbg5qs" path="res://assets/utensils/temporary/glass_back.png" id="1_rosuk"]
@@ -6,6 +6,8 @@
 [ext_resource type="Shader" uid="uid://cvi05auco6hlg" path="res://resources/shaders/fake_liquid.gdshader" id="3_ooemy"]
 [ext_resource type="Texture2D" uid="uid://cekhkbcj6q2fy" path="res://assets/utensils/temporary/glass_front.png" id="5_15roq"]
 [ext_resource type="Texture2D" uid="uid://4gss8fy7ukhn" path="res://assets/utensils/temporary/glass_highlights.png" id="6_fao6a"]
+[ext_resource type="Texture2D" uid="uid://c5gbaeku4gm3q" path="res://assets/utensils/glasses/signal_glass/glass_back.png" id="7_axe6d"]
+[ext_resource type="Texture2D" uid="uid://duwqtpa86bm47" path="res://assets/utensils/glasses/signal_glass/glass_front.png" id="8_01sys"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pr3a7"]
 shader = ExtResource("3_ooemy")
@@ -15,10 +17,11 @@ shader_parameter/wave_count = 1
 shader_parameter/ellipse_radius_x = 0.426000020235
 shader_parameter/ellipse_radius_y = 0.22000001045
 shader_parameter/ellipse_center_y = 0.2810000133475
+shader_parameter/expansion_slope = 0.3
 shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
 shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
 shader_parameter/rim_thickness = 0.00800000038
-shader_parameter/rim_blur = 0.007000000332500001
+shader_parameter/rim_blur = 0.0070000003325
 shader_parameter/show_top_rim = true
 shader_parameter/show_bottom_rim = true
 shader_parameter/show_ellipse = true
@@ -75,9 +78,9 @@ offset_right = 850.0
 offset_bottom = 445.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset = Vector2(850, 410)
 
-[node name="FirstLiquid" type="ColorRect" parent="LiquidMask/Liquid"]
-unique_name_in_owner = true
+[node name="ThirdLiquid" type="ColorRect" parent="LiquidMask/Liquid"]
 visible = false
 material = SubResource("ShaderMaterial_pr3a7")
 custom_minimum_size = Vector2(1700, 820)
@@ -86,13 +89,50 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -500.0
-offset_top = 21.0
-offset_right = 1200.0
-offset_bottom = 841.0
+offset_left = -850.0
+offset_top = -300.0
+offset_right = 850.0
+offset_bottom = 520.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.6, 0.6)
+scale = Vector2(0.942, 0.942)
+pivot_offset = Vector2(850, 410)
+
+[node name="SecondLiquid" type="ColorRect" parent="LiquidMask/Liquid"]
+visible = false
+material = SubResource("ShaderMaterial_pr3a7")
+custom_minimum_size = Vector2(1700, 820)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -850.0
+offset_top = -220.0
+offset_right = 850.0
+offset_bottom = 600.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.842, 0.842)
+pivot_offset = Vector2(850, 410)
+
+[node name="FirstLiquid" type="ColorRect" parent="LiquidMask/Liquid"]
+visible = false
+material = SubResource("ShaderMaterial_pr3a7")
+custom_minimum_size = Vector2(1700, 820)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -850.0
+offset_top = -165.265
+offset_right = 850.0
+offset_bottom = 654.735
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.692, 0.692)
+pivot_offset = Vector2(850, 410)
 
 [node name="Bubbles" type="GPUParticles2D" parent="."]
 unique_name_in_owner = true
@@ -111,3 +151,11 @@ modulate = Color(0.13333334, 1, 1, 1)
 position = Vector2(-376, -543)
 texture = ExtResource("6_fao6a")
 metadata/_edit_lock_ = true
+
+[node name="Back(WIP)" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("7_axe6d")
+
+[node name="Front(WIP)" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("8_01sys")

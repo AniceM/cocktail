@@ -15,23 +15,21 @@ var base_shader: ShaderMaterial # Cached shader material for direct access
 # ============================================================================
 # Liquid State
 # ============================================================================
+var glass_resource: GlassType # The glass type being used
 var glass_max_liquids: int = 4 # Maximum amount of liquids
 var liquid_amount: int = 0 # Current amount of liquids
 
-# Control Liquid positioning
+# Control Liquid positioning (all center-based, Y only)
 # These values should be defined in the editor first
-var full_glass_position: Vector2 = Vector2.ZERO
+var full_glass_center_y: float = 0.0
 var full_glass_scaling: float = 1
-var first_liquid_position: Vector2 = Vector2(-500, 21)
+var first_liquid_center_y: float = -165.265
 var first_liquid_scaling: float = 0.6
 
 # Variables to help animating liquid increments
-# Note that we work with the LiquidRect's center position, not top-left
-var add_liquid_center_position_increment: Vector2 = Vector2.ZERO
+var add_liquid_center_y_increment: float = 0.0
 var add_liquid_scaling: float = 0
 var rect_size: Vector2 = Vector2.ZERO
-var first_liquid_center: Vector2 = Vector2.ZERO
-var full_glass_center: Vector2 = Vector2.ZERO
 
 # ============================================================================
 # Animation State
@@ -69,6 +67,13 @@ func _ready() -> void:
 	_initialize_shader_state()
 	current_liquid_rect = liquid_rect
 	_set_liquid_amount(0, false)
+
+
+func set_glass(glass: GlassType) -> void:
+	"""Set the glass type for this scene."""
+	glass_resource = glass
+	glass_max_liquids = glass.capacity
+	_initialize_positioning()
 
 
 func reset() -> void:
@@ -158,18 +163,15 @@ func mix(animate: bool = false) -> void:
 
 func _initialize_positioning() -> void:
 	# The "full glass" position and scale should be whatever is defined in the editor
+	# Pivot is now at center, so position is already the center
 	full_glass_scaling = liquid_rect.scale.x
-	full_glass_position = liquid_rect.position
+	full_glass_center_y = liquid_rect.position.y
 
 	# Cache the rect size (never changes)
 	rect_size = liquid_rect.custom_minimum_size
 
-	# Calculate center positions from top-left positions
-	full_glass_center = full_glass_position + (rect_size * full_glass_scaling / 2.0)
-	first_liquid_center = first_liquid_position + (rect_size * first_liquid_scaling / 2.0)
-
 	# Define the center position and scaling increments based on the capacity of the glass and the first liquid values
-	add_liquid_center_position_increment = (full_glass_center - first_liquid_center) / (glass_max_liquids - 1)
+	add_liquid_center_y_increment = (full_glass_center_y - first_liquid_center_y) / (glass_max_liquids - 1)
 	add_liquid_scaling = (full_glass_scaling - first_liquid_scaling) / (glass_max_liquids - 1)
 
 
@@ -282,15 +284,26 @@ func _set_liquid_amount(amount: int, animate: bool = false) -> void:
 
 
 func _calculate_liquid_transform(amount: int) -> Array[Vector2]:
-	# Calculate target center position and scale
-	var target_center = first_liquid_center + (add_liquid_center_position_increment * (amount - 1))
-	var target_scale = Vector2.ZERO if amount == 0 else Vector2(
-		first_liquid_scaling + (add_liquid_scaling * (amount - 1)),
-		first_liquid_scaling + (add_liquid_scaling * (amount - 1))
-	)
+	var target_center_y: float
+	var target_scale: Vector2
+	var target_position: Vector2
 
-	# Convert center position to top-left position for the ColorRect
-	var target_position = target_center - (rect_size * target_scale / 2.0)
+	# If glass has checkpoints for this amount, use them
+	if glass_resource and amount > 0 and amount <= glass_resource.liquid_checkpoints.size():
+		var checkpoint = glass_resource.liquid_checkpoints[amount - 1]
+		target_center_y = checkpoint.x
+		target_scale = Vector2(checkpoint.y, checkpoint.y)
+	else:
+		# Fall back to linear interpolation
+		target_center_y = first_liquid_center_y + (add_liquid_center_y_increment * (amount - 1))
+		target_scale = Vector2.ZERO if amount == 0 else Vector2(
+			first_liquid_scaling + (add_liquid_scaling * (amount - 1)),
+			first_liquid_scaling + (add_liquid_scaling * (amount - 1))
+		)
+
+	# Position is already center-based (pivot is at center)
+	# X doesn't change, only Y changes
+	target_position = Vector2(liquid_rect.position.x, target_center_y)
 
 	return [target_position, target_scale]
 

@@ -1,12 +1,12 @@
 extends Node
 
 # Preload all flavor resources
-var CAUSTIC: Flavor = preload("res://data/flavors/caustic.tres")
-var VOLATILE: Flavor = preload("res://data/flavors/volatile.tres")
-var RESONANT: Flavor = preload("res://data/flavors/resonant.tres")
-var DRIFT: Flavor = preload("res://data/flavors/drift.tres")
-var TEMPORAL: Flavor = preload("res://data/flavors/temporal.tres")
-var ABYSS: Flavor = preload("res://data/flavors/abyss.tres")
+var CAUSTIC: Flavor = preload("uid://dqq43sfhndaps")
+var VOLATILE: Flavor = preload("uid://b6nuv127qfro5")
+var RESONANT: Flavor = preload("uid://b6uqt6sgi44nl")
+var DRIFT: Flavor = preload("uid://ch4po4u8501bh")
+var TEMPORAL: Flavor = preload("uid://coifug6hj7rfw")
+var ABYSS: Flavor = preload("uid://dqfbs2lug8qb3")
 
 func get_all_flavors() -> Array[Flavor]:
 	return [CAUSTIC, VOLATILE, RESONANT, DRIFT, TEMPORAL, ABYSS]

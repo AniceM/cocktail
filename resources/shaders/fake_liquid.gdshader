@@ -6,9 +6,12 @@ uniform float wobble_speed : hint_range(0.0, 5.0) = 2.0;
 uniform int wave_count : hint_range(1, 8) = 1;
 
 // Ellipse shape
-uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.45;
-uniform float ellipse_radius_y : hint_range(0.0, 0.5) = 0.15;
-uniform float ellipse_center_y : hint_range(0.0, 1.0) = 0.5;
+uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426;
+uniform float ellipse_radius_y : hint_range(0.0, 0.5) = 0.22;
+uniform float ellipse_center_y : hint_range(0.0, 1.0) = 0.281;
+
+// Glass expansion
+uniform float expansion_slope : hint_range(0.0, 1.0) = 0.3;
 
 // Colors
 uniform vec4 liquid_color : source_color = vec4(0.9, 0.5, 0.2, 1.0);
@@ -53,19 +56,17 @@ void fragment() {
     oval_pos.y -= wobble;
     float dist = ellipse_sdf(oval_pos, vec2(ellipse_radius_x, ellipse_radius_y));
     
-    // 2. Body fill
+    // 2. Body fill - expanding cone from ellipse surface
     float x_norm = pos.x / ellipse_radius_x;
-    bool in_horizontal_range = abs(x_norm) < 1.0;
-    bool in_body = false;
-    
-    if (in_horizontal_range) {
-        float body_edge_y = ellipse_radius_y * sqrt(1.0 - x_norm * x_norm);
-        float surface_y = body_edge_y + wobble;
-        
-        if (pos.y > surface_y) {
-            in_body = true;
-        }
-    }
+    float body_edge_y = ellipse_radius_y * sqrt(max(0.0, 1.0 - x_norm * x_norm));
+    float surface_y = body_edge_y + wobble;
+
+    // Expand outward as we go down (predetermined slope)
+    float depth_below_surface = UV.y - (ellipse_center_y + surface_y);
+    float allowed_width_at_depth = ellipse_radius_x + (depth_below_surface * expansion_slope);
+
+    float x_norm_at_depth = abs(pos.x) / allowed_width_at_depth;
+    bool in_body = (pos.y > surface_y) && (x_norm_at_depth < 1.0);
     
     // 3. Top clip ellipse (for stacking)
     bool clipped_by_top = false;

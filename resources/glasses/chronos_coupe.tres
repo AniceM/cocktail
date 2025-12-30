@@ -1,10 +1,11 @@
 [gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://bmih0fbkyl0py"]
 
-[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_ycvi4"]
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_b1u2h"]
 
 [resource]
-script = ExtResource("1_ycvi4")
+script = ExtResource("1_b1u2h")
 name = "Chronos Coupe"
-capacity = 4
 description = "The perfect cocktail glass."
+capacity = 4
+liquid_checkpoints = Array[Vector2]([Vector2(-165.265, 0.692), Vector2(-220, 0.842), Vector2(-300, 0.942), Vector2(-375, 1)])
 metadata/_custom_type_script = "uid://duqlr7id17gbq"

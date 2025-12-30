@@ -12,10 +12,10 @@ func _ready() -> void:
 	_load_all_data()
 
 func _load_all_data() -> void:
-	_load_resources("res://data/liquors/", all_liquors)
-	_load_resources("res://data/glasses/", all_glasses)
-	_load_resources("res://data/signatures/", all_signatures)
-	_load_resources("res://data/special_ingredients/", all_special_ingredients)
+	_load_resources("res://resources/liquors/", all_liquors)
+	_load_resources("res://resources/glasses/", all_glasses)
+	_load_resources("res://resources/signatures/", all_signatures)
+	_load_resources("res://resources/special_ingredients/", all_special_ingredients)
 
 	print("Game data loaded:")
 	print("  - %d liquors" % all_liquors.size())

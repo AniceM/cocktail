@@ -33,7 +33,9 @@ func _ready() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
 
 	# Create Cocktail object
-	cocktail = Cocktail.new(GameDataRegistry.get_glass("Chronos Coupe"))
+	var glass = GameDataRegistry.get_glass("Chronos Coupe")
+	cocktail = Cocktail.new(glass)
+	glass_scene.set_glass(glass)
 
 	# Animate camera zoom from 1 to 2
 	var tween = create_tween()
