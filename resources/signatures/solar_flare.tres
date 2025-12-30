@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_l7kqt"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_lnnnp"]
 [ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="2_ptoxd"]
-[ext_resource type="Resource" uid="uid://b6nuv127qfro5" path="res://data/flavors/volatile.tres" id="3_7rpo1"]
+[ext_resource type="Resource" uid="uid://b6nuv127qfro5" path="res://resources/flavors/volatile.tres" id="3_7rpo1"]
 
 [resource]
 script = ExtResource("2_ptoxd")

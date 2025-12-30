@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_ap0mt"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_tqsl2"]
-[ext_resource type="Resource" uid="uid://b6uqt6sgi44nl" path="res://data/flavors/resonant.tres" id="3_bb61j"]
+[ext_resource type="Resource" uid="uid://b6uqt6sgi44nl" path="res://resources/flavors/resonant.tres" id="3_bb61j"]
 [ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="3_l7nlv"]
-[ext_resource type="Resource" uid="uid://dqfbs2lug8qb3" path="res://data/flavors/abyss.tres" id="4_37ap5"]
+[ext_resource type="Resource" uid="uid://dqfbs2lug8qb3" path="res://resources/flavors/abyss.tres" id="4_37ap5"]
 
 [resource]
 script = ExtResource("3_l7nlv")

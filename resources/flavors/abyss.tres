@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_77xxk"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_ulhed"]
-[ext_resource type="Resource" uid="uid://krf3glt47uou" path="res://data/secret_types/omission.tres" id="3_omission"]
-[ext_resource type="Resource" uid="uid://8joi8sgrm6qd" path="res://data/secret_types/fragment.tres" id="4_fragment"]
+[ext_resource type="Resource" uid="uid://krf3glt47uou" path="res://resources/secret_types/omission.tres" id="3_omission"]
+[ext_resource type="Resource" uid="uid://8joi8sgrm6qd" path="res://resources/secret_types/fragment.tres" id="4_fragment"]
 
 [resource]
 script = ExtResource("2_ulhed")

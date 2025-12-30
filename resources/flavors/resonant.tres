@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_hora7"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_etmv4"]
-[ext_resource type="Resource" uid="uid://bfnthbt57g12i" path="res://data/secret_types/echo.tres" id="3_echo"]
-[ext_resource type="Resource" uid="uid://bj350oxh1wbxo" path="res://data/secret_types/trigger.tres" id="4_trigger"]
+[ext_resource type="Resource" uid="uid://bfnthbt57g12i" path="res://resources/secret_types/echo.tres" id="3_echo"]
+[ext_resource type="Resource" uid="uid://bj350oxh1wbxo" path="res://resources/secret_types/trigger.tres" id="4_trigger"]
 
 [resource]
 script = ExtResource("2_etmv4")

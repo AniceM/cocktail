@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_iv0hy"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_5xixv"]
-[ext_resource type="Resource" uid="uid://dm1h2eg2mgpkl" path="res://data/secret_types/foreshadow.tres" id="3_foreshadow"]
+[ext_resource type="Resource" uid="uid://dm1h2eg2mgpkl" path="res://resources/secret_types/foreshadow.tres" id="3_foreshadow"]
 
 [resource]
 script = ExtResource("2_5xixv")
