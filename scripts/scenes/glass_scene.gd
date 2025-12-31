@@ -8,6 +8,7 @@ signal animation_finished()
 # ============================================================================
 @onready var liquid_rect: ColorRect = %LiquidRect
 @onready var bubbles: GPUParticles2D = %Bubbles
+@onready var droplets: GPUParticles2D = %Droplets
 
 # Shader representing the liquid (top ellipse with a rim, and fill content below)
 var base_shader: ShaderMaterial # Cached shader material for direct access
@@ -36,13 +37,18 @@ var rect_size: Vector2 = Vector2.ZERO
 # ============================================================================
 var tween: Tween
 var wobble_tween: Tween
-var animation_duration: float = 0.5
+var splash_tween: Tween
+var pour_animation_duration: float = 0.5
 var wobble_idle_strength: float = 0
 var wobble_peak_strength: float = 0.03
 var wobble_idle_speed: float = 0.0
 var wobble_peak_speed: float = 5.0
 var wobble_spike_duration: float = 0.1
 var wobble_recovery_duration: float = 3.5
+var splash_peak_amplitude: float = 0.03
+var splash_spike_duration: float = 0.1
+var splash_pour_recovery_duration: float = 0.6 # A bit more than pour_animation_duration
+var splash_mix_recovery_duration: float = 3.5
 
 # ============================================================================
 # Layer Management
@@ -63,6 +69,12 @@ func _ready() -> void:
 		push_error("LiquidRect does not have a ShaderMaterial!")
 		return
 
+	# Make sure the particle systems are visible but not emitting yet
+	bubbles.visible = true
+	bubbles.emitting = false
+	droplets.visible = true
+	droplets.emitting = false
+
 	_initialize_positioning()
 	_initialize_shader_state()
 	current_liquid_rect = liquid_rect
@@ -80,12 +92,8 @@ func reset() -> void:
 	# Switch to the original liquid rect
 	current_liquid_rect = liquid_rect
 
-	# Remove all duplicated liquid rects
-	for extra_liquid in extra_liquid_rects:
-		extra_liquid.queue_free()
-
-	# Clear the array
-	extra_liquid_rects.clear()
+	# Clean up extra liquid rects
+	_free_extra_liquid_rects()
 
 	# Restore base shader to its original state (top ellipse visible)
 	_reset_base_shader_state()
@@ -136,15 +144,18 @@ func mix(animate: bool = false) -> void:
 	var top_position = current_liquid_rect.position
 	var top_scale = current_liquid_rect.scale
 
-	# Fade out and clean up extra layers while the bottom expands
-	for extra_liquid in extra_liquid_rects:
-		var fade_tween = create_tween()
-		fade_tween.tween_property(extra_liquid, "modulate:a", 0.0, animation_duration)
-		# Clean up this rect when its fade finishes
-		fade_tween.finished.connect(extra_liquid.queue_free)
+	# Reparent droplets back to the original liquid rect before freeing extras
+	if droplets.get_parent() != liquid_rect:
+		droplets.get_parent().remove_child(droplets)
+		liquid_rect.add_child(droplets)
 
-	# Clear the array since rects will be freed
-	extra_liquid_rects.clear()
+	# Fade out extra layers while the bottom expands
+	var fade_tween = create_tween().set_parallel(true)
+	for extra_liquid in extra_liquid_rects:
+		fade_tween.tween_property(extra_liquid, "modulate:a", 0.0, pour_animation_duration)
+
+	# Clean up rects and reparent droplets when all fades finish
+	fade_tween.finished.connect(_free_extra_liquid_rects)
 
 	# Switch back to the original liquid rect
 	current_liquid_rect = liquid_rect
@@ -154,7 +165,7 @@ func mix(animate: bool = false) -> void:
 
 	# Animate the bottom liquid expanding up and changing color
 	# This will emit animation_started and animation_finished signals
-	_update_liquid_properties(liquid_rect, top_position, top_scale, blended_color, animate)
+	_update_liquid_properties(liquid_rect, top_position, top_scale, blended_color, animate, true)
 
 
 # ============================================================================
@@ -183,6 +194,7 @@ func _initialize_shader_state() -> void:
 	# We only do this once so it doesn't need to be inside reset_base_shader
 	_set_wobble_speed(base_shader, wobble_idle_speed)
 	_set_wobble_strength(base_shader, wobble_idle_strength)
+	# Set rim color to black for now, it will be updated when _set_liquid_color is called
 	base_shader.set_shader_parameter("rim_color", Color.BLACK)
 
 
@@ -192,6 +204,20 @@ func _initialize_shader_state() -> void:
 
 func _set_liquid_color(shader: ShaderMaterial, color: Color) -> void:
 	shader.set_shader_parameter("liquid_color", color)
+
+	# Set the rim color to the same color, but darkened if color is light, lightened if dark
+	var luma = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b
+	if luma > 0.5:
+		shader.set_shader_parameter("rim_color", color.darkened(0.5))
+	else:
+		shader.set_shader_parameter("rim_color", color.lightened(0.5))
+
+	# Calculate brightened splash color
+	# This formula is equivalent to changing the "intensity" slider in the editor
+	var intensity = 2
+	var splash_color = (color.srgb_to_linear() * 2 ** intensity).linear_to_srgb()
+
+	shader.set_shader_parameter("splash_color", splash_color)
 
 
 func _get_liquid_color(shader: ShaderMaterial) -> Color:
@@ -212,6 +238,20 @@ func _set_wobble_strength(shader: ShaderMaterial, strength: float) -> void:
 
 func _set_wobble_speed(shader: ShaderMaterial, speed: float) -> void:
 	shader.set_shader_parameter("wobble_speed", speed)
+
+
+func _set_splash_amplitude(shader: ShaderMaterial, amplitude: float) -> void:
+	shader.set_shader_parameter("splash_amplitude", amplitude)
+
+
+func _set_droplets_color(color: Color) -> void:
+	"""Set the droplets particle color to match the liquid being poured (brightened)."""
+	var droplets_material = droplets.process_material as ParticleProcessMaterial
+	if droplets_material:
+		# Use the same brightening formula as splash_color for consistency
+		var intensity = 0.5
+		var brightened_color = (color.srgb_to_linear() * 2 ** intensity).linear_to_srgb()
+		droplets_material.color = brightened_color
 
 
 func _reset_base_shader_state() -> void:
@@ -253,6 +293,21 @@ func _create_new_layer(color: Color) -> ColorRect:
 	return new_liquid_rect
 
 
+func _free_extra_liquid_rects() -> void:
+	"""Reparent droplets and free all extra liquid rects."""
+	# Reparent droplets back to the original liquid rect before freeing extras
+	if droplets.get_parent() != liquid_rect:
+		droplets.get_parent().remove_child(droplets)
+		liquid_rect.add_child(droplets)
+
+	# Remove all duplicated liquid rects
+	for extra_liquid in extra_liquid_rects:
+		extra_liquid.queue_free()
+
+	# Clear the array
+	extra_liquid_rects.clear()
+
+
 # ============================================================================
 # Liquid State Management
 # ============================================================================
@@ -266,10 +321,8 @@ func _set_liquid_amount(amount: int, animate: bool = false) -> void:
 	# Update bubbles
 	if amount > 1:
 		bubbles.emitting = true
-		bubbles.visible = true
 	else:
 		bubbles.emitting = false
-		bubbles.visible = false
 
 	# Calculate target transform
 	var transform_result = _calculate_liquid_transform(amount)
@@ -280,7 +333,7 @@ func _set_liquid_amount(amount: int, animate: bool = false) -> void:
 	var current_color = _get_liquid_color(current_liquid_rect.material as ShaderMaterial)
 
 	# Update liquid properties (color stays the same)
-	_update_liquid_properties(current_liquid_rect, target_position, target_scale, current_color, animate)
+	_update_liquid_properties(current_liquid_rect, target_position, target_scale, current_color, animate, false)
 
 
 func _calculate_liquid_transform(amount: int) -> Array[Vector2]:
@@ -312,7 +365,7 @@ func _calculate_liquid_transform(amount: int) -> Array[Vector2]:
 # Animation
 # ============================================================================
 
-func _update_liquid_properties(rect: ColorRect, target_position: Vector2, target_scale: Vector2, target_color: Color, animate: bool) -> void:
+func _update_liquid_properties(rect: ColorRect, target_position: Vector2, target_scale: Vector2, target_color: Color, animate: bool, is_mix: bool = false) -> void:
 	"""Update a liquid rect's position, scale, and shader color. Can animate or set instantly."""
 	var rect_shader = rect.material as ShaderMaterial
 
@@ -328,18 +381,33 @@ func _update_liquid_properties(rect: ColorRect, target_position: Vector2, target
 		# Emit animation started signal
 		animation_started.emit()
 
-		# Start wobble animation (non-blocking; animation_finished signal doesn't wait for it)
+		# Start droplets emission for pours (not for mixes)
+		if not is_mix:
+			_set_droplets_color(target_color)
+			droplets.emitting = true
+			# If we are pouring a new layer, reparent droplets
+			if droplets.get_parent() != rect:
+				droplets.get_parent().remove_child(droplets)
+				rect.add_child(droplets)
+
+		# Start wobble and splash animation (non-blocking; animation_finished signal doesn't wait for it)
 		_animate_wobble()
+		_animate_splash(is_mix)
 
 		# Tween position and scale
-		tween.tween_property(rect, "position", target_position, animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-		tween.tween_property(rect, "scale", target_scale, animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		tween.tween_property(rect, "position", target_position, pour_animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		tween.tween_property(rect, "scale", target_scale, pour_animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 		# Tween shader color parameter
-		tween.tween_property(rect_shader, "shader_parameter/liquid_color", target_color, animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		tween.tween_property(rect_shader, "shader_parameter/liquid_color", target_color, pour_animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 		# Emit animation finished signal when done
-		tween.finished.connect(func(): animation_finished.emit(), CONNECT_ONE_SHOT)
+		tween.finished.connect(func():
+			# Stop droplet emission after pour animation finishes
+			if not is_mix:
+				droplets.emitting = false
+			animation_finished.emit()
+		, CONNECT_ONE_SHOT)
 	else:
 		# Set values directly without animation
 		rect.position = target_position
@@ -355,6 +423,10 @@ func _animate_wobble() -> void:
 
 	wobble_tween = create_tween().set_parallel(true)
 
+	# We will animate the wobbling effect by changing the speed and strength
+	# Wobble speed CANNOT be tweened, because the shader uses TIME, and TIME * wobble_speed changes dramatically between frames
+	# It needs to stay constant for the duration of the animation.
+	# Wobble strength however can be tweened.
 	for liquid in [liquid_rect] + extra_liquid_rects:
 		var liquid_shader = liquid.material as ShaderMaterial
 		# Set wobble speed
@@ -363,8 +435,25 @@ func _animate_wobble() -> void:
 		var current_strength = liquid_shader.get_shader_parameter("wobble_strength") as float
 		wobble_tween.tween_method(func(v): _set_wobble_strength(liquid_shader, v), current_strength, wobble_peak_strength, wobble_spike_duration)
 		# Phase 2: Recover back to 0 after a delay
-		wobble_tween.tween_method(func(v): _set_wobble_strength(liquid_shader, v), wobble_peak_strength, wobble_idle_strength, wobble_recovery_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT).set_delay(wobble_spike_duration + animation_duration)
+		wobble_tween.tween_method(func(v): _set_wobble_strength(liquid_shader, v), wobble_peak_strength, wobble_idle_strength, wobble_recovery_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT).set_delay(wobble_spike_duration + pour_animation_duration)
 		# Revert wobble speed
 		wobble_tween.tween_callback(func():
 			_set_wobble_speed(liquid_shader, wobble_idle_speed)
-		).set_delay(wobble_spike_duration + animation_duration + wobble_recovery_duration)
+		).set_delay(wobble_spike_duration + pour_animation_duration + wobble_recovery_duration)
+
+
+func _animate_splash(is_mix: bool = false) -> void:
+	"""Animate splash amplitude to peak, then recover after peak is reached."""
+	# Kill any existing splash tween
+	if splash_tween:
+		splash_tween.kill()
+
+	var recovery_time = splash_mix_recovery_duration if is_mix else splash_pour_recovery_duration
+	splash_tween = create_tween().set_parallel(true)
+
+	for liquid in [liquid_rect] + extra_liquid_rects:
+		var liquid_shader = liquid.material as ShaderMaterial
+		# Phase 1: Spike to peak over splash_spike_duration
+		splash_tween.tween_method(func(v): _set_splash_amplitude(liquid_shader, v), 0.0, splash_peak_amplitude, splash_spike_duration)
+		# Phase 2: Recover back to 0 after a delay
+		splash_tween.tween_method(func(v): _set_splash_amplitude(liquid_shader, v), splash_peak_amplitude, 0.0, recovery_time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT).set_delay(splash_spike_duration + pour_animation_duration)

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_31x6s")
 name = "Plasma Vodka"
-color = Color(0.9019608, 0.22352941, 0.27450982, 1)
+color = Color(0.95, 0.15, 0.2, 0.82)
 description = "Crimson with dancing energy sparks"
 caustic = 2
 volatile = 3

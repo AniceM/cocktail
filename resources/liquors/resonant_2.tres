@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_2j8dc")
 name = "Reverie Wine"
-color = Color(0.7647059, 0.60784316, 0.827451, 1)
+color = Color(0.75, 0.45, 0.95, 0.80)
 description = "Dreamy lavender with golden shimmer"
 resonant = 4
 drift = -1

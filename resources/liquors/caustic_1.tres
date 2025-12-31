@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_yb1ga")
 name = "Supernova Rye"
-color = Color(0.2901961, 0.5647059, 0.8862745, 1)
+color = Color(0.1, 0.45, 0.95, 0.85)
 description = "Electric blue with explosive white sparks"
 caustic = 3
 volatile = 2

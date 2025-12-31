@@ -5,6 +5,12 @@ uniform float wobble_strength : hint_range(0.0, 0.1) = 0.02;
 uniform float wobble_speed : hint_range(0.0, 5.0) = 2.0;
 uniform int wave_count : hint_range(1, 8) = 1;
 
+// Splash/Ripple settings (Animate splash_amplitude to see the effect!)
+uniform float splash_amplitude : hint_range(0.0, 0.1) = 0.0;
+uniform float splash_frequency : hint_range(1.0, 30.0) = 22.0;
+uniform float splash_speed : hint_range(0.5, 20.0) = 15.0;
+uniform vec4 splash_color : source_color = vec4(1.0, 1.0, 1.0, 0.4);
+
 // Ellipse shape
 uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426;
 uniform float ellipse_radius_y : hint_range(0.0, 0.5) = 0.22;
@@ -51,9 +57,19 @@ void fragment() {
     vec2 pos = UV - center;
     float wobble = get_sync_wobble(pos.x);
     
+    // Calculate Ripples (normalized to ellipse shape)
+    float ripple_factor = 0.0;
+    if (splash_amplitude > 0.0) {
+        vec2 ripple_uv = pos / vec2(ellipse_radius_x, ellipse_radius_y);
+        float r_dist = length(ripple_uv);
+        float ripple_wave = 0.5 + 0.5 * sin(r_dist * splash_frequency - TIME * splash_speed);
+        float ripple_fade = smoothstep(1.0, 0.0, r_dist);
+        ripple_factor = ripple_wave * ripple_fade * splash_amplitude;
+    }
+    
     // 1. Calculate the Top Oval Distance
     vec2 oval_pos = pos;
-    oval_pos.y -= wobble;
+    oval_pos.y -= (wobble + ripple_factor);
     float dist = ellipse_sdf(oval_pos, vec2(ellipse_radius_x, ellipse_radius_y));
     
     // 2. Body fill - expanding cone from ellipse surface
@@ -100,17 +116,21 @@ void fragment() {
     
     // Fill part (only if show_fill is true and not clipped)
     bool in_fill = show_fill && in_body && !clipped_by_top;
-	
-	// Is the pixel inside the liquid?
+    
+    // Is the pixel inside the liquid?
     if (in_ellipse || in_fill) {
         final_color = liquid_color;
+        
+        // Depth Darkening
+        float depth = smoothstep(ellipse_center_y, 1.0, UV.y);
+        final_color.rgb *= (1.0 - depth * depth_darkening);
+        
+        // Apply ripple highlights
+        if (in_ellipse && ripple_factor > 0.0) {
+            final_color = mix(final_color, splash_color, ripple_factor * 10.0);
+			//final_color = mix(final_color, splash_color, clamp(ripple_factor * 10.0, 0.0, 1.0));
+        }
     }
-	
-	// Depth Darkening
-	if (in_ellipse || in_fill) {
-    	float depth = smoothstep(ellipse_center_y, 1.0, UV.y);
-    	final_color = liquid_color * (1.0 - depth * depth_darkening);
-	}
     
     // Apply rims based on toggles (only if ellipse is shown)
     if (show_ellipse) {

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_etkrs")
 name = "Radiance Aquavit"
-color = Color(0.3647059, 0.6784314, 0.8862745, 1)
+color = Color(0.15, 0.55, 1.0, 0.80)
 description = "Crystalline sky blue with light refractions"
 caustic = 3
 resonant = 2

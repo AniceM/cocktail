@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_01l6c")
 name = "Astral Absinthe"
-color = Color(0.18039216, 0.8, 0.44313726, 1)
+color = Color(0.1, 0.85, 0.35, 0.81)
 description = "Luminous green with ghostly trails"
 caustic = 2
 volatile = -1

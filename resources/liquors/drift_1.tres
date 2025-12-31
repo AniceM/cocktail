@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_n1pex")
 name = "Eventide Sake"
-color = Color(0.28235295, 0.7882353, 0.6901961, 1)
+color = Color(0.1, 0.8, 0.7, 0.83)
 description = "Translucent teal with twilight gradient"
 resonant = 2
 drift = 3

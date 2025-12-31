@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_h8euh")
 name = "Void Rum"
-color = Color(0.10980392, 0.15686275, 0.2, 1)
+color = Color(0.08, 0.12, 0.18, 0.88)
 description = "Absolute darkness, light cannot escape"
 resonant = -2
 abyss = 4

@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://bt2ltrb4erqxi"]
+[gd_scene load_steps=18 format=3 uid="uid://bt2ltrb4erqxi"]
 
 [ext_resource type="Script" uid="uid://blsnwivy3x00f" path="res://scripts/scenes/glass_scene.gd" id="1_8267a"]
 [ext_resource type="Texture2D" uid="uid://bp0jykxdbg5qs" path="res://assets/utensils/temporary/glass_back.png" id="1_rosuk"]
 [ext_resource type="Texture2D" uid="uid://buc6gl6bvv1c6" path="res://assets/utensils/temporary/glass_liquid.png" id="2_8267a"]
 [ext_resource type="Shader" uid="uid://cvi05auco6hlg" path="res://resources/shaders/fake_liquid.gdshader" id="3_ooemy"]
+[ext_resource type="Texture2D" uid="uid://dwcwyhqgmw1i" path="res://assets/images/droplet_soft_circle.png" id="5_01sys"]
 [ext_resource type="Texture2D" uid="uid://cekhkbcj6q2fy" path="res://assets/utensils/temporary/glass_front.png" id="5_15roq"]
 [ext_resource type="Texture2D" uid="uid://4gss8fy7ukhn" path="res://assets/utensils/temporary/glass_highlights.png" id="6_fao6a"]
 [ext_resource type="Texture2D" uid="uid://c5gbaeku4gm3q" path="res://assets/utensils/glasses/signal_glass/glass_back.png" id="7_axe6d"]
@@ -14,6 +15,10 @@ shader = ExtResource("3_ooemy")
 shader_parameter/wobble_strength = 0.02
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wave_count = 1
+shader_parameter/splash_amplitude = 0.030000001425
+shader_parameter/splash_frequency = 22.0000009975
+shader_parameter/splash_speed = 15.00000068875
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
 shader_parameter/ellipse_radius_x = 0.426000020235
 shader_parameter/ellipse_radius_y = 0.22000001045
 shader_parameter/ellipse_center_y = 0.2810000133475
@@ -31,6 +36,54 @@ shader_parameter/use_top_clip = false
 shader_parameter/top_clip_center_y = 0.330000015675
 shader_parameter/top_clip_radius_x = 0.45
 shader_parameter/top_clip_radius_y = 0.15
+
+[sub_resource type="Gradient" id="Gradient_qq2fo"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ooemy"]
+gradient = SubResource("Gradient_qq2fo")
+
+[sub_resource type="Curve" id="Curve_ti24x"]
+_data = [Vector2(0.0058651045, 0.9935707), 0.0, 0.0, 0, 0, Vector2(1, 0.300816), -2.314182, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_pr3a7"]
+curve = SubResource("Curve_ti24x")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_droplets"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(150, 10, 1)
+angle_min = 45.0
+angle_max = 135.0
+direction = Vector3(0, -1, 0)
+spread = 60.0
+initial_velocity_min = 600.0
+initial_velocity_max = 800.0
+gravity = Vector3(0, 180, 0)
+radial_accel_min = 39.999996
+radial_accel_max = 99.99999
+scale_min = 0.0
+scale_max = 0.7
+scale_curve = SubResource("CurveTexture_pr3a7")
+color_ramp = SubResource("GradientTexture1D_ooemy")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_01sys"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(150, 10, 1)
+angle_min = 45.0
+angle_max = 135.0
+direction = Vector3(0, -1, 0)
+spread = 60.0
+initial_velocity_min = 600.0
+initial_velocity_max = 800.0
+gravity = Vector3(0, 900, 0)
+radial_accel_min = 39.999996
+radial_accel_max = 99.99999
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_pr3a7")
+color_ramp = SubResource("GradientTexture1D_ooemy")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8267a"]
 particle_flag_disable_z = true
@@ -79,6 +132,34 @@ offset_bottom = 445.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(850, 410)
+metadata/_edit_use_anchors_ = true
+
+[node name="DropletsGlobal" type="GPUParticles2D" parent="LiquidMask/Liquid/LiquidRect"]
+unique_name_in_owner = true
+visible = false
+z_index = 1
+position = Vector2(850, 239.4101)
+amount = 25
+texture = ExtResource("5_01sys")
+lifetime = 0.9
+speed_scale = 1.5
+randomness = 0.2
+trail_lifetime = 0.4
+process_material = SubResource("ParticleProcessMaterial_droplets")
+
+[node name="Droplets" type="GPUParticles2D" parent="LiquidMask/Liquid/LiquidRect"]
+unique_name_in_owner = true
+z_index = 1
+position = Vector2(850, 239.4101)
+emitting = false
+amount = 25
+texture = ExtResource("5_01sys")
+lifetime = 0.9
+speed_scale = 1.5
+randomness = 0.2
+local_coords = true
+trail_lifetime = 0.4
+process_material = SubResource("ParticleProcessMaterial_01sys")
 
 [node name="ThirdLiquid" type="ColorRect" parent="LiquidMask/Liquid"]
 visible = false

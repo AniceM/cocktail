@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_o2aud")
 name = "Eclipse Brandy"
-color = Color(0.20392157, 0.28627452, 0.36862746, 1)
+color = Color(0.15, 0.22, 0.35, 0.85)
 description = "Deep twilight blue, absorbs surrounding light"
 resonant = -1
 drift = 2
