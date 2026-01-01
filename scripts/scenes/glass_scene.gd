@@ -6,9 +6,11 @@ signal animation_finished()
 # ============================================================================
 # Visuals & References
 # ============================================================================
-@onready var liquid_rect: ColorRect = %LiquidRect
+@onready var liquid_sprite: Sprite2D = %LiquidSprite
+@onready var liquid_layers: Node2D = %LiquidLayers
 @onready var bubbles: GPUParticles2D = %Bubbles
-@onready var droplets: GPUParticles2D = %Droplets
+@onready var droplets: GPUParticles2D = %DropletsGlobal
+@onready var droplets_container: Node2D = %DropletsContainer
 
 # Shader representing the liquid (top ellipse with a rim, and fill content below)
 var base_shader: ShaderMaterial # Cached shader material for direct access
@@ -20,22 +22,17 @@ var glass_resource: GlassType # The glass type being used
 var glass_max_liquids: int = 4 # Maximum amount of liquids
 var liquid_amount: int = 0 # Current amount of liquids
 
-# Control Liquid positioning (all center-based, Y only)
-# These values should be defined in the editor first
-var full_glass_center_y: float = 0.0
-var full_glass_scaling: float = 1
-var first_liquid_center_y: float = -165.265
-var first_liquid_scaling: float = 0.6
-
-# Variables to help animating liquid increments
-var add_liquid_center_y_increment: float = 0.0
-var add_liquid_scaling: float = 0
-var rect_size: Vector2 = Vector2.ZERO
+# Liquid fill level (ellipse_center_y) - normalized 0-1
+# Empty glass is at 1.0 (top), full glass is at glass_resource.max_fill_center_y (bottom)
+var max_fill_center_y: float = 0.281
+# Precalculated ellipse width at every possible ellipse_center_y
+var width_lut: Array[float] = []
+var width_lut_size: int = 256
 
 # ============================================================================
 # Animation State
 # ============================================================================
-var tween: Tween
+var fill_tween: Tween
 var wobble_tween: Tween
 var splash_tween: Tween
 var pour_animation_duration: float = 0.5
@@ -53,31 +50,75 @@ var splash_mix_recovery_duration: float = 3.5
 # ============================================================================
 # Layer Management
 # ============================================================================
-# Track all liquid rects for cleanup
-var extra_liquid_rects: Array[ColorRect] = []
-var current_liquid_rect: ColorRect # The liquid rect we're currently working with
+# Track all liquid sprites for cleanup
+var extra_liquid_sprites: Array[Sprite2D] = []
+var current_liquid: Sprite2D # The liquid sprite we're currently working with
 
 
 # ============================================================================
 # Lifecycle
 # ============================================================================
 
+func _process(_delta: float) -> void:
+	if fill_tween and not width_lut.is_empty():
+		var sprite_shader = current_liquid.material as ShaderMaterial
+		var center_y = sprite_shader.get_shader_parameter("ellipse_center_y") as float
+
+		# 1. LUT Interpolation for Radius
+		var float_index = center_y * (width_lut.size() - 1)
+		var i_low = clampi(int(floor(float_index)), 0, width_lut.size() - 1)
+		var i_high = clampi(int(ceil(float_index)), 0, width_lut.size() - 1)
+		var weight = float_index - i_low
+
+		var smooth_radius = lerp(width_lut[i_low], width_lut[i_high], weight)
+		sprite_shader.set_shader_parameter("ellipse_radius_x", smooth_radius)
+
+		# 2. DROPLET SYNC (Width & Position)
+		var tex_w = liquid_sprite.texture.get_width()
+		var tex_h = liquid_sprite.texture.get_height()
+		
+		# Calculate the actual world-space half-width of the liquid surface
+		# We use a 0.9 multiplier so droplets spawn slightly inside the glass walls
+		var splash_half_width = smooth_radius * tex_w * liquid_sprite.global_scale.x * 0.9
+		
+		# Update DropletsGlobal material (ensure you use %DropletsGlobal or the correct reference)
+		var particle_material = %DropletsGlobal.process_material as ParticleProcessMaterial
+		if particle_material:
+			particle_material.emission_box_extents.x = splash_half_width
+
+			# NEW: Tighten the splash when the glass is narrow
+			# If smooth_radius is 0.1 (narrow), spread becomes ~12 degrees
+			# If smooth_radius is 0.4 (wide), spread becomes ~48 degrees
+			particle_material.spread = smooth_radius * 120.0
+			
+			# Also consider reducing radial accel or setting it to 0
+			# particle_material.radial_accel_min = 0
+			# particle_material.radial_accel_max = 0
+
+		# 3. Update Position (Y-Sync)
+		# UV 0.5 is the center of the sprite. Offset is distance from center.
+		var uv_offset_from_center = center_y - 0.5
+		var pixel_offset = uv_offset_from_center * tex_h * liquid_sprite.global_scale.y
+		
+		droplets_container.global_position.y = liquid_sprite.global_position.y + pixel_offset
+			
+
 func _ready() -> void:
 	# Validate shader exists
-	base_shader = liquid_rect.material as ShaderMaterial
+	base_shader = liquid_sprite.material as ShaderMaterial
 	if not base_shader:
-		push_error("LiquidRect does not have a ShaderMaterial!")
+		push_error("LiquidSprite does not have a ShaderMaterial!")
 		return
 
 	# Make sure the particle systems are visible but not emitting yet
-	bubbles.visible = true
+	bubbles.visible = false # TODO: Fix them before assigning true
 	bubbles.emitting = false
 	droplets.visible = true
 	droplets.emitting = false
 
 	_initialize_positioning()
 	_initialize_shader_state()
-	current_liquid_rect = liquid_rect
+	current_liquid = liquid_sprite
 	_set_liquid_amount(0, false)
 
 
@@ -86,14 +127,18 @@ func set_glass(glass: GlassType) -> void:
 	glass_resource = glass
 	glass_max_liquids = glass.capacity
 	_initialize_positioning()
+	# Disable auto_ellipse_width and always use LUT for performance
+	_set_shader_parameter(base_shader, "auto_ellipse_width", false)
+	# Pre-calculate ellipse width lookup table for smooth interpolation during animation
+	_precalculate_width_lut()
 
 
 func reset() -> void:
-	# Switch to the original liquid rect
-	current_liquid_rect = liquid_rect
+	# Switch to the original liquid sprite
+	current_liquid = liquid_sprite
 
-	# Clean up extra liquid rects
-	_free_extra_liquid_rects()
+	# Clean up extra liquid sprites
+	_free_extra_liquid_sprites()
 
 	# Restore base shader to its original state (top ellipse visible)
 	_reset_base_shader_state()
@@ -106,17 +151,17 @@ func reset() -> void:
 # ============================================================================
 
 func add_liquid(color: Color, is_new_layer: bool, animate: bool = false) -> void:
-	# For the first liquid, just use the existing ColorRect
+	# For the first liquid, just use the existing Sprite2D
 	if liquid_amount == 0:
 		_set_liquid_color(base_shader, color)
-	# If it is a new layer and not the first, duplicate ColorRect
+	# If it is a new layer and not the first, duplicate Sprite2D
 	# and add it to the scene to show the separation between layers
 	elif is_new_layer:
-		var new_liquid_rect = _create_new_layer(color)
-		current_liquid_rect = new_liquid_rect
+		var new_liquid_sprite = _create_new_layer(color)
+		current_liquid = new_liquid_sprite
 	else:
-		# Just update the color of current liquid rect
-		_set_liquid_color(current_liquid_rect.material as ShaderMaterial, color)
+		# Just update the color of current liquid sprite
+		_set_liquid_color(current_liquid.material as ShaderMaterial, color)
 
 	# Add the liquid (will trigger animation if animate=true)
 	_set_liquid_amount(liquid_amount + 1, animate)
@@ -124,14 +169,14 @@ func add_liquid(color: Color, is_new_layer: bool, animate: bool = false) -> void
 
 func mix(animate: bool = false) -> void:
 	# If there are no layers or only one layer, nothing to mix
-	if extra_liquid_rects.is_empty():
+	if extra_liquid_sprites.is_empty():
 		return
 
 	# Collect all layer colors from shader parameters
 	var colors: Array[Color] = []
 	colors.append(_get_liquid_color(base_shader))
 
-	for extra_liquid in extra_liquid_rects:
+	for extra_liquid in extra_liquid_sprites:
 		colors.append(_get_liquid_color(extra_liquid.material as ShaderMaterial))
 
 	# Blend all colors together (average them)
@@ -140,32 +185,26 @@ func mix(animate: bool = false) -> void:
 		blended_color += color
 	blended_color /= float(colors.size())
 
-	# Capture the position and scale of the topmost layer (current_liquid_rect)
-	var top_position = current_liquid_rect.position
-	var top_scale = current_liquid_rect.scale
+	# Capture the current fill level BEFORE switching back to base
+	var current_center_y = (current_liquid.material as ShaderMaterial).get_shader_parameter("ellipse_center_y") as float
 
-	# Reparent droplets back to the original liquid rect before freeing extras
-	if droplets.get_parent() != liquid_rect:
-		droplets.get_parent().remove_child(droplets)
-		liquid_rect.add_child(droplets)
-
-	# Fade out extra layers while the bottom expands
+	# Fade out extra layers
 	var fade_tween = create_tween().set_parallel(true)
-	for extra_liquid in extra_liquid_rects:
+	for extra_liquid in extra_liquid_sprites:
 		fade_tween.tween_property(extra_liquid, "modulate:a", 0.0, pour_animation_duration)
 
-	# Clean up rects and reparent droplets when all fades finish
-	fade_tween.finished.connect(_free_extra_liquid_rects)
+	# Clean up sprites and reparent droplets when all fades finish
+	fade_tween.finished.connect(_free_extra_liquid_sprites)
 
-	# Switch back to the original liquid rect
-	current_liquid_rect = liquid_rect
+	# Switch back to the original liquid sprite
+	current_liquid = liquid_sprite
 
 	# Restore base shader to its original state
 	_reset_base_shader_state()
 
-	# Animate the bottom liquid expanding up and changing color
+	# Animate the bottom liquid changing color with the captured fill level
 	# This will emit animation_started and animation_finished signals
-	_update_liquid_properties(liquid_rect, top_position, top_scale, blended_color, animate, true)
+	_update_liquid_properties(liquid_sprite, current_center_y, blended_color, animate, true)
 
 
 # ============================================================================
@@ -173,17 +212,12 @@ func mix(animate: bool = false) -> void:
 # ============================================================================
 
 func _initialize_positioning() -> void:
-	# The "full glass" position and scale should be whatever is defined in the editor
-	# Pivot is now at center, so position is already the center
-	full_glass_scaling = liquid_rect.scale.x
-	full_glass_center_y = liquid_rect.position.y
-
-	# Cache the rect size (never changes)
-	rect_size = liquid_rect.custom_minimum_size
-
-	# Define the center position and scaling increments based on the capacity of the glass and the first liquid values
-	add_liquid_center_y_increment = (full_glass_center_y - first_liquid_center_y) / (glass_max_liquids - 1)
-	add_liquid_scaling = (full_glass_scaling - first_liquid_scaling) / (glass_max_liquids - 1)
+	# Set the max fill level from the glass resource if available
+	if glass_resource:
+		max_fill_center_y = glass_resource.max_fill_center_y
+	else:
+		# Default value if no glass is set
+		max_fill_center_y = 0.281
 
 
 func _initialize_shader_state() -> void:
@@ -192,10 +226,34 @@ func _initialize_shader_state() -> void:
 
 	# Set initial wobble values to 0 and the set the rim color to black
 	# We only do this once so it doesn't need to be inside reset_base_shader
-	_set_wobble_speed(base_shader, wobble_idle_speed)
-	_set_wobble_strength(base_shader, wobble_idle_strength)
+	_set_shader_parameter(base_shader, "wobble_speed", wobble_idle_speed)
+	_set_shader_parameter(base_shader, "wobble_strength", wobble_idle_strength)
 	# Set rim color to black for now, it will be updated when _set_liquid_color is called
 	base_shader.set_shader_parameter("rim_color", Color.BLACK)
+
+
+func _precalculate_width_lut() -> void:
+	width_lut.clear()
+	var texture = liquid_sprite.texture
+	var image = texture.get_image()
+	var height = image.get_height()
+
+	# We store the width for every vertical pixel line in the image
+	for y in range(height):
+		width_lut.append(_calculate_width_at_y(image, y))
+
+
+func _calculate_width_at_y(image: Image, pixel_y: int) -> float:
+	var center_x = 0.5
+	var max_width = 0.5
+	var img_w = image.get_width()
+
+	for i in range(width_lut_size):
+		var t = float(i) / width_lut_size
+		var check_x = int((center_x + t * max_width) * img_w)
+		if image.get_pixel(mini(check_x, img_w - 1), pixel_y).a < 0.5:
+			return t * max_width
+	return max_width
 
 
 # ============================================================================
@@ -224,24 +282,8 @@ func _get_liquid_color(shader: ShaderMaterial) -> Color:
 	return shader.get_shader_parameter("liquid_color") as Color
 
 
-func _set_show_ellipse(shader: ShaderMaterial, should_show: bool) -> void:
-	shader.set_shader_parameter("show_ellipse", should_show)
-
-
-func _set_use_top_clip(shader: ShaderMaterial, use_clip: bool) -> void:
-	shader.set_shader_parameter("use_top_clip", use_clip)
-
-
-func _set_wobble_strength(shader: ShaderMaterial, strength: float) -> void:
-	shader.set_shader_parameter("wobble_strength", strength)
-
-
-func _set_wobble_speed(shader: ShaderMaterial, speed: float) -> void:
-	shader.set_shader_parameter("wobble_speed", speed)
-
-
-func _set_splash_amplitude(shader: ShaderMaterial, amplitude: float) -> void:
-	shader.set_shader_parameter("splash_amplitude", amplitude)
+func _set_shader_parameter(shader: ShaderMaterial, param: String, value: Variant) -> void:
+	shader.set_shader_parameter(param, value)
 
 
 func _set_droplets_color(color: Color) -> void:
@@ -255,57 +297,51 @@ func _set_droplets_color(color: Color) -> void:
 
 
 func _reset_base_shader_state() -> void:
-	base_shader.set_shader_parameter("show_ellipse", true)
-	base_shader.set_shader_parameter("show_fill", true)
-	base_shader.set_shader_parameter("use_top_clip", false)
+	_set_shader_parameter(base_shader, "show_ellipse", true)
+	_set_shader_parameter(base_shader, "show_fill", true)
+	_set_shader_parameter(base_shader, "use_top_clip", false)
 
 
 # ============================================================================
 # Layer Management Helpers
 # ============================================================================
 
-func _create_new_layer(color: Color) -> ColorRect:
+func _create_new_layer(color: Color) -> Sprite2D:
 	# Duplicate to create new layer (will have all parts visible)
-	var new_liquid_rect = current_liquid_rect.duplicate() as ColorRect
+	var new_liquid_sprite = current_liquid.duplicate() as Sprite2D
 
 	# Duplicate the shader material so changes don't affect other layers
-	var current_shader = current_liquid_rect.material as ShaderMaterial
+	var current_shader = current_liquid.material as ShaderMaterial
 	var new_shader = current_shader.duplicate() as ShaderMaterial
-	new_liquid_rect.material = new_shader
+	new_liquid_sprite.material = new_shader
 
 	# Set the color of the new layer
 	_set_liquid_color(new_shader, color)
 
 	# Hide the ellipse of the layer below and enable top clip
-	_set_show_ellipse(current_shader, false)
-	_set_use_top_clip(current_shader, true)
+	_set_shader_parameter(current_shader, "show_ellipse", false)
+	_set_shader_parameter(current_shader, "use_top_clip", true)
 
-	# Add to the same parent as the current liquid rect
-	var parent = current_liquid_rect.get_parent()
-	parent.add_child(new_liquid_rect)
+	# Add to the liquid layers container
+	liquid_layers.add_child(new_liquid_sprite)
 
 	# Move the new layer to index 0 (render it behind previous layers)
-	parent.move_child(new_liquid_rect, 0)
+	liquid_layers.move_child(new_liquid_sprite, 0)
 
 	# Track it
-	extra_liquid_rects.append(new_liquid_rect)
+	extra_liquid_sprites.append(new_liquid_sprite)
 
-	return new_liquid_rect
+	return new_liquid_sprite
 
 
-func _free_extra_liquid_rects() -> void:
-	"""Reparent droplets and free all extra liquid rects."""
-	# Reparent droplets back to the original liquid rect before freeing extras
-	if droplets.get_parent() != liquid_rect:
-		droplets.get_parent().remove_child(droplets)
-		liquid_rect.add_child(droplets)
-
-	# Remove all duplicated liquid rects
-	for extra_liquid in extra_liquid_rects:
+func _free_extra_liquid_sprites() -> void:
+	"""Free all extra liquid sprites."""
+	# Remove all duplicated liquid sprites
+	for extra_liquid in extra_liquid_sprites:
 		extra_liquid.queue_free()
 
 	# Clear the array
-	extra_liquid_rects.clear()
+	extra_liquid_sprites.clear()
 
 
 # ============================================================================
@@ -324,59 +360,42 @@ func _set_liquid_amount(amount: int, animate: bool = false) -> void:
 	else:
 		bubbles.emitting = false
 
-	# Calculate target transform
-	var transform_result = _calculate_liquid_transform(amount)
-	var target_position = transform_result[0]
-	var target_scale = transform_result[1]
+	# Calculate target fill level
+	var target_center_y = _calculate_center_y(amount)
 
-	# Get current color from the current liquid rect's shader
-	var current_color = _get_liquid_color(current_liquid_rect.material as ShaderMaterial)
+	# Get current color from the current liquid sprite's shader
+	var current_color = _get_liquid_color(current_liquid.material as ShaderMaterial)
 
 	# Update liquid properties (color stays the same)
-	_update_liquid_properties(current_liquid_rect, target_position, target_scale, current_color, animate, false)
+	_update_liquid_properties(current_liquid, target_center_y, current_color, animate, false)
 
 
-func _calculate_liquid_transform(amount: int) -> Array[Vector2]:
-	var target_center_y: float
-	var target_scale: Vector2
-	var target_position: Vector2
+func _calculate_center_y(amount: int) -> float:
+	"""Calculate the ellipse center Y for a given liquid amount (0-glass_max_liquids)."""
+	if amount == 0:
+		return 1.0 # Empty glass (top)
 
-	# If glass has checkpoints for this amount, use them
-	if glass_resource and amount > 0 and amount <= glass_resource.liquid_checkpoints.size():
-		var checkpoint = glass_resource.liquid_checkpoints[amount - 1]
-		target_center_y = checkpoint.x
-		target_scale = Vector2(checkpoint.y, checkpoint.y)
-	else:
-		# Fall back to linear interpolation
-		target_center_y = first_liquid_center_y + (add_liquid_center_y_increment * (amount - 1))
-		target_scale = Vector2.ZERO if amount == 0 else Vector2(
-			first_liquid_scaling + (add_liquid_scaling * (amount - 1)),
-			first_liquid_scaling + (add_liquid_scaling * (amount - 1))
-		)
-
-	# Position is already center-based (pivot is at center)
-	# X doesn't change, only Y changes
-	target_position = Vector2(liquid_rect.position.x, target_center_y)
-
-	return [target_position, target_scale]
+	# Linear interpolation from empty (1.0) to full (max_fill_center_y)
+	var t = float(amount) / float(glass_max_liquids)
+	return lerp(1.0, max_fill_center_y, t)
 
 
 # ============================================================================
 # Animation
 # ============================================================================
 
-func _update_liquid_properties(rect: ColorRect, target_position: Vector2, target_scale: Vector2, target_color: Color, animate: bool, is_mix: bool = false) -> void:
-	"""Update a liquid rect's position, scale, and shader color. Can animate or set instantly."""
-	var rect_shader = rect.material as ShaderMaterial
+func _update_liquid_properties(sprite: Sprite2D, target_center_y: float, target_color: Color, animate: bool, is_mix: bool = false) -> void:
+	"""Update a liquid sprite's fill level and shader color. Can animate or set instantly."""
+	var sprite_shader = sprite.material as ShaderMaterial
 
 	if animate:
 		# Kill any existing tween
-		if tween:
-			tween.kill()
+		if fill_tween:
+			fill_tween.kill()
 
 		# Create new tween
-		tween = create_tween()
-		tween.set_parallel(true) # Animate position, scale, and color simultaneously
+		fill_tween = create_tween()
+		fill_tween.set_parallel(true) # Animate fill level and color simultaneously
 
 		# Emit animation started signal
 		animation_started.emit()
@@ -385,24 +404,34 @@ func _update_liquid_properties(rect: ColorRect, target_position: Vector2, target
 		if not is_mix:
 			_set_droplets_color(target_color)
 			droplets.emitting = true
-			# If we are pouring a new layer, reparent droplets
-			if droplets.get_parent() != rect:
-				droplets.get_parent().remove_child(droplets)
-				rect.add_child(droplets)
 
 		# Start wobble and splash animation (non-blocking; animation_finished signal doesn't wait for it)
 		_animate_wobble()
 		_animate_splash(is_mix)
 
-		# Tween position and scale
-		tween.tween_property(rect, "position", target_position, pour_animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-		tween.tween_property(rect, "scale", target_scale, pour_animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		# Get current values to animate from
+		var current_center_y = sprite_shader.get_shader_parameter("ellipse_center_y") as float
+		var current_color = _get_liquid_color(sprite_shader)
+
+		# Tween fill level (ellipse_center_y)
+		fill_tween.tween_method(
+			func(value: float): _set_shader_parameter(sprite_shader, "ellipse_center_y", value),
+			current_center_y,
+			target_center_y,
+			pour_animation_duration
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 		# Tween shader color parameter
-		tween.tween_property(rect_shader, "shader_parameter/liquid_color", target_color, pour_animation_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		if target_color != current_color:
+			fill_tween.tween_method(
+				func(value: Color): _set_shader_parameter(sprite_shader, "liquid_color", value),
+				current_color,
+				target_color,
+				pour_animation_duration
+			).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 		# Emit animation finished signal when done
-		tween.finished.connect(func():
+		fill_tween.finished.connect(func():
 			# Stop droplet emission after pour animation finishes
 			if not is_mix:
 				droplets.emitting = false
@@ -410,9 +439,8 @@ func _update_liquid_properties(rect: ColorRect, target_position: Vector2, target
 		, CONNECT_ONE_SHOT)
 	else:
 		# Set values directly without animation
-		rect.position = target_position
-		rect.scale = target_scale
-		_set_liquid_color(rect.material as ShaderMaterial, target_color)
+		sprite_shader.set_shader_parameter("ellipse_center_y", target_center_y)
+		_set_liquid_color(sprite_shader, target_color)
 
 
 func _animate_wobble() -> void:
@@ -427,18 +455,18 @@ func _animate_wobble() -> void:
 	# Wobble speed CANNOT be tweened, because the shader uses TIME, and TIME * wobble_speed changes dramatically between frames
 	# It needs to stay constant for the duration of the animation.
 	# Wobble strength however can be tweened.
-	for liquid in [liquid_rect] + extra_liquid_rects:
+	for liquid in [liquid_sprite] + extra_liquid_sprites:
 		var liquid_shader = liquid.material as ShaderMaterial
 		# Set wobble speed
-		_set_wobble_speed(liquid_shader, wobble_peak_speed)
+		_set_shader_parameter(liquid_shader, "wobble_speed", wobble_peak_speed)
 		# Phase 1: Spike to peak over wobble_spike_duration
 		var current_strength = liquid_shader.get_shader_parameter("wobble_strength") as float
-		wobble_tween.tween_method(func(v): _set_wobble_strength(liquid_shader, v), current_strength, wobble_peak_strength, wobble_spike_duration)
+		wobble_tween.tween_method(func(v): _set_shader_parameter(liquid_shader, "wobble_strength", v), current_strength, wobble_peak_strength, wobble_spike_duration)
 		# Phase 2: Recover back to 0 after a delay
-		wobble_tween.tween_method(func(v): _set_wobble_strength(liquid_shader, v), wobble_peak_strength, wobble_idle_strength, wobble_recovery_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT).set_delay(wobble_spike_duration + pour_animation_duration)
+		wobble_tween.tween_method(func(v): _set_shader_parameter(liquid_shader, "wobble_strength", v), wobble_peak_strength, wobble_idle_strength, wobble_recovery_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT).set_delay(wobble_spike_duration + pour_animation_duration)
 		# Revert wobble speed
 		wobble_tween.tween_callback(func():
-			_set_wobble_speed(liquid_shader, wobble_idle_speed)
+			_set_shader_parameter(liquid_shader, "wobble_speed", wobble_idle_speed)
 		).set_delay(wobble_spike_duration + pour_animation_duration + wobble_recovery_duration)
 
 
@@ -451,9 +479,9 @@ func _animate_splash(is_mix: bool = false) -> void:
 	var recovery_time = splash_mix_recovery_duration if is_mix else splash_pour_recovery_duration
 	splash_tween = create_tween().set_parallel(true)
 
-	for liquid in [liquid_rect] + extra_liquid_rects:
+	for liquid in [liquid_sprite] + extra_liquid_sprites:
 		var liquid_shader = liquid.material as ShaderMaterial
 		# Phase 1: Spike to peak over splash_spike_duration
-		splash_tween.tween_method(func(v): _set_splash_amplitude(liquid_shader, v), 0.0, splash_peak_amplitude, splash_spike_duration)
+		splash_tween.tween_method(func(v): _set_shader_parameter(liquid_shader, "splash_amplitude", v), 0.0, splash_peak_amplitude, splash_spike_duration)
 		# Phase 2: Recover back to 0 after a delay
-		splash_tween.tween_method(func(v): _set_splash_amplitude(liquid_shader, v), splash_peak_amplitude, 0.0, recovery_time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT).set_delay(splash_spike_duration + pour_animation_duration)
+		splash_tween.tween_method(func(v): _set_shader_parameter(liquid_shader, "splash_amplitude", v), splash_peak_amplitude, 0.0, recovery_time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT).set_delay(splash_spike_duration + pour_animation_duration)

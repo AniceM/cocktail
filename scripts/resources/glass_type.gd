@@ -18,9 +18,9 @@ enum BonusType {
 @export_multiline var description: String = ""
 @export var capacity: int = 3
 
-# Liquid positioning checkpoints for non-linear glass shapes
-# Each checkpoint: x=center_y, y=scale
-@export var liquid_checkpoints: Array[Vector2] = []
+# Maximum fill level for the liquid (ellipse_center_y when glass is full)
+# Normalized 0-1 range, with 0 at top and 1 at bottom
+@export var max_fill_center_y: float = 0.281
 
 # Type of bonus this GlassType provides, if any
 @export var bonus_type: BonusType = BonusType.NONE

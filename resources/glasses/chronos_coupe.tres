@@ -7,5 +7,4 @@ script = ExtResource("1_b1u2h")
 name = "Chronos Coupe"
 description = "The perfect cocktail glass."
 capacity = 4
-liquid_checkpoints = Array[Vector2]([Vector2(-165.265, 0.692), Vector2(-220, 0.842), Vector2(-300, 0.942), Vector2(-375, 1)])
 metadata/_custom_type_script = "uid://duqlr7id17gbq"

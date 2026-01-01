@@ -1,5 +1,8 @@
 shader_type canvas_item;
 
+// Mask texture (the glass shape)
+uniform sampler2D mask_texture : hint_default_white;
+
 // Wobble settings
 uniform float wobble_strength : hint_range(0.0, 0.1) = 0.02;
 uniform float wobble_speed : hint_range(0.0, 5.0) = 2.0;
@@ -15,12 +18,10 @@ uniform float splash_speed : hint_range(0.5, 20.0) = 15.0;
 uniform vec4 splash_color : source_color = vec4(1.0, 1.0, 1.0, 0.4);
 
 // Ellipse shape
-uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426;
-uniform float ellipse_radius_y : hint_range(0.0, 0.5) = 0.22;
+uniform float ellipse_ratio : hint_range(0.1, 1.0) = 0.5;
 uniform float ellipse_center_y : hint_range(0.0, 1.0) = 0.281;
-
-// Glass expansion
-uniform float expansion_slope : hint_range(0.0, 1.0) = 0.3;
+uniform bool auto_ellipse_width = false;
+uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426;
 
 // Colors
 uniform vec4 liquid_color : source_color = vec4(0.9, 0.5, 0.2, 1.0);
@@ -39,8 +40,6 @@ uniform bool show_fill = true;
 // Darkening
 uniform float depth_darkening : hint_range(0.0, 0.5) = 0.2;
 uniform float surface_darken_amount : hint_range(0.0, 1.0) = 0.2;
-uniform float side_darkening : hint_range(0.0, 1.0) = 0.0;
-uniform float side_falloff : hint_range(0.1, 2.0) = 1.5;
 
 // Top clip (for stacking) - matches the ellipse of the layer above
 uniform bool use_top_clip = false;
@@ -58,15 +57,51 @@ float ellipse_sdf(vec2 uv, vec2 radius) {
     return (length(p) - 1.0) * min(radius.x, radius.y);
 }
 
+float find_ellipse_radius_x(sampler2D mask, float center_y) {
+    // Sample the mask texture horizontally at the given center Y to find the ellipse width
+    // Returns the normalized distance from center (0.5) to the edge
+    float max_width = 0.0;
+
+    for (int x = 0; x <= 64; x++) {
+        float norm_x = float(x) / 64.0;
+        float sample_value = texture(mask, vec2(norm_x, center_y)).r;
+        if (sample_value > 0.5) {
+            max_width = abs(norm_x - 0.5);
+        }
+    }
+
+    return max_width;
+}
+
 void fragment() {
-    vec2 center = vec2(0.5, ellipse_center_y);
+    // Sample the mask to see if we're in a valid region
+    float mask_value = texture(mask_texture, UV).r;
+
+    // Determine ellipse radius X: either auto-calculated from mask or pre-calculated via LUT
+    float radius_x = auto_ellipse_width ? find_ellipse_radius_x(mask_texture, ellipse_center_y) : ellipse_radius_x;
+
+    // Calculate ellipse radius Y from the ratio
+    float ellipse_radius_y = radius_x * ellipse_ratio;
+
+    // Check if there's enough vertical space at the bottom for the ellipse
+    // If not, the glass is effectively empty and nothing should render
+    bool glass_is_empty = ellipse_center_y + ellipse_radius_y > 1.0;
+    if (glass_is_empty) {
+        discard;
+    }
+
+    // Clamp ellipse center Y so the entire ellipse stays visible
+    float clamped_center_y = clamp(ellipse_center_y, ellipse_radius_y, 1.0 - ellipse_radius_y);
+
+    vec2 center = vec2(0.5, clamped_center_y);
     vec2 pos = UV - center;
+
     float wobble = get_sync_wobble(pos.x);
 
     // Calculate Ripples (normalized to ellipse shape)
     float ripple_factor = 0.0;
     if (splash_amplitude > 0.0) {
-        vec2 ripple_uv = pos / vec2(ellipse_radius_x, ellipse_radius_y);
+        vec2 ripple_uv = pos / vec2(radius_x, ellipse_radius_y);
         float r_dist = length(ripple_uv);
         float ripple_wave = 0.5 + 0.5 * sin(r_dist * splash_frequency - TIME * splash_speed);
         float ripple_fade = smoothstep(1.0, 0.0, r_dist);
@@ -76,19 +111,16 @@ void fragment() {
     // 1. Calculate the Top Oval Distance
     vec2 oval_pos = pos;
     oval_pos.y -= (wobble + ripple_factor);
-    float dist = ellipse_sdf(oval_pos, vec2(ellipse_radius_x, ellipse_radius_y));
+    float dist = ellipse_sdf(oval_pos, vec2(radius_x, ellipse_radius_y));
 
-    // 2. Body fill - expanding cone from ellipse surface
-    float x_norm = pos.x / ellipse_radius_x;
+    // 2. Body fill - based on the ellipse at current depth
+    float x_norm = pos.x / radius_x;
     float body_edge_y = ellipse_radius_y * sqrt(max(0.0, 1.0 - x_norm * x_norm));
     float surface_y = body_edge_y + wobble;
 
-    // Expand outward as we go down (predetermined slope)
-    float depth_below_surface = UV.y - (ellipse_center_y + surface_y);
-    float allowed_width_at_depth = ellipse_radius_x + (depth_below_surface * expansion_slope);
-
-    float x_norm_at_depth = abs(pos.x) / allowed_width_at_depth;
-    bool in_body = (pos.y > surface_y) && (x_norm_at_depth < 1.0);
+    // Check if inside mask for fill only
+    bool inside_mask = mask_value > 0.5;
+    bool in_body = inside_mask && (pos.y > surface_y) && (abs(pos.x) < radius_x);
 
     // 3. Top clip ellipse (for stacking)
     bool clipped_by_top = false;
@@ -117,10 +149,10 @@ void fragment() {
     // 5. Final Color Logic
     vec4 final_color = vec4(0.0);
 
-    // Ellipse part (only if show_ellipse is true)
+    // Ellipse part (only if show_ellipse is true) - renders regardless of mask
     bool in_ellipse = show_ellipse && dist < 0.0;
 
-    // Fill part (only if show_fill is true and not clipped)
+    // Fill part (only if show_fill is true, inside mask, and not clipped)
     bool in_fill = show_fill && in_body && !clipped_by_top;
 
     // Is the pixel inside the liquid?
@@ -138,15 +170,6 @@ void fragment() {
             if (ripple_factor > 0.0) {
                 final_color.rgb += (ripple_factor * 15.0) * wave_glow * final_color.rgb;
             }
-        }
-
-        // Side Darkening (edges darker due to glass refraction)
-        if (in_body) {
-            // Calculate how far from center we are horizontally (0 at center, 1 at edge)
-            float side_distance = abs(pos.x) / allowed_width_at_depth;
-            // Smooth falloff from center to edge
-            float side_factor = pow(side_distance, side_falloff);
-            final_color.rgb *= (1.0 - side_factor * side_darkening);
         }
 
         // Apply ripple highlights
