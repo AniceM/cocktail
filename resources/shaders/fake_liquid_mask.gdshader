@@ -3,6 +3,9 @@ shader_type canvas_item;
 // Mask texture (the glass shape)
 uniform sampler2D mask_texture : hint_default_white;
 
+// SDF texture (Signed Distance Field for fresnel/edge effects)
+uniform sampler2D sdf_texture : hint_default_white;
+
 // Wobble settings
 uniform float wobble_strength : hint_range(0.0, 0.1) = 0.02;
 uniform float wobble_speed : hint_range(0.0, 5.0) = 2.0;
@@ -18,9 +21,9 @@ uniform float splash_speed : hint_range(0.5, 20.0) = 15.0;
 uniform vec4 splash_color : source_color = vec4(1.0, 1.0, 1.0, 0.4);
 
 // Ellipse shape
+uniform bool auto_ellipse_width = false;
 uniform float ellipse_ratio : hint_range(0.1, 1.0) = 0.5;
 uniform float ellipse_center_y : hint_range(0.0, 1.0) = 0.281;
-uniform bool auto_ellipse_width = false;
 uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426;
 
 // Colors
@@ -33,13 +36,21 @@ uniform float rim_blur : hint_range(0.001, 0.03) = 0.01;
 uniform bool show_top_rim = true;
 uniform bool show_bottom_rim = true;
 
+// Fresnel edge glow settings
+uniform bool enable_fresnel = true;
+uniform vec4 fresnel_color : source_color = vec4(1.0, 1.0, 1.0, 0.588);
+uniform float fresnel_width : hint_range(0.0, 100.0) = 75.0;
+uniform float fresnel_falloff : hint_range(0.1, 10.0) = 5.0;
+
 // Visibility
 uniform bool show_ellipse = true;
 uniform bool show_fill = true;
 
 // Darkening
 uniform float depth_darkening : hint_range(0.0, 0.5) = 0.2;
-uniform float surface_darken_amount : hint_range(0.0, 1.0) = 0.2;
+uniform float surface_darken_amount : hint_range(0.0, 1.0) = 0.25;
+uniform float side_darkening : hint_range(0.0, 1.0) = 0.15;
+uniform float center_darkening : hint_range(0.0, 1.0) = 0.1;
 
 // Top clip (for stacking) - matches the ellipse of the layer above
 uniform bool use_top_clip = false;
@@ -55,6 +66,46 @@ float get_sync_wobble(float x_offset) {
 float ellipse_sdf(vec2 uv, vec2 radius) {
     vec2 p = uv / radius;
     return (length(p) - 1.0) * min(radius.x, radius.y);
+}
+
+float calculate_fresnel_glow(sampler2D sdf, vec2 uv, float width, float falloff) {
+    // Sample the SDF texture (128 = edge, <128 = inside, >128 = outside)
+    float sdf_value = texture(sdf, uv).r * 255.0 - 128.0;
+
+    // Calculate distance from edge (0 at edge, negative inside, positive outside)
+    float distance_from_edge = abs(sdf_value);
+
+    // Create a smooth falloff from the edge
+    // fresnel_width controls how far the glow extends (in pixels)
+    // fresnel_falloff controls how sharp the falloff curve is (higher = sharper edge, faster dropoff)
+    float normalized_dist = distance_from_edge / max(width, 0.001);
+    float fresnel = pow(smoothstep(1.0, 0.0, normalized_dist), falloff);
+
+    return fresnel;
+}
+
+float calculate_side_darkening(sampler2D sdf, vec2 uv, float strength) {
+    // Sample the SDF texture
+    float sdf_value = texture(sdf, uv).r * 255.0 - 128.0;
+    float distance_from_edge = abs(sdf_value);
+
+    // Darker near edges, brighter in center
+    // Normalize distance: 0 at edge = dark, far from edge = bright
+    float darkening = smoothstep(150.0, 0.0, distance_from_edge) * strength;
+
+    return darkening;
+}
+
+float calculate_center_darkening(float x_norm, float strength) {
+    // x_norm: 0 at center, 1 at the sides
+    // thickness: 1 at center, 0 at the sides
+    float thickness = 1.0 - x_norm; 
+    
+    // Use a power higher than 1.0 (like 2.0) to make the darkening 
+    // feel like a "core" in the middle rather than a flat gradient.
+    float darkening = pow(thickness, 2.0) * strength;
+
+    return 1.0 - darkening;
 }
 
 float find_ellipse_radius_x(sampler2D mask, float center_y) {
@@ -163,6 +214,19 @@ void fragment() {
         float depth = smoothstep(ellipse_center_y, 1.0, UV.y);
         final_color.rgb *= (1.0 - depth * depth_darkening);
 
+        // Side darkening (based on SDF distance from edge)
+        if (in_fill) {
+            float side_dark = calculate_side_darkening(sdf_texture, UV, side_darkening);
+            final_color.rgb *= (1.0 - side_dark);
+        }
+
+        // Center darkening (to simulate liquid thickness)
+        if (in_fill) {
+            float x_norm = abs(pos.x) / radius_x;
+            float center_bright = calculate_center_darkening(x_norm, center_darkening);
+            final_color.rgb *= center_bright;
+        }
+
         // Surface darkening on the ellipse (top surface)
         if (in_ellipse) {
             final_color.rgb *= (1.0 - surface_darken_amount);
@@ -175,6 +239,14 @@ void fragment() {
         // Apply ripple highlights
         if (in_ellipse && ripple_factor > 0.0) {
             final_color = mix(final_color, splash_color, ripple_factor * 10.0);
+        }
+
+        // Apply fresnel edge glow (only to fill, not ellipse)
+        if (in_fill && enable_fresnel) {
+            float fresnel_glow = calculate_fresnel_glow(sdf_texture, UV, fresnel_width, fresnel_falloff);
+            if (fresnel_glow > 0.0) {
+                final_color.rgb += fresnel_glow * fresnel_color.rgb * fresnel_color.a;
+            }
         }
     }
 

@@ -22,12 +22,16 @@ var glass_resource: GlassType # The glass type being used
 var glass_max_liquids: int = 4 # Maximum amount of liquids
 var liquid_amount: int = 0 # Current amount of liquids
 
-# Liquid fill level (ellipse_center_y) - normalized 0-1
-# Empty glass is at 1.0 (top), full glass is at glass_resource.max_fill_center_y (bottom)
+# Liquid fill level (ellipse_center_y) - normalized 0-1 in UV space
+# UV space: 0.0 = top of texture, 1.0 = bottom of texture
+# An empty glass has the ellipse pushed down past the visible area (center_y > 1.0, clamped)
+# A full glass has center_y at max_fill_center_y (the lowest safe fill point)
 var max_fill_center_y: float = 0.281
 # Precalculated ellipse width at every possible ellipse_center_y
 var width_lut: Array[float] = []
 var width_lut_size: int = 256
+# Cumulative volume at each Y position for volume-based interpolation
+var volume_lut: Array[float] = []
 
 # ============================================================================
 # Animation State
@@ -234,13 +238,24 @@ func _initialize_shader_state() -> void:
 
 func _precalculate_width_lut() -> void:
 	width_lut.clear()
-	var texture = liquid_sprite.texture
-	var image = texture.get_image()
-	var height = image.get_height()
+	volume_lut.clear()
+	var image = liquid_sprite.texture.get_image()
+	var h = image.get_height()
 
-	# We store the width for every vertical pixel line in the image
-	for y in range(height):
+	# First pass: build width_lut (top to bottom, matching UV.y order)
+	for y in range(h):
 		width_lut.append(_calculate_width_at_y(image, y))
+
+	# Second pass: calculate volume from bottom to top
+	# volume_lut[0] will be volume at Y=1.0 (bottom)
+	# volume_lut[h-1] will be volume at Y=0.0 (top)
+	# Volume is accumulated as the integral of cross-sectional area (width²)
+	# Since width is the radius from center, area ∝ width² for a circular cross-section
+	var accumulated_vol = 0.0
+	for y in range(h - 1, -1, -1):
+		var w = width_lut[y]
+		accumulated_vol += w * w  # Area of cross-section is proportional to radius²
+		volume_lut.append(accumulated_vol)
 
 
 func _calculate_width_at_y(image: Image, pixel_y: int) -> float:
@@ -371,13 +386,45 @@ func _set_liquid_amount(amount: int, animate: bool = false) -> void:
 
 
 func _calculate_center_y(amount: int) -> float:
-	"""Calculate the ellipse center Y for a given liquid amount (0-glass_max_liquids)."""
-	if amount == 0:
-		return 1.0 # Empty glass (top)
+	"""Calculate the ellipse center Y for a given liquid amount (0-glass_max_liquids).
 
-	# Linear interpolation from empty (1.0) to full (max_fill_center_y)
-	var t = float(amount) / float(glass_max_liquids)
-	return lerp(1.0, max_fill_center_y, t)
+	Note: ellipse_center_y uses UV coordinates where 0.0 is the top and 1.0 is the bottom.
+	The volume_lut is built bottom-up (index 0 = Y=1.0, index size-1 = Y=0.0) for efficient
+	volume-based filling. We binary search the volume_lut, then convert back to top-down UV coords.
+	"""
+	if amount == 0:
+		return 1.0 # Empty glass (pushed below visible area)
+
+	if volume_lut.is_empty():
+		# Fallback to linear if volume LUT not ready
+		var t = float(amount) / float(glass_max_liquids)
+		return lerp(1.0, max_fill_center_y, t)
+
+	# Find the volume at the max fill line
+	# Since volume_lut is bottom-up, the index for max_fill_center_y (top-down) is:
+	var max_fill_idx = clampi(int((1.0 - max_fill_center_y) * (volume_lut.size() - 1)), 0, volume_lut.size() - 1)
+	var total_usable_volume = volume_lut[max_fill_idx]
+
+	# Target volume is a percentage of usable volume
+	var target_volume = (float(amount) / float(glass_max_liquids)) * total_usable_volume
+
+	# Binary search to find the index in the bottom-up LUT
+	var left = 0
+	var right = volume_lut.size() - 1
+
+	while left < right:
+		var mid = int(float(left + right) / 2)
+		if volume_lut[mid] < target_volume:
+			left = mid + 1
+		else:
+			right = mid
+
+	# Convert bottom-up index back to top-down UV coordinate
+	# If index is 0, UV is 1.0 (bottom). If index is size-1, UV is 0.0 (top).
+	var height_from_bottom = float(left) / float(volume_lut.size() - 1)
+	var target_y = 1.0 - height_from_bottom
+
+	return target_y
 
 
 # ============================================================================

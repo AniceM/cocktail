@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bt2ltrb4erqxi"]
+[gd_scene load_steps=19 format=3 uid="uid://bt2ltrb4erqxi"]
 
 [ext_resource type="Script" uid="uid://blsnwivy3x00f" path="res://scripts/scenes/glass_scene.gd" id="1_8267a"]
 [ext_resource type="Texture2D" uid="uid://bp0jykxdbg5qs" path="res://assets/utensils/temporary/glass_back.png" id="1_rosuk"]
@@ -6,6 +6,7 @@
 [ext_resource type="Shader" uid="uid://b0ws308m5no1r" path="res://resources/shaders/fake_liquid_mask.gdshader" id="4_qq2fo"]
 [ext_resource type="Texture2D" uid="uid://dwcwyhqgmw1i" path="res://assets/images/droplet_soft_circle.png" id="5_01sys"]
 [ext_resource type="Texture2D" uid="uid://cekhkbcj6q2fy" path="res://assets/utensils/temporary/glass_front.png" id="5_15roq"]
+[ext_resource type="Texture2D" uid="uid://cflubixdul0ld" path="res://assets/utensils/temporary/glass_liquid_sdf.png" id="5_qq2fo"]
 [ext_resource type="Texture2D" uid="uid://4gss8fy7ukhn" path="res://assets/utensils/temporary/glass_highlights.png" id="6_fao6a"]
 [ext_resource type="Texture2D" uid="uid://c5gbaeku4gm3q" path="res://assets/utensils/glasses/signal_glass/glass_back.png" id="7_axe6d"]
 [ext_resource type="Texture2D" uid="uid://duwqtpa86bm47" path="res://assets/utensils/glasses/signal_glass/glass_front.png" id="8_01sys"]
@@ -13,6 +14,7 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ooemy"]
 shader = ExtResource("4_qq2fo")
 shader_parameter/mask_texture = ExtResource("2_8267a")
+shader_parameter/sdf_texture = ExtResource("5_qq2fo")
 shader_parameter/wobble_strength = 0.02
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wave_count = 1
@@ -21,20 +23,26 @@ shader_parameter/splash_amplitude = 0.030000001425
 shader_parameter/splash_frequency = 22.0
 shader_parameter/splash_speed = 15.0
 shader_parameter/splash_color = Color(1, 1, 1, 0.4)
-shader_parameter/ellipse_ratio = 0.5
-shader_parameter/ellipse_center_y = 0.281
 shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_ratio = 0.5
+shader_parameter/ellipse_center_y = 0.3930000186675
 shader_parameter/ellipse_radius_x = 0.426
-shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/liquid_color = Color(0.9019608, 0.5019608, 0.2, 1)
 shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
 shader_parameter/rim_thickness = 0.015
 shader_parameter/rim_blur = 0.01
 shader_parameter/show_top_rim = true
 shader_parameter/show_bottom_rim = true
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.5882353)
+shader_parameter/fresnel_width = 75.0
+shader_parameter/fresnel_falloff = 5.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/depth_darkening = 0.2
-shader_parameter/surface_darken_amount = 0.2
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
 shader_parameter/use_top_clip = false
 shader_parameter/top_clip_center_y = 0.3
 shader_parameter/top_clip_radius_x = 0.45
