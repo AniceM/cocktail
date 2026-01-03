@@ -41,6 +41,15 @@ uniform vec4 splash_color : source_color = vec4(1.0, 1.0, 1.0, 0.4);
 uniform int wave_count : hint_range(1, 8) = 1;
 uniform float wave_glow : hint_range(0.0, 2.0) = 0.5;
 
+// Noise / Texture
+// Adds a scrolling noise texture to simulate particles/pulp/ imperfection
+uniform bool enable_noise = false;
+uniform sampler2D noise_texture : hint_default_black, repeat_enable;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.1;
+uniform float noise_scale : hint_range(0.1, 10.0) = 3.0;
+uniform vec2 noise_scroll_speed = vec2(0.05, 0.1);
+
+
 // ============================================================================
 // Visual Styling
 // ============================================================================
@@ -56,7 +65,7 @@ uniform float specular_strength : hint_range(0.0, 2.0) = 0.5;
 // Rim
 // The subtle line around the edge of the surface ellipse
 uniform vec4 rim_color : source_color = vec4(1.0, 0.8, 0.5, 1.0);
-uniform float rim_thickness : hint_range(0.0, 0.05) = 0.015;
+uniform float rim_thickness : hint_range(0.0, 0.05) = 0.01;
 uniform float rim_blur : hint_range(0.001, 0.03) = 0.01;
 
 // Fresnel / Edge Glow
@@ -87,6 +96,7 @@ float get_sync_wobble(float x_offset) {
 	// Multiplied by wave_count to allow more "ripples" across the width
 	return sin(x_offset * float(wave_count) * TAU + TIME * wobble_speed) * wobble_strength;
 }
+
 
 float ellipse_sdf(vec2 uv, vec2 radius) {
 	// Signed Distance Field for an ellipse
@@ -180,6 +190,7 @@ void fragment() {
 	// A. Define the Top Surface Oval
 	vec2 oval_pos = pos;
 	oval_pos.y -= (wobble + ripple_factor); // Apply animations to surface position
+	
 	float dist_surface = ellipse_sdf(oval_pos, vec2(radius_x, ellipse_radius_y));
 
 	// B. Define the Body (Fill Volume)
@@ -218,6 +229,19 @@ void fragment() {
 	if (in_ellipse || in_fill) {
 		final_color = liquid_color;
 
+		// Noise sampling (scrolling texture)
+		float noise_val = 0.0;
+		if (enable_noise) {
+			vec2 noise_uv = UV * noise_scale + TIME * noise_scroll_speed;
+			noise_val = texture(noise_texture, noise_uv).r;
+
+			// Apply noise texture to the base color (Texture / Particles effect)
+			// We use an Overlay-like blend to keep colors vibrant
+			// value < 0.5 darkens, value > 0.5 lightens
+			float noise_mix = (noise_val - 0.5) * 2.0; // -1 to 1
+			final_color.rgb += noise_mix * noise_strength * 0.2;
+		} 
+
 		// --- Volume Lighting (Body) ---
 		if (in_fill) {
 			// Depth Darkening (vertical gradient, darker at bottom)
@@ -253,6 +277,12 @@ void fragment() {
 			// Specular Highlight (Reflection)
 			// Strongest at center (viewing angle perpendicular), falls off at sides
 			float fresnel = pow(abs(cos(x_norm_signed * PI * 0.5)), 2.0);
+			
+			// Use noise to break up the specular highlight slightly (Surface imperfection)
+			if (enable_noise) {
+				fresnel *= (0.8 + 0.4 * noise_val); // Varies from 0.8 to 1.2
+			}
+			
 			// Soften specular near the rim
 			float rim_proximity = smoothstep(0.05, -0.02, dist_surface);
 			
