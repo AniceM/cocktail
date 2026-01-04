@@ -18,6 +18,21 @@ enum BonusType {
 @export_multiline var description: String = ""
 @export var capacity: int = 3
 
+# Glass sprite textures
+@export_group("Textures")
+@export var sprite_front: Texture2D
+@export var sprite_back: Texture2D
+@export var liquid_mask: Texture2D
+@export var liquid_sdf: Texture2D
+
+# Sprite positioning offsets
+@export_group("Offsets")
+@export var front_offset: Vector2 = Vector2.ZERO
+@export var back_offset: Vector2 = Vector2.ZERO
+@export var liquid_offset: Vector2 = Vector2.ZERO
+
+# Liquid fill settings
+@export_group("Liquid")
 # Maximum fill level for the liquid (ellipse_center_y when glass is full)
 # Normalized 0-1 range, with 0 at top and 1 at bottom
 @export var max_fill_center_y: float = 0.281

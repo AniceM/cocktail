@@ -239,8 +239,10 @@ func _initialize_shader_state() -> void:
 	# We only do this once so it doesn't need to be inside reset_base_shader
 	_set_shader_parameter(base_shader, "wobble_speed", wobble_idle_speed)
 	_set_shader_parameter(base_shader, "wobble_strength", wobble_idle_strength)
+	_set_shader_parameter(base_shader, "wobble_ripple_count", 1)
 	# Set rim color to black for now, it will be updated when _set_liquid_color is called
 	base_shader.set_shader_parameter("rim_color", Color.BLACK)
+	# TODO: Give a default value for all parameters that the liquid doesn't care for
 
 
 func _precalculate_width_lut() -> void:
@@ -319,6 +321,7 @@ func _set_droplets_color(color: Color) -> void:
 
 
 func _reset_base_shader_state() -> void:
+	# Visual Aspect
 	_set_shader_parameter(base_shader, "show_ellipse", true)
 	_set_shader_parameter(base_shader, "show_fill", true)
 	_set_shader_parameter(base_shader, "use_top_clip", false)

@@ -13,6 +13,7 @@ uniform sampler2D sdf_texture : hint_default_white;
 // Geometry & Shape
 // ============================================================================
 uniform bool auto_ellipse_width = false; // If true, calculates width from mask_texture
+uniform float ellipse_width_scale : hint_range(0.8, 1.0) = 1.0; // Scale factor for auto-calculated width (use < 1 to shrink ellipse from glass edges)
 uniform float ellipse_ratio : hint_range(0.1, 1.0) = 0.5; // Height/Width ratio of the surface ellipse
 uniform float ellipse_center_y : hint_range(0.0, 1.0) = 0.281; // 0.0=Top, 1.0=Bottom
 uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426; // Width of the liquid surface
@@ -29,7 +30,7 @@ uniform float top_clip_radius_y : hint_range(0.0, 0.5) = 0.15;
 // ============================================================================
 // "Wobble" simulates the main liquid sloshing movement
 uniform float wobble_strength : hint_range(0.0, 0.1) = 0.02;
-uniform float wobble_speed : hint_range(0.0, 5.0) = 2.0;
+uniform float wobble_speed : hint_range(0.0, 10.0) = 2.0;
 uniform int wobble_ripple_count : hint_range(1, 8) = 1; // Number of wobble ripples across liquid width
 
 // "Splash" simulates ripples/waves during pouring
@@ -132,7 +133,7 @@ float get_sync_wobble(float x_offset) {
 	return sin(x_offset * float(wobble_ripple_count) * TAU + TIME * wobble_speed) * wobble_strength;
 }
 
-float calculate_ripple_factor(vec2 pos, float radius_x, float ellipse_radius_y) {
+float calculate_ripple_factor(vec2 pos, float radius_x, float ellipse_radius_y, float wobble) {
 	// Calculate multi-layered ripple/splash effect
 	if (splash_amplitude <= 0.0) {
 		return 0.0;
@@ -152,7 +153,16 @@ float calculate_ripple_factor(vec2 pos, float radius_x, float ellipse_radius_y) 
 	// Exponential falloff for more realistic decay
 	float ripple_fade = exp(-r_dist * 2.0);
 
-	return ripple_wave * ripple_fade * splash_amplitude;
+	// Edge fade: ripples fade out before reaching the ellipse boundary
+	// Account for wobble by offsetting the y position before calculating distance
+	vec2 wobbled_pos = pos;
+	wobbled_pos.y -= wobble;
+	vec2 wobbled_uv = wobbled_pos / vec2(radius_x, ellipse_radius_y);
+	float wobbled_dist = length(wobbled_uv);
+	// wobbled_dist approaches 1.0 at the ellipse edge, so we fade from 0.7 to 1.0
+	float edge_fade = smoothstep(1.0, 0.7, wobbled_dist);
+
+	return ripple_wave * ripple_fade * edge_fade * splash_amplitude;
 }
 
 // ============================================================================
@@ -269,17 +279,26 @@ float calculate_surface_specular(vec2 pos, float x_norm_abs, float ellipse_radiu
 }
 
 // Scans the mask texture to find how wide the glass is at a specific Y level
-float find_ellipse_radius_x(sampler2D mask, float center_y) {
-	float max_width = 0.0;
-	// We scan only 64 steps for performance, sufficient for smooth shapes
-	for (int x = 0; x <= 64; x++) {
-		float norm_x = float(x) / 64.0;
-		float sample_value = texture(mask, vec2(norm_x, center_y)).r;
-		if (sample_value > 0.5) {
-			max_width = abs(norm_x - 0.5);
+// Scans outward from center to find the first non-white pixel on the right side
+float find_width_at_y(sampler2D mask, float y) {
+	// Scan from center (0.5) outward to the right edge (1.0)
+	// 128 steps for better precision (~0.4% per step)
+	for (int i = 0; i <= 128; i++) {
+		float offset = float(i) / 256.0; // 0.0 to 0.5
+		float sample_x = 0.5 + offset;
+		float sample_value = texture(mask, vec2(sample_x, y)).r;
+		if (sample_value < 0.5) {
+			// Found the edge - return the last valid width
+			return offset;
 		}
 	}
-	return max_width;
+	return 0.5; // Full width if no edge found
+}
+
+// Finds the ellipse radius at the given center_y, scaled by ellipse_width_scale
+float find_ellipse_radius_x(sampler2D mask, float center_y) {
+	float width = find_width_at_y(mask, center_y);
+	return width * ellipse_width_scale;
 }
 
 void fragment() {
@@ -287,10 +306,10 @@ void fragment() {
 	// ========================================================================
 	float mask_value = texture(mask_texture, UV).r;
 
-	// Calculate the radius (width/2) of our surface ellipse
+	// Calculate the base radius (width/2) of our surface ellipse at the static center
 	float radius_x = auto_ellipse_width ? find_ellipse_radius_x(mask_texture, ellipse_center_y) : ellipse_radius_x;
 	float ellipse_radius_y = radius_x * ellipse_ratio;
-	
+
 	// Visual Compensation for Fade
 	// If fade is active, the top of the liquid becomes transparent, reducing visual volume.
 	// We offset the center Y upwards to compensate.
@@ -314,21 +333,23 @@ void fragment() {
 	// Pre-calculate normalized X coordinates used for logic/shading
 	// x_norm_signed: -1.0 (left) to 1.0 (right)
 	// x_norm_abs:     0.0 (center) to 1.0 (edge)
-	float x_norm_signed = pos.x / radius_x;       
-	float x_norm_abs = abs(x_norm_signed);        
+	float x_norm_signed = pos.x / radius_x;
+	float x_norm_abs = abs(x_norm_signed);
 
 	// 2. Animation Calculations
 	// ========================================================================
-	float wobble = get_sync_wobble(pos.x);
-	float ripple_factor = calculate_ripple_factor(pos, radius_x, ellipse_radius_y);
+	// Attenuate wobble near the ellipse edges to keep them anchored to the glass walls
+	float edge_attenuation = 1.0 - smoothstep(0.7, 1.0, x_norm_abs);
+	float wobble = get_sync_wobble(pos.x) * edge_attenuation;
+	float ripple_factor = calculate_ripple_factor(pos, radius_x, ellipse_radius_y, wobble);
 
 	// 3. Shape Definitions
 	// ========================================================================
-	
+
 	// A. Define the Top Surface Oval
 	vec2 oval_pos = pos;
 	oval_pos.y -= (wobble + ripple_factor); // Apply animations to surface position
-	
+
 	float dist_surface = ellipse_sdf(oval_pos, vec2(radius_x, ellipse_radius_y));
 
 	// B. Define the Body (Fill Volume)
@@ -338,8 +359,8 @@ void fragment() {
 	float surface_y_wobbled = surface_curve_y + wobble;
 	
 	bool inside_mask = mask_value > 0.5;
-	// Pixel is in the body if: inside mask AND below the surface curve AND horizontally inside the radius
-	bool in_body = inside_mask && (pos.y > surface_y_wobbled) && (x_norm_abs < 1.0);
+	// Pixel is in the body if: inside mask AND below the surface curve
+	bool in_body = inside_mask && (pos.y > surface_y_wobbled);
 
 	// C. Top Clip Logic (Masking for Layers)
 	// If this liquid is covered by another layer, we subtract the top layer's shape
@@ -357,7 +378,7 @@ void fragment() {
 
 	// 4. Region Checks
 	// ========================================================================
-	bool in_ellipse = show_ellipse && dist_surface < 0.0;
+	bool in_ellipse = show_ellipse && dist_surface < 0.0 && inside_mask;
 	bool in_fill = show_fill && in_body && !clipped_by_top;
 
 	// 5. Coloring

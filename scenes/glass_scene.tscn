@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bt2ltrb4erqxi"]
+[gd_scene load_steps=21 format=3 uid="uid://bt2ltrb4erqxi"]
 
 [ext_resource type="Script" uid="uid://blsnwivy3x00f" path="res://scripts/scenes/glass_scene.gd" id="1_8267a"]
 [ext_resource type="Texture2D" uid="uid://bp0jykxdbg5qs" path="res://assets/utensils/temporary/glass_back.png" id="1_rosuk"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://cekhkbcj6q2fy" path="res://assets/utensils/temporary/glass_front.png" id="5_15roq"]
 [ext_resource type="Texture2D" uid="uid://b8y4x21aj8n1" path="res://resources/textures/simple_noise.tres" id="5_ooemy"]
 [ext_resource type="Texture2D" uid="uid://cflubixdul0ld" path="res://assets/utensils/temporary/glass_liquid_sdf.png" id="5_qq2fo"]
+[ext_resource type="Texture2D" uid="uid://cuetk8ndlyg3t" path="res://assets/utensils/glasses/signal_glass/glass_mask.png" id="5_ti24x"]
 [ext_resource type="Texture2D" uid="uid://4gss8fy7ukhn" path="res://assets/utensils/temporary/glass_highlights.png" id="6_fao6a"]
 [ext_resource type="Texture2D" uid="uid://c5gbaeku4gm3q" path="res://assets/utensils/glasses/signal_glass/glass_back.png" id="7_axe6d"]
 [ext_resource type="Texture2D" uid="uid://duwqtpa86bm47" path="res://assets/utensils/glasses/signal_glass/glass_front.png" id="8_01sys"]
@@ -17,6 +18,7 @@ shader = ExtResource("4_qq2fo")
 shader_parameter/mask_texture = ExtResource("2_8267a")
 shader_parameter/sdf_texture = ExtResource("5_qq2fo")
 shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 1.0
 shader_parameter/ellipse_ratio = 0.5
 shader_parameter/ellipse_center_y = 0.281
 shader_parameter/ellipse_radius_x = 0.426
@@ -24,8 +26,8 @@ shader_parameter/use_top_clip = false
 shader_parameter/top_clip_center_y = 0.3
 shader_parameter/top_clip_radius_x = 0.45
 shader_parameter/top_clip_radius_y = 0.15
-shader_parameter/wobble_strength = 0.02
-shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_strength = 0.030000001425
+shader_parameter/wobble_speed = 2.000000095
 shader_parameter/wobble_ripple_count = 1
 shader_parameter/splash_amplitude = 0.030000001425
 shader_parameter/splash_frequency = 22.0
@@ -152,6 +154,13 @@ material = SubResource("ShaderMaterial_ooemy")
 position = Vector2(0, -575)
 texture = ExtResource("2_8267a")
 
+[node name="LiquidSpriteWIP" type="Sprite2D" parent="LiquidLayers"]
+unique_name_in_owner = true
+visible = false
+material = SubResource("ShaderMaterial_ooemy")
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("5_ti24x")
+
 [node name="DropletsContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(0, -700)
@@ -190,17 +199,18 @@ position = Vector2(0, -276.9231)
 emitting = false
 amount = 100
 process_material = SubResource("ParticleProcessMaterial_8267a")
+metadata/_edit_lock_ = true
 
 [node name="Front" type="Sprite2D" parent="."]
 texture = ExtResource("5_15roq")
 metadata/_edit_lock_ = true
+
+[node name="Front(WIP)" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("8_01sys")
 
 [node name="Highlight" type="Sprite2D" parent="."]
 modulate = Color(0.13333334, 1, 1, 1)
 position = Vector2(-376, -543)
 texture = ExtResource("6_fao6a")
 metadata/_edit_lock_ = true
-
-[node name="Front(WIP)" type="Sprite2D" parent="."]
-visible = false
-texture = ExtResource("8_01sys")

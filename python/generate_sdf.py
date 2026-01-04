@@ -74,7 +74,7 @@ def generate_sdf(input_path: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python generate_sdf.py <input.png>")
+        print("Usage: python3 generate_sdf.py <input.png>")
         sys.exit(1)
 
     generate_sdf(sys.argv[1])
