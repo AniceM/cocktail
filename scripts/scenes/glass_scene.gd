@@ -57,7 +57,8 @@ var splash_mix_recovery_duration: float = 3.5
 # Track all liquid sprites for cleanup
 var extra_liquid_sprites: Array[Sprite2D] = []
 var current_liquid: Sprite2D # The liquid sprite we're currently working with
-
+var layer_to_fade: Sprite2D # The layer below current_liquid that should fade when pouring
+const TOP_FADE_HEIGHT: float = 0.4 # The height of the fade at the top of the liquid (0.0 = top, 1.0 = bottom)
 
 # ============================================================================
 # Lifecycle
@@ -141,6 +142,9 @@ func reset() -> void:
 	# Switch to the original liquid sprite
 	current_liquid = liquid_sprite
 
+	# Clear the layer to fade
+	layer_to_fade = null
+
 	# Clean up extra liquid sprites
 	_free_extra_liquid_sprites()
 
@@ -203,6 +207,9 @@ func mix(animate: bool = false) -> void:
 	# Switch back to the original liquid sprite
 	current_liquid = liquid_sprite
 
+	# Clear the layer to fade
+	layer_to_fade = null
+
 	# Restore base shader to its original state
 	_reset_base_shader_state()
 
@@ -254,7 +261,7 @@ func _precalculate_width_lut() -> void:
 	var accumulated_vol = 0.0
 	for y in range(h - 1, -1, -1):
 		var w = width_lut[y]
-		accumulated_vol += w * w  # Area of cross-section is proportional to radius²
+		accumulated_vol += w * w # Area of cross-section is proportional to radius²
 		volume_lut.append(accumulated_vol)
 
 
@@ -315,6 +322,7 @@ func _reset_base_shader_state() -> void:
 	_set_shader_parameter(base_shader, "show_ellipse", true)
 	_set_shader_parameter(base_shader, "show_fill", true)
 	_set_shader_parameter(base_shader, "use_top_clip", false)
+	_set_shader_parameter(base_shader, "top_fade_height", 0.0)
 
 
 # ============================================================================
@@ -336,6 +344,9 @@ func _create_new_layer(color: Color) -> Sprite2D:
 	# Hide the ellipse of the layer below and enable top clip
 	_set_shader_parameter(current_shader, "show_ellipse", false)
 	_set_shader_parameter(current_shader, "use_top_clip", true)
+
+	# Mark the current layer as needing fade when animation runs
+	layer_to_fade = current_liquid
 
 	# Add to the liquid layers container
 	liquid_layers.add_child(new_liquid_sprite)
@@ -474,6 +485,16 @@ func _update_liquid_properties(sprite: Sprite2D, target_center_y: float, target_
 				func(value: Color): _set_shader_parameter(sprite_shader, "liquid_color", value),
 				current_color,
 				target_color,
+				pour_animation_duration
+			).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+
+		# Tween fade on the layer below (if one exists)
+		if layer_to_fade:
+			var fade_shader = layer_to_fade.material as ShaderMaterial
+			fill_tween.tween_method(
+				func(value: float): _set_shader_parameter(fade_shader, "top_fade_height", value),
+				0.0,
+				TOP_FADE_HEIGHT,
 				pour_animation_duration
 			).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 

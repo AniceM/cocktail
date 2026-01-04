@@ -30,16 +30,14 @@ uniform float top_clip_radius_y : hint_range(0.0, 0.5) = 0.15;
 // "Wobble" simulates the main liquid sloshing movement
 uniform float wobble_strength : hint_range(0.0, 0.1) = 0.02;
 uniform float wobble_speed : hint_range(0.0, 5.0) = 2.0;
+uniform int wobble_ripple_count : hint_range(1, 8) = 1; // Number of wobble ripples across liquid width
 
 // "Splash" simulates ripples/waves during pouring
 uniform float splash_amplitude : hint_range(0.0, 0.1) = 0.0;
 uniform float splash_frequency : hint_range(1.0, 30.0) = 22.0;
 uniform float splash_speed : hint_range(0.5, 20.0) = 15.0;
 uniform vec4 splash_color : source_color = vec4(1.0, 1.0, 1.0, 0.4);
-
-// Wave settings (visual detail on the wobble/splash)
-uniform int wave_count : hint_range(1, 8) = 1;
-uniform float wave_glow : hint_range(0.0, 2.0) = 0.5;
+uniform float wave_glow : hint_range(0.0, 2.0) = 0.5; // Brightness multiplier for wave highlights
 
 // Noise / Texture
 // Adds a scrolling noise texture to simulate particles/pulp/ imperfection
@@ -48,6 +46,13 @@ uniform sampler2D noise_texture : hint_default_black, repeat_enable;
 uniform float noise_strength : hint_range(0.0, 1.0) = 0.1;
 uniform float noise_scale : hint_range(0.1, 10.0) = 3.0;
 uniform vec2 noise_scroll_speed = vec2(0.05, 0.1);
+
+// Caustics (Simulated Light Refraction)
+// Creates animated light patterns like sunlight through water
+uniform bool enable_caustics = false;
+uniform float caustic_strength : hint_range(0.0, 1.0) = 0.3;
+uniform float caustic_scale : hint_range(0.5, 5.0) = 2.0;
+uniform float caustic_speed : hint_range(0.0, 2.0) = 0.25;
 
 
 // ============================================================================
@@ -60,7 +65,9 @@ uniform vec4 liquid_color : source_color = vec4(0.9, 0.5, 0.2, 1.0);
 // Highlights that appear on the top "surface ellipse" of the liquid
 uniform float top_highlight : hint_range(0.0, 0.5) = 0.25;
 uniform vec4 specular_color : source_color = vec4(1.0, 1.0, 1.0, 0.5);
-uniform float specular_strength : hint_range(0.0, 2.0) = 0.5;
+uniform float specular_strength : hint_range(0.0, 2.0) = 0.8;
+uniform float specular_falloff_x : hint_range(0.5, 20.0) = 5.0; // Horizontal sharpness (higher = narrower)
+uniform float specular_falloff_y : hint_range(0.5, 5.0) = 1.5; // Vertical stretch (lower = longer)
 
 // Rim
 // The subtle line around the edge of the surface ellipse
@@ -75,12 +82,26 @@ uniform vec4 fresnel_color : source_color = vec4(1.0, 1.0, 1.0, 0.588);
 uniform float fresnel_width : hint_range(0.0, 100.0) = 55.0;
 uniform float fresnel_falloff : hint_range(0.1, 10.0) = 5.0;
 
+// Subsurface Scattering
+// Simulates light passing through thin liquid areas (backlight effect)
+uniform bool enable_subsurface = false;
+uniform vec4 subsurface_color : source_color = vec4(1.0, 0.6, 0.3, 1.0);
+uniform float subsurface_strength : hint_range(0.0, 1.0) = 0.2;
+uniform float subsurface_threshold : hint_range(0.0, 150.0) = 80.0; // Distance threshold for "thin" areas
+
 // Darkening / Depth
 // Various darkening factors to make the liquid look 3D/volumetric
 uniform float depth_darkening : hint_range(0.0, 0.5) = 0.2; // Darker at the bottom
 uniform float surface_darken_amount : hint_range(0.0, 1.0) = 0.25; // Darken the flat surface disc
 uniform float side_darkening : hint_range(0.0, 1.0) = 0.15; // Darken edges (glass thickness)
 uniform float center_darkening : hint_range(0.0, 1.0) = 0.1; // "Core" darkening
+
+// ============================================================================
+// Layer Blending
+// ============================================================================
+// Fade the top of the fill to blend smoothly with layers above
+uniform float top_fade_height : hint_range(0.0, 0.5) = 0.0; // Height of fade zone from surface
+uniform bool top_fade_compensation = true; // If true, visually raises the liquid to compensate for transparency volume loss
 
 // ============================================================================
 // Visibility Toggles
@@ -90,13 +111,53 @@ uniform bool show_fill = true; // Show the volume below surface
 uniform bool show_top_rim = true; // Show rim on the upper half of the ellipse
 uniform bool show_bottom_rim = true; // Show rim on the lower half of the ellipse
 
+// ============================================================================
+// Constants (Named Magic Numbers for Clarity)
+// ============================================================================
+const float NOISE_COLOR_BLEND_STRENGTH = 0.2; // How much noise affects base liquid color
+const float SURFACE_PROXIMITY_RANGE = 0.3; // Distance range for surface highlight fade
+const float SUBSURFACE_COLOR_MIX = 0.3; // How much liquid color mixes with subsurface color
+const float SPECULAR_WOBBLE_INFLUENCE = 0.5; // How much wobble affects highlight position
+const float RIPPLE_SPLASH_MIX_INTENSITY = 10.0; // Intensity of ripple color mixing
+const float RIPPLE_GLOW_MULTIPLIER = 15.0; // Brightness multiplier for ripple glow
+const float FRESNEL_ELLIPSE_FADE_RANGE = 0.75; // Fade distance for Fresnel near surface ellipse (in ellipse heights)
+
+// ============================================================================
+// Animation Helpers
+// ============================================================================
 
 float get_sync_wobble(float x_offset) {
 	// Simple sine wave based on time and x-position
-	// Multiplied by wave_count to allow more "ripples" across the width
-	return sin(x_offset * float(wave_count) * TAU + TIME * wobble_speed) * wobble_strength;
+	// Multiplied by wobble_ripple_count to allow more "ripples" across the width
+	return sin(x_offset * float(wobble_ripple_count) * TAU + TIME * wobble_speed) * wobble_strength;
 }
 
+float calculate_ripple_factor(vec2 pos, float radius_x, float ellipse_radius_y) {
+	// Calculate multi-layered ripple/splash effect
+	if (splash_amplitude <= 0.0) {
+		return 0.0;
+	}
+
+	vec2 ripple_uv = pos / vec2(radius_x, ellipse_radius_y);
+	float r_dist = length(ripple_uv);
+
+	// Multiple wave frequencies for complex ripples
+	float wave1 = sin(r_dist * splash_frequency - TIME * splash_speed);
+	float wave2 = sin(r_dist * splash_frequency * 1.5 - TIME * splash_speed * 0.8);
+	float wave3 = sin(r_dist * splash_frequency * 2.3 - TIME * splash_speed * 0.6);
+
+	// Combine waves with different weights
+	float ripple_wave = (wave1 * 0.6 + wave2 * 0.3 + wave3 * 0.1) * 0.5 + 0.5;
+
+	// Exponential falloff for more realistic decay
+	float ripple_fade = exp(-r_dist * 2.0);
+
+	return ripple_wave * ripple_fade * splash_amplitude;
+}
+
+// ============================================================================
+// Geometry & Shape Helpers
+// ============================================================================
 
 float ellipse_sdf(vec2 uv, vec2 radius) {
 	// Signed Distance Field for an ellipse
@@ -105,18 +166,26 @@ float ellipse_sdf(vec2 uv, vec2 radius) {
 	return (length(p) - 1.0) * min(radius.x, radius.y);
 }
 
+// Decodes SDF texture value to pixel distance from edge
+float decode_sdf(sampler2D sdf, vec2 uv) {
+	float sdf_value = texture(sdf, uv).r * 255.0 - 128.0;
+	return abs(sdf_value);
+}
+
 // Calculates the "Glow" at the edges using the SDF texture
 float calculate_fresnel_glow(sampler2D sdf, vec2 uv, float width, float falloff) {
-	float sdf_value = texture(sdf, uv).r * 255.0 - 128.0;
-	float distance_from_edge = abs(sdf_value);
+	float distance_from_edge = decode_sdf(sdf, uv);
 	float normalized_dist = distance_from_edge / max(width, 0.001);
 	return pow(smoothstep(1.0, 0.0, normalized_dist), falloff);
 }
 
+// ============================================================================
+// Lighting & Shading Helpers
+// ============================================================================
+
 // Darkens the liquid near the glass edges to simulate absorption/thickness
 float calculate_side_darkening(sampler2D sdf, vec2 uv, float strength) {
-	float sdf_value = texture(sdf, uv).r * 255.0 - 128.0;
-	float distance_from_edge = abs(sdf_value);
+	float distance_from_edge = decode_sdf(sdf, uv);
 	// 150.0 is an arbitrary "pixel distance" range for the effect
 	return smoothstep(150.0, 0.0, distance_from_edge) * strength;
 }
@@ -124,9 +193,79 @@ float calculate_side_darkening(sampler2D sdf, vec2 uv, float strength) {
 // Darkens the center of the liquid column
 float calculate_center_darkening(float x_abs_norm, float strength) {
 	// x_abs_norm: 0 at center, 1 at sides
-	float thickness = 1.0 - x_abs_norm; 
+	float thickness = 1.0 - x_abs_norm;
 	float darkening = pow(thickness, 2.0) * strength;
 	return 1.0 - darkening;
+}
+
+// Calculates caustic light patterns (animated refraction effect)
+vec3 calculate_caustics(sampler2D noise, vec2 uv, float x_abs_norm, float center_y) {
+	if (!enable_caustics || !enable_noise) {
+		return vec3(0.0);
+	}
+
+	// Sample noise twice with different offsets to create interference pattern
+	vec2 caustic_uv1 = uv * caustic_scale + TIME * caustic_speed * vec2(0.3, 0.5);
+	vec2 caustic_uv2 = uv * caustic_scale - TIME * caustic_speed * vec2(0.5, 0.3);
+	float caustic1 = texture(noise, caustic_uv1).r;
+	float caustic2 = texture(noise, caustic_uv2).r;
+
+	// Multiply and threshold to create concentrated light patterns
+	float caustic = pow(caustic1 * caustic2, 2.0);
+
+	// Apply stronger near bottom (light travels through more liquid)
+	float depth_influence = smoothstep(center_y, 1.0, uv.y);
+
+	// Reduce caustics near edges (less refraction at glass walls)
+	float edge_fade = 1.0 - smoothstep(0.6, 1.0, x_abs_norm);
+
+	return vec3(caustic * caustic_strength * depth_influence * edge_fade);
+}
+
+// Calculates subsurface scattering glow (backlight through thin liquid)
+vec3 calculate_subsurface(sampler2D sdf, vec2 uv, vec3 base_color) {
+	if (!enable_subsurface) {
+		return vec3(0.0);
+	}
+
+	// Use SDF to find thin areas (close to edges)
+	float distance_from_edge = decode_sdf(sdf, uv);
+	float thinness = smoothstep(subsurface_threshold, 0.0, distance_from_edge);
+
+	// Add warm glow in thin regions, mix with liquid color for harmony
+	vec3 sss_color = mix(subsurface_color.rgb, base_color, SUBSURFACE_COLOR_MIX);
+	return thinness * subsurface_strength * sss_color;
+}
+
+// Calculates surface specular highlight (reflection on liquid surface)
+float calculate_surface_specular(vec2 pos, float x_norm_abs, float ellipse_radius_y, float wobble, float noise_val, float dist_surface) {
+	// (OLD VERSION - Simple specular)
+	// Strongest at center (viewing angle perpendicular), falls off at sides
+	// float fresnel = pow(abs(cos(x_norm_signed * PI * 0.5)), 2.0);
+	//
+	// // Use noise to break up the specular highlight slightly (Surface imperfection)
+	// if (enable_noise) {
+	// 	fresnel *= (0.8 + 0.4 * noise_val); // Varies from 0.8 to 1.2
+	// }
+
+	// (CURRENT VERSION - Anisotropic specular with elongated highlight)
+	float specular_x = pow(1.0 - x_norm_abs, specular_falloff_x); // Horizontal sharpness
+	float specular_y = pow(abs(pos.y / ellipse_radius_y), specular_falloff_y); // Vertical stretch
+	float fresnel = specular_x * (1.0 - specular_y);
+
+	// Offset highlight position based on wobble for realism
+	float highlight_offset = wobble * SPECULAR_WOBBLE_INFLUENCE;
+	fresnel *= smoothstep(0.4, -0.1, pos.y - highlight_offset);
+
+	// Use noise to break up the specular highlight slightly (Surface imperfection)
+	if (enable_noise) {
+		fresnel *= (0.7 + 0.6 * noise_val);
+	}
+
+	// Soften specular near the rim
+	float rim_proximity = smoothstep(0.05, -0.02, dist_surface);
+
+	return fresnel * rim_proximity * specular_strength;
 }
 
 // Scans the mask texture to find how wide the glass is at a specific Y level
@@ -151,15 +290,24 @@ void fragment() {
 	// Calculate the radius (width/2) of our surface ellipse
 	float radius_x = auto_ellipse_width ? find_ellipse_radius_x(mask_texture, ellipse_center_y) : ellipse_radius_x;
 	float ellipse_radius_y = radius_x * ellipse_ratio;
+	
+	// Visual Compensation for Fade
+	// If fade is active, the top of the liquid becomes transparent, reducing visual volume.
+	// We offset the center Y upwards to compensate.
+	float adjusted_center_y = ellipse_center_y;
+	if (top_fade_compensation && top_fade_height > 0.0) {
+		// Heuristic: move up by half the fade height relative to the ellipse height
+		adjusted_center_y -= top_fade_height * ellipse_radius_y * 0.5;
+	}
 
 	// If the liquid level is below the bottom of the mask, draw nothing
-	bool glass_is_empty = ellipse_center_y + ellipse_radius_y > 1.0;
+	bool glass_is_empty = adjusted_center_y + ellipse_radius_y > 1.0;
 	if (glass_is_empty) {
 		discard;
 	}
 
 	// Clamp ensures the ellipse never draws partially off-texture
-	float clamped_center_y = clamp(ellipse_center_y, ellipse_radius_y, 1.0 - ellipse_radius_y);
+	float clamped_center_y = clamp(adjusted_center_y, ellipse_radius_y, 1.0 - ellipse_radius_y);
 	vec2 center = vec2(0.5, clamped_center_y);
 	vec2 pos = UV - center;
 
@@ -172,17 +320,7 @@ void fragment() {
 	// 2. Animation Calculations
 	// ========================================================================
 	float wobble = get_sync_wobble(pos.x);
-	
-	// Ripple/Splash logic (only active if splash_amplitude > 0)
-	float ripple_factor = 0.0;
-	if (splash_amplitude > 0.0) {
-		vec2 ripple_uv = pos / vec2(radius_x, ellipse_radius_y);
-		float r_dist = length(ripple_uv);
-		// Create a ring wave effect moving outward
-		float ripple_wave = 0.5 + 0.5 * sin(r_dist * splash_frequency - TIME * splash_speed);
-		float ripple_fade = smoothstep(1.0, 0.0, r_dist);
-		ripple_factor = ripple_wave * ripple_fade * splash_amplitude;
-	}
+	float ripple_factor = calculate_ripple_factor(pos, radius_x, ellipse_radius_y);
 
 	// 3. Shape Definitions
 	// ========================================================================
@@ -239,7 +377,7 @@ void fragment() {
 			// We use an Overlay-like blend to keep colors vibrant
 			// value < 0.5 darkens, value > 0.5 lightens
 			float noise_mix = (noise_val - 0.5) * 2.0; // -1 to 1
-			final_color.rgb += noise_mix * noise_strength * 0.2;
+			final_color.rgb += noise_mix * noise_strength * NOISE_COLOR_BLEND_STRENGTH;
 		} 
 
 		// --- Volume Lighting (Body) ---
@@ -259,13 +397,34 @@ void fragment() {
 			// Brightens the liquid just below the surface line
 			// We reuse 'surface_y_wobbled' calculated earlier!
 			float dist_to_surface = clamp((surface_y_wobbled - pos.y) / ellipse_radius_y, 0.0, 1.0);
-			float surface_proximity = 1.0 - smoothstep(0.0, 0.3, dist_to_surface);
+			float surface_proximity = 1.0 - smoothstep(0.0, SURFACE_PROXIMITY_RANGE, dist_to_surface);
 			final_color.rgb += surface_proximity * top_highlight * final_color.rgb;
 			
 			// Fresnel Glow (Edge highlighting)
 			if (enable_fresnel) {
 				float fresnel_val = calculate_fresnel_glow(sdf_texture, UV, fresnel_width, fresnel_falloff);
-				final_color.rgb += fresnel_val * fresnel_color.rgb * fresnel_color.a;
+
+				// Fade out Fresnel as we approach the surface ellipse from below to avoid harsh cutoff
+				// We calculate vertical distance to the surface ellipse edge in normalized space
+				float vertical_dist_to_ellipse = abs(pos.y - surface_y_wobbled) / ellipse_radius_y;
+				// Fade based on distance to ellipse (0 = at surface, 1+ = below)
+				float ellipse_fade = smoothstep(0.0, FRESNEL_ELLIPSE_FADE_RANGE, vertical_dist_to_ellipse);
+
+				final_color.rgb += fresnel_val * fresnel_color.rgb * fresnel_color.a * ellipse_fade;
+			}
+
+			// Caustics (Animated light refraction patterns)
+			final_color.rgb += calculate_caustics(noise_texture, UV, x_norm_abs, ellipse_center_y);
+
+			// Subsurface Scattering (Backlight effect in thin liquid areas)
+			final_color.rgb += calculate_subsurface(sdf_texture, UV, final_color.rgb);
+
+			// Top Fade for Layer Blending
+			// Fade alpha at the top of the fill to blend smoothly with layers above
+			if (top_fade_height > 0.0) {
+				float distance_from_surface = clamp((pos.y - surface_y_wobbled) / ellipse_radius_y, 0.0, 1.0);
+				float fade = mix(0.1, 1.0, smoothstep(0.0, top_fade_height, distance_from_surface));
+				final_color.a *= fade;
 			}
 		}
 
@@ -275,24 +434,13 @@ void fragment() {
 			final_color.rgb *= (1.0 - surface_darken_amount);
 
 			// Specular Highlight (Reflection)
-			// Strongest at center (viewing angle perpendicular), falls off at sides
-			float fresnel = pow(abs(cos(x_norm_signed * PI * 0.5)), 2.0);
-			
-			// Use noise to break up the specular highlight slightly (Surface imperfection)
-			if (enable_noise) {
-				fresnel *= (0.8 + 0.4 * noise_val); // Varies from 0.8 to 1.2
-			}
-			
-			// Soften specular near the rim
-			float rim_proximity = smoothstep(0.05, -0.02, dist_surface);
-			
-			float specular = fresnel * rim_proximity * specular_strength;
+			float specular = calculate_surface_specular(pos, x_norm_abs, ellipse_radius_y, wobble, noise_val, dist_surface);
 			final_color.rgb += specular * specular_color.rgb;
 
 			// Wave Glow (Brightens the peaks of ripples)
 			if (ripple_factor > 0.0) {
-				final_color = mix(final_color, splash_color, ripple_factor * 10.0);
-				final_color.rgb += (ripple_factor * 15.0) * wave_glow * final_color.rgb;
+				final_color = mix(final_color, splash_color, ripple_factor * RIPPLE_SPLASH_MIX_INTENSITY);
+				final_color.rgb += (ripple_factor * RIPPLE_GLOW_MULTIPLIER) * wave_glow * final_color.rgb;
 			}
 		}
 	}
