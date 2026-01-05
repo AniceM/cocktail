@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cuetk8ndlyg3t"
-path="res://.godot/imported/glass_mask.png-b9e52346e7e017fbf4e50390f514009c.ctex"
+uid="uid://cco76ckirckbc"
+path="res://.godot/imported/snifter_glass_mask.png-6cac4dc6cb8ff8cd967713c5e0b1220d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/utensils/glasses/signal_glass/glass_mask.png"
-dest_files=["res://.godot/imported/glass_mask.png-b9e52346e7e017fbf4e50390f514009c.ctex"]
+source_file="res://assets/utensils/glasses/snifter/snifter_glass_mask.png"
+dest_files=["res://.godot/imported/snifter_glass_mask.png-6cac4dc6cb8ff8cd967713c5e0b1220d.ctex"]
 
 [params]
 

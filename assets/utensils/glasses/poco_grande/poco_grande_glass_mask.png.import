@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c5gbaeku4gm3q"
-path="res://.godot/imported/glass_back.png-1387144c7e2516b954a6bfe9e7d102fb.ctex"
+uid="uid://dko87ypmhu4nu"
+path="res://.godot/imported/poco_grande_glass_mask.png-2ef5fe87ea2e54fe787d7e568c8586ee.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/utensils/glasses/signal_glass/glass_back.png"
-dest_files=["res://.godot/imported/glass_back.png-1387144c7e2516b954a6bfe9e7d102fb.ctex"]
+source_file="res://assets/utensils/glasses/poco_grande/poco_grande_glass_mask.png"
+dest_files=["res://.godot/imported/poco_grande_glass_mask.png-2ef5fe87ea2e54fe787d7e568c8586ee.ctex"]
 
 [params]
 
