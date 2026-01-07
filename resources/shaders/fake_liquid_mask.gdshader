@@ -14,7 +14,7 @@ uniform sampler2D sdf_texture : hint_default_white;
 // ============================================================================
 uniform bool auto_ellipse_width = false; // If true, calculates width from mask_texture
 uniform float ellipse_width_scale : hint_range(0.8, 1.0) = 1.0; // Scale factor for auto-calculated width (use < 1 to shrink ellipse from glass edges)
-uniform float ellipse_ratio : hint_range(0.1, 1.0) = 0.5; // Height/Width ratio of the surface ellipse
+uniform float ellipse_ratio : hint_range(0.0, 1.0) = 0.5; // Height/Width ratio of the surface ellipse
 uniform float ellipse_center_y : hint_range(0.0, 1.0) = 0.281; // 0.0=Top, 1.0=Bottom
 uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426; // Width of the liquid surface
 
@@ -51,8 +51,8 @@ uniform vec2 noise_scroll_speed = vec2(0.05, 0.1);
 // Caustics (Simulated Light Refraction)
 // Creates animated light patterns like sunlight through water
 uniform bool enable_caustics = false;
-uniform float caustic_strength : hint_range(0.0, 1.0) = 0.3;
-uniform float caustic_scale : hint_range(0.5, 5.0) = 2.0;
+uniform float caustic_strength : hint_range(0.0, 5.0) = 0.3;
+uniform float caustic_scale : hint_range(0.5, 10.0) = 2.0;
 uniform float caustic_speed : hint_range(0.0, 2.0) = 0.25;
 
 
@@ -65,6 +65,7 @@ uniform vec4 liquid_color : source_color = vec4(0.9, 0.5, 0.2, 1.0);
 // Surface & Specular
 // Highlights that appear on the top "surface ellipse" of the liquid
 uniform float top_highlight : hint_range(0.0, 0.5) = 0.25;
+uniform float top_highlight_falloff : hint_range(0.0, 1.0) = 0.3; // Distance range for surface highlight fade
 uniform vec4 specular_color : source_color = vec4(1.0, 1.0, 1.0, 0.5);
 uniform float specular_strength : hint_range(0.0, 2.0) = 0.8;
 uniform float specular_falloff_x : hint_range(0.5, 20.0) = 5.0; // Horizontal sharpness (higher = narrower)
@@ -92,7 +93,7 @@ uniform float subsurface_threshold : hint_range(0.0, 150.0) = 80.0; // Distance 
 
 // Darkening / Depth
 // Various darkening factors to make the liquid look 3D/volumetric
-uniform float depth_darkening : hint_range(0.0, 0.5) = 0.2; // Darker at the bottom
+uniform float depth_darkening : hint_range(0.0, 10.0) = 0.2; // Darker at the bottom
 uniform float surface_darken_amount : hint_range(0.0, 1.0) = 0.25; // Darken the flat surface disc
 uniform float side_darkening : hint_range(0.0, 1.0) = 0.15; // Darken edges (glass thickness)
 uniform float center_darkening : hint_range(0.0, 1.0) = 0.1; // "Core" darkening
@@ -116,7 +117,6 @@ uniform bool show_bottom_rim = true; // Show rim on the lower half of the ellips
 // Constants (Named Magic Numbers for Clarity)
 // ============================================================================
 const float NOISE_COLOR_BLEND_STRENGTH = 0.2; // How much noise affects base liquid color
-const float SURFACE_PROXIMITY_RANGE = 0.3; // Distance range for surface highlight fade
 const float SUBSURFACE_COLOR_MIX = 0.3; // How much liquid color mixes with subsurface color
 const float SPECULAR_WOBBLE_INFLUENCE = 0.5; // How much wobble affects highlight position
 const float RIPPLE_SPLASH_MIX_INTENSITY = 10.0; // Intensity of ripple color mixing
@@ -416,9 +416,10 @@ void fragment() {
 
 			// Surface Proximity Highlight (Light entering from top)
 			// Brightens the liquid just below the surface line
-			// We reuse 'surface_y_wobbled' calculated earlier!
-			float dist_to_surface = clamp((surface_y_wobbled - pos.y) / ellipse_radius_y, 0.0, 1.0);
-			float surface_proximity = 1.0 - smoothstep(0.0, SURFACE_PROXIMITY_RANGE, dist_to_surface);
+			// We use the glass depth (from surface to bottom) as the normalization factor
+			float glass_depth = 1.0 - clamped_center_y; // Depth from surface to bottom of UV space
+			float dist_to_surface = clamp((pos.y - surface_y_wobbled) / glass_depth, 0.0, 1.0);
+			float surface_proximity = 1.0 - smoothstep(0.0, top_highlight_falloff, dist_to_surface);
 			final_color.rgb += surface_proximity * top_highlight * final_color.rgb;
 			
 			// Fresnel Glow (Edge highlighting)
@@ -469,11 +470,16 @@ void fragment() {
 	// 6. Rims Application
 	// ========================================================================
 	if (show_ellipse) {
+		// Normalize rim parameters by the ellipse's min radius so they work consistently across glass shapes
+		float min_radius = min(radius_x, ellipse_radius_y);
+		float scaled_rim_thickness = rim_thickness * min_radius;
+		float scaled_rim_blur = rim_blur * min_radius;
+
 		// Calculate rim mask using smoothstep for antialiased edges
-		float inner_edge = -rim_thickness;
+		float inner_edge = -scaled_rim_thickness;
 		// Creates a ring between inner_edge and 0.0
-		float rim_mask = smoothstep(inner_edge - rim_blur, inner_edge + rim_blur, dist_surface)
-					   * (1.0 - smoothstep(-rim_blur, rim_blur, dist_surface));
+		float rim_mask = smoothstep(inner_edge - scaled_rim_blur, inner_edge + scaled_rim_blur, dist_surface)
+					   * (1.0 - smoothstep(-scaled_rim_blur, scaled_rim_blur, dist_surface));
 
 		if (show_bottom_rim) {
 			// step(0.0, oval_pos.y) selects only the bottom half

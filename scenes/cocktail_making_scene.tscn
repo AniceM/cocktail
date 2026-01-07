@@ -120,7 +120,8 @@ zoom = Vector2(2, 2)
 
 [node name="GlassScene" parent="." instance=ExtResource("5_b2ome")]
 unique_name_in_owner = true
-position = Vector2(1145, 912.99994)
+position = Vector2(1145, 884.68)
+scale = Vector2(0.3, 0.3)
 
 [node name="Jigger" type="Sprite2D" parent="."]
 position = Vector2(852.99994, 935)

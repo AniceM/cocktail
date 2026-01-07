@@ -6,7 +6,7 @@ signal animation_finished()
 # ============================================================================
 # Visuals & References
 # ============================================================================
-@onready var liquid_sprite: Sprite2D = %LiquidSprite
+@onready var liquid_sprite: Sprite2D = %LiquidSpriteWIP
 @onready var liquid_layers: Node2D = %LiquidLayers
 @onready var bubbles: GPUParticles2D = %Bubbles
 @onready var droplets: GPUParticles2D = %DropletsGlobal
@@ -24,14 +24,19 @@ var liquid_amount: int = 0 # Current amount of liquids
 
 # Liquid fill level (ellipse_center_y) - normalized 0-1 in UV space
 # UV space: 0.0 = top of texture, 1.0 = bottom of texture
-# An empty glass has the ellipse pushed down past the visible area (center_y > 1.0, clamped)
-# A full glass has center_y at max_fill_center_y (the lowest safe fill point)
+# max_fill_center_y: where the ellipse is when glass is FULL (artistic choice from GlassType)
+# min_fill_center_y: where the ellipse is when glass is EMPTY (auto-calculated from mask)
 var max_fill_center_y: float = 0.281
+var min_fill_center_y: float = 1.0 # Will be set to glass_bottom_uv after LUT calculation
 # Precalculated ellipse width at every possible ellipse_center_y
 var width_lut: Array[float] = []
 var width_lut_size: int = 256
 # Cumulative volume at each Y position for volume-based interpolation
 var volume_lut: Array[float] = []
+# Actual glass bounds in UV space (detected from mask, not texture edges)
+# These mark where the glass actually exists, ignoring transparent padding
+var glass_top_uv: float = 0.0 # First row where glass exists (UV Y)
+var glass_bottom_uv: float = 1.0 # Last row where glass exists (UV Y)
 
 # ============================================================================
 # Animation State
@@ -41,7 +46,8 @@ var wobble_tween: Tween
 var splash_tween: Tween
 var pour_animation_duration: float = 0.5
 var wobble_idle_strength: float = 0
-var wobble_peak_strength: float = 0.03
+# var wobble_peak_strength: float = 0.03
+var wobble_peak_strength: float = 0.007
 var wobble_idle_speed: float = 0.0
 var wobble_peak_speed: float = 5.0
 var wobble_spike_duration: float = 0.1
@@ -70,17 +76,11 @@ func _process(_delta: float) -> void:
 		var center_y = sprite_shader.get_shader_parameter("ellipse_center_y") as float
 
 		# 1. LUT Interpolation for Radius
-		var float_index = center_y * (width_lut.size() - 1)
-		var i_low = clampi(int(floor(float_index)), 0, width_lut.size() - 1)
-		var i_high = clampi(int(ceil(float_index)), 0, width_lut.size() - 1)
-		var weight = float_index - i_low
-
-		var smooth_radius = lerp(width_lut[i_low], width_lut[i_high], weight)
+		var smooth_radius = _get_radius_at_center_y(center_y)
 		sprite_shader.set_shader_parameter("ellipse_radius_x", smooth_radius)
 
 		# 2. DROPLET SYNC (Width & Position)
 		var tex_w = liquid_sprite.texture.get_width()
-		var tex_h = liquid_sprite.texture.get_height()
 		
 		# Calculate the actual world-space half-width of the liquid surface
 		# We use a 0.9 multiplier so droplets spawn slightly inside the glass walls
@@ -101,11 +101,7 @@ func _process(_delta: float) -> void:
 			# particle_material.radial_accel_max = 0
 
 		# 3. Update Position (Y-Sync)
-		# UV 0.5 is the center of the sprite. Offset is distance from center.
-		var uv_offset_from_center = center_y - 0.5
-		var pixel_offset = uv_offset_from_center * tex_h * liquid_sprite.global_scale.y
-		
-		droplets_container.global_position.y = liquid_sprite.global_position.y + pixel_offset
+		_sync_droplets_position(center_y)
 			
 
 func _ready() -> void:
@@ -114,6 +110,10 @@ func _ready() -> void:
 	if not base_shader:
 		push_error("LiquidSprite does not have a ShaderMaterial!")
 		return
+	
+	# Disable auto_ellipse_width and always use LUT for performance
+	# This only needs to be done once, so it's done here
+	_set_shader_parameter(base_shader, "auto_ellipse_width", false)
 
 	# Make sure the particle systems are visible but not emitting yet
 	bubbles.visible = false # TODO: Fix them before assigning true
@@ -121,21 +121,45 @@ func _ready() -> void:
 	droplets.visible = true
 	droplets.emitting = false
 
-	_initialize_positioning()
+	# Make sure shader has its default values and appearance
 	_initialize_shader_state()
+	
+	# Current liquid sprite starts with the globally defined liquid sprite
 	current_liquid = liquid_sprite
+
+	# Set the initial liquid amount to 0
 	_set_liquid_amount(0, false)
+
+	print("Ellipse Center Y is " + str(base_shader.get_shader_parameter("ellipse_center_y")))
 
 
 func set_glass(glass: GlassType) -> void:
 	"""Set the glass type for this scene."""
+	# Update glass resource
 	glass_resource = glass
+	# TODO: Error handling
+	if not glass_resource:
+		return
+	# Update our local variables with the glass resource's values
 	glass_max_liquids = glass.capacity
-	_initialize_positioning()
-	# Disable auto_ellipse_width and always use LUT for performance
-	_set_shader_parameter(base_shader, "auto_ellipse_width", false)
+	max_fill_center_y = glass.max_fill_center_y
+
 	# Pre-calculate ellipse width lookup table for smooth interpolation during animation
 	_precalculate_width_lut()
+	
+	# Set min_fill_center_y to slightly below the glass bottom
+	# We add ellipse_radius_y so the entire ellipse is hidden, not just its center
+	var ellipse_ratio = base_shader.get_shader_parameter("ellipse_ratio") as float
+	var bottom_radius_x = width_lut[width_lut.size() - 1] if not width_lut.is_empty() else 0.1
+	var ellipse_radius_y = bottom_radius_x * ellipse_ratio
+	# Add a small offset to ensure the ellipse is fully hidden
+	min_fill_center_y = glass_bottom_uv + ellipse_radius_y + 0.001
+	
+	# Re-initialize shader's ellipse_center_y with the correct min value
+	# (The _ready() call happened before we knew min_fill_center_y)
+	_set_liquid_amount(0, false)
+
+	print("Ellipse Center Y is " + str(base_shader.get_shader_parameter("ellipse_center_y")))
 
 
 func reset() -> void:
@@ -222,24 +246,16 @@ func mix(animate: bool = false) -> void:
 # Initialization Helpers
 # ============================================================================
 
-func _initialize_positioning() -> void:
-	# Set the max fill level from the glass resource if available
-	if glass_resource:
-		max_fill_center_y = glass_resource.max_fill_center_y
-	else:
-		# Default value if no glass is set
-		max_fill_center_y = 0.281
-
-
 func _initialize_shader_state() -> void:
 	# Make sure the base shader is set up correctly
 	_reset_base_shader_state()
 
-	# Set initial wobble values to 0 and the set the rim color to black
-	# We only do this once so it doesn't need to be inside reset_base_shader
+	# Reset wobble parameters
 	_set_shader_parameter(base_shader, "wobble_speed", wobble_idle_speed)
 	_set_shader_parameter(base_shader, "wobble_strength", wobble_idle_strength)
 	_set_shader_parameter(base_shader, "wobble_ripple_count", 1)
+	# Reset splash parameters
+	_set_shader_parameter(base_shader, "splash_amplitude", 0.0)
 	# Set rim color to black for now, it will be updated when _set_liquid_color is called
 	base_shader.set_shader_parameter("rim_color", Color.BLACK)
 	# TODO: Give a default value for all parameters that the liquid doesn't care for
@@ -251,9 +267,29 @@ func _precalculate_width_lut() -> void:
 	var image = liquid_sprite.texture.get_image()
 	var h = image.get_height()
 
+	# Track glass bounds (first/last row where glass actually exists)
+	var first_valid_row: int = -1
+	var last_valid_row: int = -1
+
 	# First pass: build width_lut (top to bottom, matching UV.y order)
 	for y in range(h):
-		width_lut.append(_calculate_width_at_y(image, y))
+		var width = _calculate_width_at_y(image, y)
+		width_lut.append(width)
+		
+		# Track glass bounds
+		if width > 0.0:
+			if first_valid_row == -1:
+				first_valid_row = y
+			last_valid_row = y
+
+	# Convert pixel rows to UV coordinates
+	if first_valid_row >= 0 and last_valid_row >= 0:
+		glass_top_uv = float(first_valid_row) / float(h - 1)
+		glass_bottom_uv = float(last_valid_row) / float(h - 1)
+	else:
+		# Fallback if no valid glass found (shouldn't happen)
+		glass_top_uv = 0.0
+		glass_bottom_uv = 1.0
 
 	# Second pass: calculate volume from bottom to top
 	# volume_lut[0] will be volume at Y=1.0 (bottom)
@@ -273,11 +309,24 @@ func _calculate_width_at_y(image: Image, pixel_y: int) -> float:
 	var img_w = image.get_width()
 
 	for i in range(width_lut_size):
-		var t = float(i) / width_lut_size
+		var t = float(i) / (width_lut_size - 1)
 		var check_x = int((center_x + t * max_width) * img_w)
 		if image.get_pixel(mini(check_x, img_w - 1), pixel_y).a < 0.5:
 			return t * max_width
 	return max_width
+
+
+func _get_radius_at_center_y(center_y: float) -> float:
+	"""Get the ellipse radius (width) at a given center_y position by interpolating the LUT."""
+	if width_lut.is_empty():
+		return 0.1 # Fallback
+	
+	var float_index = center_y * (width_lut.size() - 1)
+	var i_low = clampi(int(floor(float_index)), 0, width_lut.size() - 1)
+	var i_high = clampi(int(ceil(float_index)), 0, width_lut.size() - 1)
+	var weight = float_index - i_low
+	
+	return lerp(width_lut[i_low], width_lut[i_high], weight)
 
 
 # ============================================================================
@@ -407,12 +456,12 @@ func _calculate_center_y(amount: int) -> float:
 	volume-based filling. We binary search the volume_lut, then convert back to top-down UV coords.
 	"""
 	if amount == 0:
-		return 1.0 # Empty glass (pushed below visible area)
+		return min_fill_center_y # Empty glass (at bottom of glass)
 
 	if volume_lut.is_empty():
 		# Fallback to linear if volume LUT not ready
 		var t = float(amount) / float(glass_max_liquids)
-		return lerp(1.0, max_fill_center_y, t)
+		return lerp(min_fill_center_y, max_fill_center_y, t)
 
 	# Find the volume at the max fill line
 	# Since volume_lut is bottom-up, the index for max_fill_center_y (top-down) is:
@@ -464,6 +513,8 @@ func _update_liquid_properties(sprite: Sprite2D, target_center_y: float, target_
 		# Start droplets emission for pours (not for mixes)
 		if not is_mix:
 			_set_droplets_color(target_color)
+			var start_center_y = sprite_shader.get_shader_parameter("ellipse_center_y") as float
+			_sync_droplets_position(start_center_y)
 			droplets.emitting = true
 
 		# Start wobble and splash animation (non-blocking; animation_finished signal doesn't wait for it)
@@ -475,6 +526,7 @@ func _update_liquid_properties(sprite: Sprite2D, target_center_y: float, target_
 		var current_color = _get_liquid_color(sprite_shader)
 
 		# Tween fill level (ellipse_center_y)
+		print("Tween center Y from", current_center_y, "to", target_center_y)
 		fill_tween.tween_method(
 			func(value: float): _set_shader_parameter(sprite_shader, "ellipse_center_y", value),
 			current_center_y,
@@ -511,7 +563,13 @@ func _update_liquid_properties(sprite: Sprite2D, target_center_y: float, target_
 	else:
 		# Set values directly without animation
 		sprite_shader.set_shader_parameter("ellipse_center_y", target_center_y)
+		# Also sync ellipse_radius_x from LUT to match the new center_y
+		var radius_x = _get_radius_at_center_y(target_center_y)
+		sprite_shader.set_shader_parameter("ellipse_radius_x", radius_x)
+		# Set liquid color
 		_set_liquid_color(sprite_shader, target_color)
+		# Sync droplets position for non-animated changes too
+		_sync_droplets_position(target_center_y)
 
 
 func _animate_wobble() -> void:
@@ -556,3 +614,22 @@ func _animate_splash(is_mix: bool = false) -> void:
 		splash_tween.tween_method(func(v): _set_shader_parameter(liquid_shader, "splash_amplitude", v), 0.0, splash_peak_amplitude, splash_spike_duration)
 		# Phase 2: Recover back to 0 after a delay
 		splash_tween.tween_method(func(v): _set_shader_parameter(liquid_shader, "splash_amplitude", v), splash_peak_amplitude, 0.0, recovery_time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT).set_delay(splash_spike_duration + pour_animation_duration)
+
+
+func _sync_droplets_position(center_y: float) -> void:
+	"""Sync droplets container position to match the current liquid surface level.
+	
+	The ellipse center_y can be anywhere in UV space, but the actual glass only exists
+	between glass_top_uv and glass_bottom_uv. When center_y is beyond the glass bottom
+	(empty glass), we clamp to the glass bottom so droplets appear at the correct position.
+	"""
+	var tex_h = liquid_sprite.texture.get_height()
+	
+	# Clamp center_y to the actual glass bounds
+	# When center_y > glass_bottom_uv, the ellipse is below the visible glass
+	var valid_center_y = clampf(center_y, glass_top_uv, glass_bottom_uv)
+	
+	# UV 0.5 is the center of the sprite (pivot point). Offset is distance from center.
+	var uv_offset_from_center = valid_center_y - 0.5
+	var pixel_offset = uv_offset_from_center * tex_h * liquid_sprite.global_scale.y
+	droplets_container.global_position.y = liquid_sprite.global_position.y + pixel_offset

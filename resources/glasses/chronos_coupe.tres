@@ -7,4 +7,5 @@ script = ExtResource("1_b1u2h")
 name = "Chronos Coupe"
 description = "The perfect cocktail glass."
 capacity = 4
+max_fill_center_y = 0.29
 metadata/_custom_type_script = "uid://duqlr7id17gbq"
