@@ -6,8 +6,11 @@ signal animation_finished()
 # ============================================================================
 # Visuals & References
 # ============================================================================
-@onready var liquid_sprite: Sprite2D = %LiquidSpriteWIP
+@onready var liquid_sprite: Sprite2D = %LiquidSprite
 @onready var liquid_layers: Node2D = %LiquidLayers
+@onready var glass_node: Node2D = %Glass
+@onready var glass_front: Sprite2D = %GlassFront
+@onready var glass_back: Sprite2D = %GlassBack
 @onready var bubbles: GPUParticles2D = %Bubbles
 @onready var droplets: GPUParticles2D = %DropletsGlobal
 @onready var droplets_container: Node2D = %DropletsContainer
@@ -46,7 +49,6 @@ var wobble_tween: Tween
 var splash_tween: Tween
 var pour_animation_duration: float = 0.5
 var wobble_idle_strength: float = 0
-# var wobble_peak_strength: float = 0.03
 var wobble_peak_strength: float = 0.007
 var wobble_idle_speed: float = 0.0
 var wobble_peak_speed: float = 5.0
@@ -137,13 +139,47 @@ func set_glass(glass: GlassType) -> void:
 	"""Set the glass type for this scene."""
 	# Update glass resource
 	glass_resource = glass
-	# TODO: Error handling
 	if not glass_resource:
+		push_error("GlassScene: set_glass called with null glass resource")
 		return
-	# Update our local variables with the glass resource's values
+	
+	# =========================================================================
+	# Apply Textures
+	# =========================================================================
+	# Glass front and back sprites
+	if glass.sprite_front:
+		glass_front.texture = glass.sprite_front
+	if glass.sprite_back:
+		glass_back.texture = glass.sprite_back
+	
+	# Liquid mask and SDF for shader
+	if glass.liquid_mask:
+		liquid_sprite.texture = glass.liquid_mask
+		base_shader.set_shader_parameter("mask_texture", glass.liquid_mask)
+	if glass.liquid_sdf:
+		base_shader.set_shader_parameter("sdf_texture", glass.liquid_sdf)
+	
+	# =========================================================================
+	# Apply Offsets
+	# =========================================================================
+	glass_node.position = glass.glass_offset
+	liquid_layers.position = glass.liquid_offset
+	# Reset liquid sprite local position to zero so it exactly follows liquid_layers
+	liquid_sprite.position = Vector2.ZERO
+	
+	# =========================================================================
+	# Apply Liquid Parameters
+	# =========================================================================
 	glass_max_liquids = glass.capacity
 	max_fill_center_y = glass.max_fill_center_y
-
+	
+	# Wobble parameters from resource
+	wobble_peak_strength = glass.wobble_strength
+	_set_shader_parameter(base_shader, "wobble_ripple_count", glass.wobble_ripple_count)
+	
+	# =========================================================================
+	# Calculate LUT and Glass Height
+	# =========================================================================
 	# Pre-calculate ellipse width lookup table for smooth interpolation during animation
 	_precalculate_width_lut()
 	
@@ -155,11 +191,15 @@ func set_glass(glass: GlassType) -> void:
 	# Add a small offset to ensure the ellipse is fully hidden
 	min_fill_center_y = glass_bottom_uv + ellipse_radius_y + 0.001
 	
+	# Calculate and set glass_bottom_y for the shader
+	# This is used by the shader to scale depth-based effects (caustics, depth darkening)
+	_set_shader_parameter(base_shader, "glass_bottom_y", glass_bottom_uv)
+	
 	# Re-initialize shader's ellipse_center_y with the correct min value
 	# (The _ready() call happened before we knew min_fill_center_y)
 	_set_liquid_amount(0, false)
 
-	print("Ellipse Center Y is " + str(base_shader.get_shader_parameter("ellipse_center_y")))
+	print("Glass '%s' loaded: bottom=%.3f, capacity=%d" % [glass.name, glass_bottom_uv, glass.capacity])
 
 
 func reset() -> void:
@@ -250,10 +290,14 @@ func _initialize_shader_state() -> void:
 	# Make sure the base shader is set up correctly
 	_reset_base_shader_state()
 
-	# Reset wobble parameters
+	# Reset wobble parameters from the glass resource
+	if glass_resource:
+		_set_shader_parameter(base_shader, "wobble_ripple_count", glass_resource.wobble_ripple_count)
+	else:
+		_set_shader_parameter(base_shader, "wobble_ripple_count", 1)
+		
 	_set_shader_parameter(base_shader, "wobble_speed", wobble_idle_speed)
 	_set_shader_parameter(base_shader, "wobble_strength", wobble_idle_strength)
-	_set_shader_parameter(base_shader, "wobble_ripple_count", 1)
 	# Reset splash parameters
 	_set_shader_parameter(base_shader, "splash_amplitude", 0.0)
 	# Set rim color to black for now, it will be updated when _set_liquid_color is called

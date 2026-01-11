@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="GlassType" load_steps=6 format=3]
+
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://djx88r3o48w84" path="res://assets/utensils/glasses/martini/martini_glass_front.png" id="2_front"]
+[ext_resource type="Texture2D" uid="uid://baew4mgcll2er" path="res://assets/utensils/glasses/martini/martini_glass_back.png" id="3_back"]
+[ext_resource type="Texture2D" uid="uid://c2rnwho8vcu6h" path="res://assets/utensils/glasses/martini/martini_glass_mask.png" id="4_mask"]
+[ext_resource type="Texture2D" uid="uid://bdcwhs6nb8q8j" path="res://assets/utensils/glasses/martini/martini_glass_mask_sdf.png" id="5_sdf"]
+
+[resource]
+script = ExtResource("1_script")
+name = "Pulsar Point"
+description = "Sharp and focused, like a beam cutting through the cosmos."
+capacity = 3
+sprite_front = ExtResource("2_front")
+sprite_back = ExtResource("3_back")
+liquid_mask = ExtResource("4_mask")
+liquid_sdf = ExtResource("5_sdf")
+glass_offset = Vector2(0, 53.51)
+liquid_offset = Vector2(0, -37)
+max_fill_center_y = 0.215
+wobble_strength = 0.005
+wobble_ripple_count = 1
+metadata/_custom_type_script = "uid://duqlr7id17gbq"

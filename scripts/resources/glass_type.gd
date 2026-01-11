@@ -26,17 +26,21 @@ enum BonusType {
 @export var liquid_sdf: Texture2D
 
 # Sprite positioning offsets
-@export_group("Offsets")
-@export var front_offset: Vector2 = Vector2.ZERO
-@export var back_offset: Vector2 = Vector2.ZERO
+@export_group("Texture Offsets")
+@export var glass_offset: Vector2 = Vector2.ZERO
 @export var liquid_offset: Vector2 = Vector2.ZERO
 
-# Liquid fill settings
+# Liquid shader settings
 @export_group("Liquid")
 # Maximum fill level for the liquid (ellipse_center_y when glass is full)
 # Normalized 0-1 range, with 0 at top and 1 at bottom
 @export var max_fill_center_y: float = 0.281
+# Different glass shapes create different wobble patterns
+# Typically, narower glasses have more wobble
+@export var wobble_strength: float = 0.01
+@export var wobble_ripple_count: int = 1
 
+@export_group("Bonuses")
 # Type of bonus this GlassType provides, if any
 @export var bonus_type: BonusType = BonusType.NONE
 # @export_multiline var bonus_description: String = ""

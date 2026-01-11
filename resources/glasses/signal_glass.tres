@@ -1,11 +1,20 @@
-[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://dy0nd64vu078m"]
+[gd_resource type="Resource" script_class="GlassType" load_steps=6 format=3 uid="uid://dy0nd64vu078m"]
 
-[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_b1u2h"]
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://duwqtpa86bm47" path="res://assets/utensils/glasses/signal/glass_front.png" id="2_front"]
+[ext_resource type="Texture2D" uid="uid://c5gbaeku4gm3q" path="res://assets/utensils/glasses/signal/glass_back.png" id="3_back"]
+[ext_resource type="Texture2D" uid="uid://cuetk8ndlyg3t" path="res://assets/utensils/glasses/signal/glass_mask.png" id="4_mask"]
+[ext_resource type="Texture2D" uid="uid://cvvgqekf6ue1m" path="res://assets/utensils/glasses/signal/glass_mask_sdf.png" id="5_sdf"]
 
 [resource]
-script = ExtResource("1_b1u2h")
+script = ExtResource("1_script")
 name = "Signal Glass"
-description = "Beginner Glass. Focused Flavor."
+description = "Beginner Glass. Focused Flavor. Amplifies the dominant note."
+sprite_front = ExtResource("2_front")
+sprite_back = ExtResource("3_back")
+liquid_mask = ExtResource("4_mask")
+liquid_sdf = ExtResource("5_sdf")
+max_fill_center_y = 0.25
+wobble_strength = 0.005
 bonus_type = 1
-bonus_description = "Amplifies dominant flavor"
 metadata/_custom_type_script = "uid://duqlr7id17gbq"

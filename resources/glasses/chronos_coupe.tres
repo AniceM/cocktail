@@ -1,11 +1,23 @@
-[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://bmih0fbkyl0py"]
+[gd_resource type="Resource" script_class="GlassType" load_steps=6 format=3 uid="uid://bmih0fbkyl0py"]
 
-[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_b1u2h"]
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://mp3wges2unvt" path="res://assets/utensils/glasses/coupe/coupe_glass_front.png" id="2_front"]
+[ext_resource type="Texture2D" uid="uid://dxt3ofa440mma" path="res://assets/utensils/glasses/coupe/coupe_glass_back.png" id="3_back"]
+[ext_resource type="Texture2D" uid="uid://cn055br52odyy" path="res://assets/utensils/glasses/coupe/coupe_glass_mask.png" id="4_mask"]
+[ext_resource type="Texture2D" uid="uid://cvu2dsoaf5yb2" path="res://assets/utensils/glasses/coupe/coupe_glass_mask_sdf.png" id="5_sdf"]
 
 [resource]
-script = ExtResource("1_b1u2h")
+script = ExtResource("1_script")
 name = "Chronos Coupe"
-description = "The perfect cocktail glass."
+description = "The perfect cocktail glass. Time flows differently here."
 capacity = 4
+sprite_front = ExtResource("2_front")
+sprite_back = ExtResource("3_back")
+liquid_mask = ExtResource("4_mask")
+liquid_sdf = ExtResource("5_sdf")
+glass_offset = Vector2(0, 40)
+liquid_offset = Vector2(0, -37)
 max_fill_center_y = 0.29
+wobble_strength = 0.005
+bonus_type = 2
 metadata/_custom_type_script = "uid://duqlr7id17gbq"

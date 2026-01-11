@@ -1,10 +1,24 @@
-[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://c2xblwl3vh4el"]
+[gd_resource type="Resource" script_class="GlassType" load_steps=6 format=3 uid="uid://c2xblwl3vh4el"]
 
-[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_lq23k"]
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bsxckvkx06xc4" path="res://assets/utensils/glasses/flute/flute_glass_front.png" id="2_front"]
+[ext_resource type="Texture2D" uid="uid://doemaace1sxhi" path="res://assets/utensils/glasses/flute/flute_glass_back.png" id="3_back"]
+[ext_resource type="Texture2D" uid="uid://bofwtxmylvxai" path="res://assets/utensils/glasses/flute/flute_glass_mask.png" id="4_mask"]
+[ext_resource type="Texture2D" uid="uid://kwpl7mibyrc5" path="res://assets/utensils/glasses/flute/flute_glass_mask_sdf.png" id="5_sdf"]
 
 [resource]
-script = ExtResource("1_lq23k")
+script = ExtResource("1_script")
 name = "Eclipse Flute"
+description = "Tall and slender, capturing light like a solar eclipse."
 capacity = 5
-description = "Eclipse Flute."
+sprite_front = ExtResource("2_front")
+sprite_back = ExtResource("3_back")
+liquid_mask = ExtResource("4_mask")
+liquid_sdf = ExtResource("5_sdf")
+glass_offset = Vector2(0, -152.55)
+liquid_offset = Vector2(0, -37)
+max_fill_center_y = 0.150
+wobble_strength = 0.005
+wobble_ripple_count = 1
+bonus_type = 5
 metadata/_custom_type_script = "uid://duqlr7id17gbq"

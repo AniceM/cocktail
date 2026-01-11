@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="GlassType" load_steps=6 format=3]
+
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cakgsrb0p76j4" path="res://assets/utensils/glasses/poco_grande/poco_grande_glass_front.png" id="2_front"]
+[ext_resource type="Texture2D" uid="uid://0y2skl2gqtgr" path="res://assets/utensils/glasses/poco_grande/poco_grande_glass_back.png" id="3_back"]
+[ext_resource type="Texture2D" uid="uid://boc4iotxlv1hx" path="res://assets/utensils/glasses/poco_grande/poco_grande_glass_mask.png" id="4_mask"]
+[ext_resource type="Texture2D" uid="uid://cqoppnpk2388e" path="res://assets/utensils/glasses/poco_grande/poco_grande_glass_mask_sdf.png" id="5_sdf"]
+
+[resource]
+script = ExtResource("1_script")
+name = "Nova Chalice"
+description = "An elegant goblet worthy of celestial celebrations."
+capacity = 5
+sprite_front = ExtResource("2_front")
+sprite_back = ExtResource("3_back")
+liquid_mask = ExtResource("4_mask")
+liquid_sdf = ExtResource("5_sdf")
+glass_offset = Vector2(0, -47.93)
+liquid_offset = Vector2(0, -14.17)
+max_fill_center_y = 0.165
+wobble_strength = 0.005
+wobble_ripple_count = 1
+metadata/_custom_type_script = "uid://duqlr7id17gbq"

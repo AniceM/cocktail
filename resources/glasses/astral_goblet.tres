@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="GlassType" load_steps=6 format=3]
+
+[ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bxhpgq1powsss" path="res://assets/utensils/glasses/wine/wine_glass_front.png" id="2_front"]
+[ext_resource type="Texture2D" uid="uid://bhwgcdvxohcnc" path="res://assets/utensils/glasses/wine/wine_glass_back.png" id="3_back"]
+[ext_resource type="Texture2D" uid="uid://0agk47mlwb6x" path="res://assets/utensils/glasses/wine/wine_glass_mask.png" id="4_mask"]
+[ext_resource type="Texture2D" uid="uid://cn44m76deoh4h" path="res://assets/utensils/glasses/wine/wine_glass_mask_sdf.png" id="5_sdf"]
+
+[resource]
+script = ExtResource("1_script")
+name = "Astral Goblet"
+description = "Elegant stem reaching upward, like a bloom among the stars."
+capacity = 4
+sprite_front = ExtResource("2_front")
+sprite_back = ExtResource("3_back")
+liquid_mask = ExtResource("4_mask")
+liquid_sdf = ExtResource("5_sdf")
+glass_offset = Vector2(0, -201.5)
+liquid_offset = Vector2(0, -14.17)
+max_fill_center_y = 0.200
+wobble_strength = 0.005
+wobble_ripple_count = 1
+metadata/_custom_type_script = "uid://duqlr7id17gbq"

@@ -1,0 +1,851 @@
+[gd_scene load_steps=53 format=3 uid="uid://clamglqovxxxo"]
+
+[ext_resource type="Shader" uid="uid://b0ws308m5no1r" path="res://resources/shaders/fake_liquid_mask.gdshader" id="1_8nuwv"]
+[ext_resource type="Script" uid="uid://bfjh4tulnmtup" path="res://scripts/cocktail_system/liquid_shader_calibrator.gd" id="1_ounc1"]
+[ext_resource type="Texture2D" uid="uid://cn055br52odyy" path="res://assets/utensils/glasses/coupe/coupe_glass_mask.png" id="2_bs5a0"]
+[ext_resource type="Texture2D" uid="uid://dxhi6lho1i4d7" path="res://assets/utensils/glasses/collins/collins_glass_mask.png" id="2_tue24"]
+[ext_resource type="Texture2D" uid="uid://b8y4x21aj8n1" path="res://resources/textures/simple_noise.tres" id="3_3fl5j"]
+[ext_resource type="Texture2D" uid="uid://cvu2dsoaf5yb2" path="res://assets/utensils/glasses/coupe/coupe_glass_mask_sdf.png" id="4_ounc1"]
+[ext_resource type="Texture2D" uid="uid://bvqbqxnd8d8v0" path="res://assets/utensils/glasses/collins/collins_glass_mask_sdf.png" id="4_pyfkk"]
+[ext_resource type="Texture2D" uid="uid://mp3wges2unvt" path="res://assets/utensils/glasses/coupe/coupe_glass_front.png" id="5_6j7fh"]
+[ext_resource type="Texture2D" uid="uid://q32av3li0rbi" path="res://assets/utensils/glasses/collins/collins_glass_front.png" id="5_bs5a0"]
+[ext_resource type="Texture2D" uid="uid://dxt3ofa440mma" path="res://assets/utensils/glasses/coupe/coupe_glass_back.png" id="6_habbc"]
+[ext_resource type="Texture2D" uid="uid://cx1niqujbtx1q" path="res://assets/utensils/glasses/collins/collins_glass_back.png" id="6_ounc1"]
+[ext_resource type="Texture2D" uid="uid://bofwtxmylvxai" path="res://assets/utensils/glasses/flute/flute_glass_mask.png" id="7_6j7fh"]
+[ext_resource type="Texture2D" uid="uid://kwpl7mibyrc5" path="res://assets/utensils/glasses/flute/flute_glass_mask_sdf.png" id="8_habbc"]
+[ext_resource type="Texture2D" uid="uid://bsxckvkx06xc4" path="res://assets/utensils/glasses/flute/flute_glass_front.png" id="9_vqlff"]
+[ext_resource type="Texture2D" uid="uid://doemaace1sxhi" path="res://assets/utensils/glasses/flute/flute_glass_back.png" id="10_wek34"]
+[ext_resource type="Texture2D" uid="uid://bvigcjwsnmmd0" path="res://assets/utensils/glasses/highball/highball_glass_mask.png" id="11_xfjg5"]
+[ext_resource type="Texture2D" uid="uid://w1wbtsx86l1l" path="res://assets/utensils/glasses/highball/highball_glass_mask_sdf.png" id="12_ukwgv"]
+[ext_resource type="Texture2D" uid="uid://cwvbpdr04yew6" path="res://assets/utensils/glasses/highball/highball_glass_front.png" id="13_kmorp"]
+[ext_resource type="Texture2D" uid="uid://duab4sew53qge" path="res://assets/utensils/glasses/highball/highball_glass_back.png" id="14_m3fkj"]
+[ext_resource type="Texture2D" uid="uid://io3ilj2jbafv" path="res://assets/utensils/glasses/hurricane/hurricane_glass_mask.png" id="15_qnwke"]
+[ext_resource type="Texture2D" uid="uid://4jyfwtabfmjt" path="res://assets/utensils/glasses/hurricane/hurricane_glass_mask_sdf.png" id="16_wmm7x"]
+[ext_resource type="Texture2D" uid="uid://bkho10lds8ul7" path="res://assets/utensils/glasses/hurricane/hurricane_glass_front.png" id="17_r83n2"]
+[ext_resource type="Texture2D" uid="uid://ci2suuhqyo23e" path="res://assets/utensils/glasses/hurricane/hurricane_glass_back.png" id="18_jcbag"]
+[ext_resource type="Texture2D" uid="uid://c2rnwho8vcu6h" path="res://assets/utensils/glasses/martini/martini_glass_mask.png" id="19_piy5h"]
+[ext_resource type="Texture2D" uid="uid://bdcwhs6nb8q8j" path="res://assets/utensils/glasses/martini/martini_glass_mask_sdf.png" id="20_i85fp"]
+[ext_resource type="Texture2D" uid="uid://djx88r3o48w84" path="res://assets/utensils/glasses/martini/martini_glass_front.png" id="21_6v1bi"]
+[ext_resource type="Texture2D" uid="uid://baew4mgcll2er" path="res://assets/utensils/glasses/martini/martini_glass_back.png" id="22_tk1lq"]
+[ext_resource type="Texture2D" uid="uid://boc4iotxlv1hx" path="res://assets/utensils/glasses/poco_grande/poco_grande_glass_mask.png" id="23_wp1fs"]
+[ext_resource type="Texture2D" uid="uid://cqoppnpk2388e" path="res://assets/utensils/glasses/poco_grande/poco_grande_glass_mask_sdf.png" id="24_rmyms"]
+[ext_resource type="Texture2D" uid="uid://cakgsrb0p76j4" path="res://assets/utensils/glasses/poco_grande/poco_grande_glass_front.png" id="25_hevnx"]
+[ext_resource type="Texture2D" uid="uid://0y2skl2gqtgr" path="res://assets/utensils/glasses/poco_grande/poco_grande_glass_back.png" id="26_svlsn"]
+[ext_resource type="Texture2D" uid="uid://cc85ma8yogjd7" path="res://assets/utensils/glasses/rocks/rocks_glass_mask.png" id="32_habbc"]
+[ext_resource type="Texture2D" uid="uid://bt0isvc11lem7" path="res://assets/utensils/glasses/rocks/rocks_glass_mask_sdf.png" id="33_vqlff"]
+[ext_resource type="Texture2D" uid="uid://bxc3os8poe45l" path="res://assets/utensils/glasses/rocks/rocks_glass_front.png" id="34_vqlff"]
+[ext_resource type="Texture2D" uid="uid://dcpf6a5bwqplk" path="res://assets/utensils/glasses/snifter/snifter_glass_mask.png" id="35_kmorp"]
+[ext_resource type="Texture2D" uid="uid://cuealr51debsj" path="res://assets/utensils/glasses/snifter/snifter_glass_mask_sdf.png" id="36_m3fkj"]
+[ext_resource type="Texture2D" uid="uid://clkxdaq6y5k8p" path="res://assets/utensils/glasses/snifter/snifter_glass_front.png" id="37_qnwke"]
+[ext_resource type="Texture2D" uid="uid://cg6em2yulldqx" path="res://assets/utensils/glasses/snifter/snifter_glass_back.png" id="38_wmm7x"]
+[ext_resource type="Texture2D" uid="uid://0agk47mlwb6x" path="res://assets/utensils/glasses/wine/wine_glass_mask.png" id="39_r83n2"]
+[ext_resource type="Texture2D" uid="uid://cn44m76deoh4h" path="res://assets/utensils/glasses/wine/wine_glass_mask_sdf.png" id="40_jcbag"]
+[ext_resource type="Texture2D" uid="uid://bxhpgq1powsss" path="res://assets/utensils/glasses/wine/wine_glass_front.png" id="41_piy5h"]
+[ext_resource type="Texture2D" uid="uid://bhwgcdvxohcnc" path="res://assets/utensils/glasses/wine/wine_glass_back.png" id="42_i85fp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vqlff"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("2_bs5a0")
+shader_parameter/sdf_texture = ExtResource("4_ounc1")
+shader_parameter/glass_bottom_y = 0.43115234
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.290000013775
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a6jol"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("2_tue24")
+shader_parameter/sdf_texture = ExtResource("4_pyfkk")
+shader_parameter/glass_bottom_y = 0.74365234
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.1550000073625
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2xaxn"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("7_6j7fh")
+shader_parameter/sdf_texture = ExtResource("8_habbc")
+shader_parameter/glass_bottom_y = 0.5288086
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.150000007125
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lo5qc"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("11_xfjg5")
+shader_parameter/sdf_texture = ExtResource("12_ukwgv")
+shader_parameter/glass_bottom_y = 0.74365234
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.22000001045
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lm7wq"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("15_qnwke")
+shader_parameter/sdf_texture = ExtResource("16_wmm7x")
+shader_parameter/glass_bottom_y = 0.78271484
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.170000008075
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_na8kj"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("19_piy5h")
+shader_parameter/sdf_texture = ExtResource("20_i85fp")
+shader_parameter/glass_bottom_y = 0.4116211
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.2150000102125
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ygnkr"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("23_wp1fs")
+shader_parameter/sdf_texture = ExtResource("24_rmyms")
+shader_parameter/glass_bottom_y = 0.62646484
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.1650000078375
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wek34"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("32_habbc")
+shader_parameter/sdf_texture = ExtResource("33_vqlff")
+shader_parameter/glass_bottom_y = 0.66552734
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.3810000180975
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r83n2"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("35_kmorp")
+shader_parameter/sdf_texture = ExtResource("36_m3fkj")
+shader_parameter/glass_bottom_y = 0.6069336
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.238000011305
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6v1bi"]
+shader = ExtResource("1_8nuwv")
+shader_parameter/mask_texture = ExtResource("39_r83n2")
+shader_parameter/sdf_texture = ExtResource("40_jcbag")
+shader_parameter/glass_bottom_y = 0.5678711
+shader_parameter/auto_ellipse_width = true
+shader_parameter/ellipse_width_scale = 0.98600002075593
+shader_parameter/ellipse_ratio = 0.0790000037525
+shader_parameter/ellipse_center_y = 0.2000000095
+shader_parameter/ellipse_radius_x = 0.30000001425
+shader_parameter/use_top_clip = false
+shader_parameter/top_clip_center_y = 0.162000007695
+shader_parameter/top_clip_radius_x = 0.750000035625
+shader_parameter/top_clip_radius_y = 0.15
+shader_parameter/wobble_strength = 0.005
+shader_parameter/wobble_speed = 2.0
+shader_parameter/wobble_ripple_count = 1
+shader_parameter/splash_amplitude = 0.02
+shader_parameter/splash_frequency = 22.0
+shader_parameter/splash_speed = 15.0
+shader_parameter/splash_color = Color(1, 1, 1, 0.4)
+shader_parameter/wave_glow = 4.0
+shader_parameter/enable_noise = true
+shader_parameter/noise_texture = ExtResource("3_3fl5j")
+shader_parameter/noise_strength = 0.1
+shader_parameter/noise_scale = 3.0
+shader_parameter/noise_scroll_speed = Vector2(0.05, 0.1)
+shader_parameter/enable_caustics = true
+shader_parameter/caustic_strength = 0.3
+shader_parameter/caustic_scale = 6.0
+shader_parameter/caustic_speed = 0.2
+shader_parameter/liquid_color = Color(0.9, 0.5, 0.2, 1)
+shader_parameter/top_highlight = 0.25
+shader_parameter/top_highlight_falloff = 0.3
+shader_parameter/specular_color = Color(1, 1, 1, 0.5)
+shader_parameter/specular_strength = 0.8
+shader_parameter/specular_falloff_x = 5.0
+shader_parameter/specular_falloff_y = 1.5
+shader_parameter/rim_color = Color(1, 0.8, 0.5, 1)
+shader_parameter/rim_thickness = 0.01
+shader_parameter/rim_blur = 0.01
+shader_parameter/enable_fresnel = true
+shader_parameter/fresnel_color = Color(1, 1, 1, 0.588)
+shader_parameter/fresnel_width = 20.0
+shader_parameter/fresnel_falloff = 5.0
+shader_parameter/enable_subsurface = true
+shader_parameter/subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+shader_parameter/subsurface_strength = 0.2
+shader_parameter/subsurface_threshold = 45.0
+shader_parameter/depth_darkening_range = 0.1
+shader_parameter/depth_darkening_intensity = 0.5
+shader_parameter/surface_darken_amount = 0.25
+shader_parameter/side_darkening = 0.15
+shader_parameter/center_darkening = 0.1
+shader_parameter/top_fade_height = 0.0
+shader_parameter/top_fade_compensation = true
+shader_parameter/show_ellipse = true
+shader_parameter/show_fill = true
+shader_parameter/show_top_rim = true
+shader_parameter/show_bottom_rim = true
+
+[node name="LiquidShaderCalibrator" type="Node2D"]
+script = ExtResource("1_ounc1")
+debug_info = Array[String](["CoupeSprite: bottom=0.431, surface=0.290", "CollinsLiquid: bottom=0.744, surface=0.155", "FluteLiquid: bottom=0.529, surface=0.150", "HighballLiquid: bottom=0.744, surface=0.220", "HurricaneLiquid: bottom=0.783, surface=0.170", "MartiniLiquid: bottom=0.412, surface=0.215", "PocoGrandeLiquid: bottom=0.626, surface=0.165", "RocksLiquid: bottom=0.666, surface=0.381", "SnifterLiquid: bottom=0.607, surface=0.238", "WineLiquid: bottom=0.568, surface=0.200"])
+wobble_strength = 0.005
+wobble_speed = 2.0
+wobble_ripple_count = 1
+splash_amplitude = 0.02
+splash_frequency = 22.0
+splash_speed = 15.0
+splash_color = Color(1, 1, 1, 0.4)
+wave_glow = 4.0
+enable_noise = true
+noise_strength = 0.1
+noise_scale = 3.0
+noise_scroll_speed = Vector2(0.05, 0.1)
+enable_caustics = true
+caustic_strength = 0.3
+caustic_scale = 6.0
+caustic_speed = 0.2
+liquid_color = Color(0.9, 0.5, 0.2, 1)
+top_highlight = 0.25
+top_highlight_falloff = 0.3
+specular_color = Color(1, 1, 1, 0.5)
+specular_strength = 0.8
+specular_falloff_x = 5.0
+specular_falloff_y = 1.5
+rim_color = Color(1, 0.8, 0.5, 1)
+rim_thickness = 0.01
+rim_blur = 0.01
+enable_fresnel = true
+fresnel_color = Color(1, 1, 1, 0.588)
+fresnel_width = 20.0
+fresnel_falloff = 5.0
+enable_subsurface = true
+subsurface_color = Color(0.11319893, 0.8038287, 0.89448106, 1)
+subsurface_strength = 0.2
+subsurface_threshold = 45.0
+depth_darkening_range = 0.1
+depth_darkening_intensity = 0.5
+surface_darken_amount = 0.25
+side_darkening = 0.15
+center_darkening = 0.1
+
+[node name="CoupeGlass" type="Node2D" parent="."]
+position = Vector2(0, 40)
+
+[node name="CoupeSprite" type="Sprite2D" parent="CoupeGlass"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_vqlff")
+position = Vector2(0, -37)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("2_bs5a0")
+
+[node name="CoupeGlassFront" type="Sprite2D" parent="CoupeGlass"]
+texture = ExtResource("5_6j7fh")
+
+[node name="CoupeGlassBack" type="Sprite2D" parent="CoupeGlass"]
+texture = ExtResource("6_habbc")
+
+[node name="CollinsGlass" type="Node2D" parent="."]
+position = Vector2(550, -90)
+
+[node name="CollinsLiquid" type="Sprite2D" parent="CollinsGlass"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_a6jol")
+position = Vector2(0, 9)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("2_tue24")
+
+[node name="CollinsGlassFront" type="Sprite2D" parent="CollinsGlass"]
+texture = ExtResource("5_bs5a0")
+
+[node name="CollinsGlassBack" type="Sprite2D" parent="CollinsGlass"]
+texture = ExtResource("6_ounc1")
+
+[node name="FluteGlass" type="Node2D" parent="."]
+position = Vector2(1050, -152.55)
+
+[node name="FluteLiquid" type="Sprite2D" parent="FluteGlass"]
+material = SubResource("ShaderMaterial_2xaxn")
+position = Vector2(0, -37)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("7_6j7fh")
+
+[node name="FluteGlassFront" type="Sprite2D" parent="FluteGlass"]
+texture = ExtResource("9_vqlff")
+
+[node name="FluteGlassBack" type="Sprite2D" parent="FluteGlass"]
+texture = ExtResource("10_wek34")
+
+[node name="HighballGlass" type="Node2D" parent="."]
+position = Vector2(1500, -97.24)
+
+[node name="HighballLiquid" type="Sprite2D" parent="HighballGlass"]
+material = SubResource("ShaderMaterial_lo5qc")
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("11_xfjg5")
+
+[node name="HighballGlassFront" type="Sprite2D" parent="HighballGlass"]
+texture = ExtResource("13_kmorp")
+
+[node name="HighballGlassBack" type="Sprite2D" parent="HighballGlass"]
+texture = ExtResource("14_m3fkj")
+
+[node name="HurricaneGlass" type="Node2D" parent="."]
+position = Vector2(2100, -147.12)
+
+[node name="HurricaneLiquid" type="Sprite2D" parent="HurricaneGlass"]
+material = SubResource("ShaderMaterial_lm7wq")
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("15_qnwke")
+
+[node name="HurricaneGlassFront" type="Sprite2D" parent="HurricaneGlass"]
+texture = ExtResource("17_r83n2")
+
+[node name="HurricaneGlassBack" type="Sprite2D" parent="HurricaneGlass"]
+texture = ExtResource("18_jcbag")
+
+[node name="MartiniGlass" type="Node2D" parent="."]
+position = Vector2(2800, 53.51)
+
+[node name="MartiniLiquid" type="Sprite2D" parent="MartiniGlass"]
+material = SubResource("ShaderMaterial_na8kj")
+position = Vector2(0, -37)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("19_piy5h")
+
+[node name="MartiniGlassFront" type="Sprite2D" parent="MartiniGlass"]
+texture = ExtResource("21_6v1bi")
+
+[node name="MartiniGlassBack" type="Sprite2D" parent="MartiniGlass"]
+texture = ExtResource("22_tk1lq")
+
+[node name="PocoGrandeGlass" type="Node2D" parent="."]
+position = Vector2(3500, -47.93)
+
+[node name="PocoGrandeLiquid" type="Sprite2D" parent="PocoGrandeGlass"]
+material = SubResource("ShaderMaterial_ygnkr")
+position = Vector2(0, -14.17)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("23_wp1fs")
+
+[node name="PocoGrandeGlassFront" type="Sprite2D" parent="PocoGrandeGlass"]
+texture = ExtResource("25_hevnx")
+
+[node name="PocoGrandeGlassBack" type="Sprite2D" parent="PocoGrandeGlass"]
+texture = ExtResource("26_svlsn")
+
+[node name="RocksGlass" type="Node2D" parent="."]
+position = Vector2(4100, 35.83)
+
+[node name="RocksLiquid" type="Sprite2D" parent="RocksGlass"]
+material = SubResource("ShaderMaterial_wek34")
+position = Vector2(0, -14.17)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("32_habbc")
+
+[node name="RocksGlassFront" type="Sprite2D" parent="RocksGlass"]
+texture = ExtResource("34_vqlff")
+
+[node name="RocksGlassBack" type="Sprite2D" parent="RocksGlass"]
+texture = ExtResource("34_vqlff")
+
+[node name="SnifterGlass" type="Node2D" parent="."]
+position = Vector2(4800, -36.52)
+
+[node name="SnifterLiquid" type="Sprite2D" parent="SnifterGlass"]
+material = SubResource("ShaderMaterial_r83n2")
+position = Vector2(0, -14.17)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("35_kmorp")
+
+[node name="SnifterGlassFront" type="Sprite2D" parent="SnifterGlass"]
+texture = ExtResource("37_qnwke")
+
+[node name="SnifterGlassBack" type="Sprite2D" parent="SnifterGlass"]
+texture = ExtResource("38_wmm7x")
+
+[node name="WineGlass" type="Node2D" parent="."]
+position = Vector2(5500, -201.5)
+
+[node name="WineLiquid" type="Sprite2D" parent="WineGlass"]
+material = SubResource("ShaderMaterial_6v1bi")
+position = Vector2(0, -14.17)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("39_r83n2")
+
+[node name="WineGlassFront" type="Sprite2D" parent="WineGlass"]
+texture = ExtResource("41_piy5h")
+
+[node name="WineGlassBack" type="Sprite2D" parent="WineGlass"]
+texture = ExtResource("42_i85fp")
+
+[node name="Ground" type="Line2D" parent="."]
+position = Vector2(0, 500)
+points = PackedVector2Array(-10000, 0, 10000, 0)

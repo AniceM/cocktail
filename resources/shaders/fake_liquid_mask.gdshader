@@ -12,6 +12,7 @@ uniform sampler2D sdf_texture : hint_default_white;
 // ============================================================================
 // Geometry & Shape
 // ============================================================================
+uniform float glass_bottom_y : hint_range(0.0, 1.0) = 0.8; // Fixed UV Y of the glass bottom, set by script
 uniform bool auto_ellipse_width = false; // If true, calculates width from mask_texture
 uniform float ellipse_width_scale : hint_range(0.8, 1.0) = 1.0; // Scale factor for auto-calculated width (use < 1 to shrink ellipse from glass edges)
 uniform float ellipse_ratio : hint_range(0.0, 1.0) = 0.5; // Height/Width ratio of the surface ellipse
@@ -29,7 +30,7 @@ uniform float top_clip_radius_y : hint_range(0.0, 0.5) = 0.15;
 // Animation (Wobble & Wave/Splash)
 // ============================================================================
 // "Wobble" simulates the main liquid sloshing movement
-uniform float wobble_strength : hint_range(0.0, 0.1) = 0.02;
+uniform float wobble_strength : hint_range(0.0, 0.1) = 0.005;
 uniform float wobble_speed : hint_range(0.0, 10.0) = 2.0;
 uniform int wobble_ripple_count : hint_range(1, 8) = 1; // Number of wobble ripples across liquid width
 
@@ -38,11 +39,11 @@ uniform float splash_amplitude : hint_range(0.0, 0.1) = 0.0;
 uniform float splash_frequency : hint_range(1.0, 30.0) = 22.0;
 uniform float splash_speed : hint_range(0.5, 20.0) = 15.0;
 uniform vec4 splash_color : source_color = vec4(1.0, 1.0, 1.0, 0.4);
-uniform float wave_glow : hint_range(0.0, 2.0) = 0.5; // Brightness multiplier for wave highlights
+uniform float wave_glow : hint_range(0.0, 5.0) = 4.0; // Brightness multiplier for wave highlights
 
 // Noise / Texture
 // Adds a scrolling noise texture to simulate particles/pulp/ imperfection
-uniform bool enable_noise = false;
+uniform bool enable_noise = true;
 uniform sampler2D noise_texture : hint_default_black, repeat_enable;
 uniform float noise_strength : hint_range(0.0, 1.0) = 0.1;
 uniform float noise_scale : hint_range(0.1, 10.0) = 3.0;
@@ -50,9 +51,9 @@ uniform vec2 noise_scroll_speed = vec2(0.05, 0.1);
 
 // Caustics (Simulated Light Refraction)
 // Creates animated light patterns like sunlight through water
-uniform bool enable_caustics = false;
+uniform bool enable_caustics = true;
 uniform float caustic_strength : hint_range(0.0, 5.0) = 0.3;
-uniform float caustic_scale : hint_range(0.5, 10.0) = 2.0;
+uniform float caustic_scale : hint_range(0.5, 10.0) = 6.0;
 uniform float caustic_speed : hint_range(0.0, 2.0) = 0.25;
 
 
@@ -81,19 +82,20 @@ uniform float rim_blur : hint_range(0.001, 0.03) = 0.01;
 // Glow appearing at the sides of the glass body
 uniform bool enable_fresnel = true;
 uniform vec4 fresnel_color : source_color = vec4(1.0, 1.0, 1.0, 0.588);
-uniform float fresnel_width : hint_range(0.0, 100.0) = 55.0;
+uniform float fresnel_width : hint_range(0.0, 100.0) = 20.0;
 uniform float fresnel_falloff : hint_range(0.1, 10.0) = 5.0;
 
 // Subsurface Scattering
 // Simulates light passing through thin liquid areas (backlight effect)
-uniform bool enable_subsurface = false;
-uniform vec4 subsurface_color : source_color = vec4(1.0, 0.6, 0.3, 1.0);
+uniform bool enable_subsurface = true;
+uniform vec4 subsurface_color : source_color = vec4(0.113, 0.804, 0.894, 1.0);
 uniform float subsurface_strength : hint_range(0.0, 1.0) = 0.2;
-uniform float subsurface_threshold : hint_range(0.0, 150.0) = 80.0; // Distance threshold for "thin" areas
+uniform float subsurface_threshold : hint_range(0.0, 150.0) = 45.0; // Distance threshold for "thin" areas
 
 // Darkening / Depth
 // Various darkening factors to make the liquid look 3D/volumetric
-uniform float depth_darkening : hint_range(0.0, 10.0) = 0.2; // Darker at the bottom
+uniform float depth_darkening_range : hint_range(0.0, 1.0) = 0.1; // How far up from bottom the darkening extends (in UV units)
+uniform float depth_darkening_intensity : hint_range(0.0, 1.0) = 0.5; // How dark it gets at the bottom
 uniform float surface_darken_amount : hint_range(0.0, 1.0) = 0.25; // Darken the flat surface disc
 uniform float side_darkening : hint_range(0.0, 1.0) = 0.15; // Darken edges (glass thickness)
 uniform float center_darkening : hint_range(0.0, 1.0) = 0.1; // "Core" darkening
@@ -209,7 +211,7 @@ float calculate_center_darkening(float x_abs_norm, float strength) {
 }
 
 // Calculates caustic light patterns (animated refraction effect)
-vec3 calculate_caustics(sampler2D noise, vec2 uv, float x_abs_norm, float center_y) {
+vec3 calculate_caustics(sampler2D noise, vec2 uv, float x_abs_norm, float surface_y, float bottom_y) {
 	if (!enable_caustics || !enable_noise) {
 		return vec3(0.0);
 	}
@@ -224,7 +226,8 @@ vec3 calculate_caustics(sampler2D noise, vec2 uv, float x_abs_norm, float center
 	float caustic = pow(caustic1 * caustic2, 2.0);
 
 	// Apply stronger near bottom (light travels through more liquid)
-	float depth_influence = smoothstep(center_y, 1.0, uv.y);
+	// Depth influence is normalized between the surface and the ACTUAL glass bottom
+	float depth_influence = smoothstep(surface_y, bottom_y, uv.y);
 
 	// Reduce caustics near edges (less refraction at glass walls)
 	float edge_fade = 1.0 - smoothstep(0.6, 1.0, x_abs_norm);
@@ -404,8 +407,10 @@ void fragment() {
 		// --- Volume Lighting (Body) ---
 		if (in_fill) {
 			// Depth Darkening (vertical gradient, darker at bottom)
-			float depth_factor = smoothstep(ellipse_center_y, 1.0, UV.y);
-			final_color.rgb *= (1.0 - depth_factor * depth_darkening);
+			// Use fixed glass_bottom_y so darkening is consistent as the glass fills
+			float distance_from_bottom = glass_bottom_y - UV.y;
+			float depth_factor = 1.0 - smoothstep(0.0, max(depth_darkening_range, 0.01), distance_from_bottom);
+			final_color.rgb *= (1.0 - depth_factor * depth_darkening_intensity);
 
 			// Side Darkening (SDF based, darker near glass walls)
 			float side_dark = calculate_side_darkening(sdf_texture, UV, side_darkening);
@@ -416,9 +421,9 @@ void fragment() {
 
 			// Surface Proximity Highlight (Light entering from top)
 			// Brightens the liquid just below the surface line
-			// We use the glass depth (from surface to bottom) as the normalization factor
-			float glass_depth = 1.0 - clamped_center_y; // Depth from surface to bottom of UV space
-			float dist_to_surface = clamp((pos.y - surface_y_wobbled) / glass_depth, 0.0, 1.0);
+			// We use the absolute glass depth (from surface to fixed bottom) as the normalization factor
+			float current_glass_depth = max(glass_bottom_y - clamped_center_y, 0.01);
+			float dist_to_surface = clamp((pos.y - surface_y_wobbled) / current_glass_depth, 0.0, 1.0);
 			float surface_proximity = 1.0 - smoothstep(0.0, top_highlight_falloff, dist_to_surface);
 			final_color.rgb += surface_proximity * top_highlight * final_color.rgb;
 			
@@ -436,7 +441,7 @@ void fragment() {
 			}
 
 			// Caustics (Animated light refraction patterns)
-			final_color.rgb += calculate_caustics(noise_texture, UV, x_norm_abs, ellipse_center_y);
+			final_color.rgb += calculate_caustics(noise_texture, UV, x_norm_abs, ellipse_center_y, glass_bottom_y);
 
 			// Subsurface Scattering (Backlight effect in thin liquid areas)
 			final_color.rgb += calculate_subsurface(sdf_texture, UV, final_color.rgb);
