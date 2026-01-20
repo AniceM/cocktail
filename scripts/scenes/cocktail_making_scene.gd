@@ -10,7 +10,21 @@ var cocktail: Cocktail
 # State Machine
 var state_machine: CocktailMakingStateMachine
 
+# Animation
+var _glass_tween: Tween
+var _menu_tween: Tween
+var _camera_tween: Tween
+var _chart_tween: Tween
+const GLASS_BASE_SCALE := Vector2(0.3, 0.3) # Match scene default
+const MENU_SLIDE_OFFSET := 200.0 # Pixels to slide from
+const MENU_TRANSITION_DURATION := 0.35
+const CAMERA_ZOOM_GLASS_SELECTION := Vector2(1.8, 1.8)
+const CAMERA_ZOOM_LIQUOR_SELECTION := Vector2(2.0, 2.0)
+const CAMERA_ZOOM_DURATION := 0.5
+
 # UI
+@onready var glass_selection_menu: Control = %GlassSelectionMenu
+@onready var glass_selection_button: Button = %GlassSelectionButton
 @onready var add_ingredients_menu: Control = %AddIngredientsMenu
 @onready var flavor_profile_chart: Control = %FlavorProfileChart
 @onready var reset_button: Button = %ResetButton
@@ -20,27 +34,35 @@ var state_machine: CocktailMakingStateMachine
 @onready var debug_label: RichTextLabel = %DebugLabel
 
 func _ready() -> void:
+	# Hide the glass until one is selected
+	glass_scene.visible = false
+	# Hide buttons that shouldn't be visible at start
+	glass_selection_button.visible = false
+	reset_button.visible = false
+	mix_button.visible = false
+	# Hide flavor chart until liquor selection
+	flavor_profile_chart.visible = false
+
 	# Connect signals
 	glass_scene.animation_started.connect(_on_glass_animation_started)
 	glass_scene.animation_finished.connect(_on_glass_animation_finished)
+	glass_selection_menu.glass_selected.connect(_on_glass_selected)
+	glass_selection_button.pressed.connect(_on_glass_selection_button_pressed)
 	add_ingredients_menu.add_liquor.connect(_on_add_liquor)
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	mix_button.pressed.connect(_on_mix_button_pressed)
 
 	# Create State Machine
 	state_machine = CocktailMakingStateMachine.new(self)
-	# TODO: (temporary) Immediately switch to LIQUOR_SELECTION
-	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
+	state_machine.state_changed.connect(_on_state_changed)
 
-	# Create Cocktail object
-	var glass = GameDataRegistry.get_glass("Chronos Coupe")
-	cocktail = Cocktail.new(glass)
-	glass_scene.set_glass(glass)
+	# Start the flow
+	state_machine.change_state(CocktailMakingStateMachine.StateName.GLASS_SELECTION)
 
 	# Animate camera zoom from 1 to 2
-	var tween = create_tween()
+	# var tween = create_tween()
 	camera.zoom = Vector2(1, 1)
-	tween.tween_property(camera, "zoom", Vector2(2, 2), 1.0)
+	# tween.tween_property(camera, "zoom", Vector2(2, 2), 1.0)
 
 func _process(_delta: float) -> void:
 	update_debug_info()
@@ -84,11 +106,9 @@ func _unhandled_input(event: InputEvent) -> void:
 # Block / Unlock interactivity while animations are running
 func _on_glass_animation_started() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.ADDING_INGREDIENT)
-	add_ingredients_menu.set_disabled(true)
 
 func _on_glass_animation_finished() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
-	add_ingredients_menu.set_disabled(false)
 
 # Add a liquor to the cocktail
 func _on_add_liquor(liquor: Liquor) -> void:
@@ -109,3 +129,150 @@ func _on_reset_button_pressed() -> void:
 func _on_mix_button_pressed() -> void:
 	cocktail.mix()
 	glass_scene.mix(true)
+
+
+func _on_glass_selected(glass: GlassType) -> void:
+	# Create Cocktail object with selected glass
+	cocktail = Cocktail.new(glass)
+	glass_scene.set_glass(glass)
+	# Animate glass appearing
+	_animate_glass_in()
+	# Transition to liquor selection
+	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
+
+
+func _on_glass_selection_button_pressed() -> void:
+	# Reset current cocktail
+	cocktail = null
+	GameSession.current_cocktail = null
+	# Reset visuals
+	flavor_profile_chart.reset()
+	# Animate glass disappearing, then reset and return to glass selection
+	_animate_glass_out(func():
+		glass_scene.reset()
+		state_machine.change_state(CocktailMakingStateMachine.StateName.GLASS_SELECTION)
+	)
+
+
+func _animate_glass_in() -> void:
+	if _glass_tween:
+		_glass_tween.kill()
+	glass_scene.scale = Vector2.ZERO
+	glass_scene.visible = true
+	_glass_tween = create_tween()
+	_glass_tween.tween_property(glass_scene, "scale", GLASS_BASE_SCALE, 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+
+
+func _animate_glass_out(on_complete: Callable = Callable()) -> void:
+	if _glass_tween:
+		_glass_tween.kill()
+	_glass_tween = create_tween()
+	_glass_tween.tween_property(glass_scene, "scale", Vector2.ZERO, 0.25).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
+	_glass_tween.tween_callback(func():
+		glass_scene.visible = false
+		glass_scene.scale = GLASS_BASE_SCALE
+		if on_complete.is_valid():
+			on_complete.call()
+	)
+
+
+func _on_state_changed(old_state: CocktailMakingStateMachine.StateName, new_state: CocktailMakingStateMachine.StateName) -> void:
+	# Update UI visibility based on state
+	match new_state:
+		CocktailMakingStateMachine.StateName.GLASS_SELECTION:
+			glass_selection_button.visible = false
+			reset_button.visible = false
+			mix_button.visible = false
+			_animate_camera_zoom(CAMERA_ZOOM_GLASS_SELECTION)
+			if old_state != CocktailMakingStateMachine.StateName.START:
+				_transition_menus(glass_selection_menu, add_ingredients_menu)
+				_animate_chart_out()
+			else:
+				_transition_menus(glass_selection_menu, null)
+			# Defer to ensure buttons are populated on first run
+			glass_selection_menu.animate_buttons_in.call_deferred()
+		CocktailMakingStateMachine.StateName.LIQUOR_SELECTION:
+			glass_selection_button.visible = true
+			reset_button.visible = true
+			mix_button.visible = true
+			_animate_camera_zoom(CAMERA_ZOOM_LIQUOR_SELECTION)
+			# Only transition menus when coming from glass selection, not from adding ingredient
+			if old_state == CocktailMakingStateMachine.StateName.GLASS_SELECTION:
+				_transition_menus(add_ingredients_menu, glass_selection_menu)
+				_animate_chart_in()
+		CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
+			pass
+
+
+func _animate_camera_zoom(target_zoom: Vector2) -> void:
+	if _camera_tween:
+		_camera_tween.kill()
+	_camera_tween = create_tween()
+	_camera_tween.tween_property(camera, "zoom", target_zoom, CAMERA_ZOOM_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+
+
+func _animate_chart_in() -> void:
+	if _chart_tween:
+		_chart_tween.kill()
+	var base_x := flavor_profile_chart.position.x
+	flavor_profile_chart.position.x = base_x - MENU_SLIDE_OFFSET
+	flavor_profile_chart.modulate.a = 0.0
+	flavor_profile_chart.visible = true
+	_chart_tween = create_tween()
+	_chart_tween.set_parallel(true)
+	_chart_tween.tween_property(flavor_profile_chart, "position:x", base_x, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	_chart_tween.tween_property(flavor_profile_chart, "modulate:a", 1.0, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+
+
+func _animate_chart_out() -> void:
+	if _chart_tween:
+		_chart_tween.kill()
+	var base_x := flavor_profile_chart.position.x
+	var target_x := base_x - MENU_SLIDE_OFFSET
+	_chart_tween = create_tween()
+	_chart_tween.set_parallel(true)
+	_chart_tween.tween_property(flavor_profile_chart, "position:x", target_x, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	_chart_tween.tween_property(flavor_profile_chart, "modulate:a", 0.0, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	_chart_tween.chain().tween_callback(func():
+		flavor_profile_chart.visible = false
+		flavor_profile_chart.position.x = base_x
+		flavor_profile_chart.modulate.a = 1.0
+	)
+
+
+func _transition_menus(menu_in: Control, menu_out: Control) -> void:
+	if _menu_tween:
+		_menu_tween.kill()
+	_menu_tween = create_tween()
+	_menu_tween.set_parallel(true)
+
+	# Animate menu out (slide right + fade out)
+	if menu_out and menu_out.visible:
+		if menu_out.has_method("set_disabled"):
+			menu_out.set_disabled(true)
+		var out_target_x := menu_out.position.x + MENU_SLIDE_OFFSET
+		_menu_tween.tween_property(menu_out, "position:x", out_target_x, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+		_menu_tween.tween_property(menu_out, "modulate:a", 0.0, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+
+	# Animate menu in (slide from right + fade in)
+	if menu_in:
+		if menu_in.has_method("set_disabled"):
+			menu_in.set_disabled(true)
+		if menu_in.has_method("reset_scroll"):
+			menu_in.reset_scroll()
+		var in_base_x := menu_in.position.x
+		menu_in.position.x = in_base_x + MENU_SLIDE_OFFSET
+		menu_in.modulate.a = 0.0
+		menu_in.visible = true
+		_menu_tween.tween_property(menu_in, "position:x", in_base_x, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+		_menu_tween.tween_property(menu_in, "modulate:a", 1.0, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+
+	# After animation completes: hide menu_out, restore input on menu_in
+	_menu_tween.chain().tween_callback(func():
+		if menu_out:
+			menu_out.visible = false
+			menu_out.position.x -= MENU_SLIDE_OFFSET
+			menu_out.modulate.a = 1.0
+		if menu_in and menu_in.has_method("set_disabled"):
+			menu_in.set_disabled(false)
+	)

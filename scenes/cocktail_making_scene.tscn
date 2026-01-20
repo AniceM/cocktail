@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://xvh17tek7uhl"]
+[gd_scene load_steps=8 format=3 uid="uid://xvh17tek7uhl"]
 
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/scenes/cocktail_making_scene.gd" id="1_ac75x"]
 [ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="2_slgu4"]
 [ext_resource type="PackedScene" uid="uid://rubxbrjldnjr" path="res://scenes/flavor_profile_chart.tscn" id="4_ac75x"]
 [ext_resource type="PackedScene" uid="uid://d1pifdvndfi24" path="res://scenes/add_ingredients_menu.tscn" id="4_fcfq3"]
 [ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://scenes/glass_scene.tscn" id="5_b2ome"]
+[ext_resource type="PackedScene" uid="uid://b37dhsp4c70nr" path="res://scenes/glass_selection_menu.tscn" id="5_slgu4"]
 [ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="6_vlt8w"]
 
 [node name="CocktailMakingScene" type="Node2D"]
@@ -40,8 +41,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="GlassSelectionMenu" parent="HUD/FullScreenControl" instance=ExtResource("5_slgu4")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1700.0
+offset_top = 260.0
+offset_right = 1700.0
+offset_bottom = 260.0
+
 [node name="AddIngredientsMenu" parent="HUD/FullScreenControl" instance=ExtResource("4_fcfq3")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -49,9 +59,9 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -604.0
-offset_top = -385.0
-offset_right = -133.99072
-offset_bottom = 385.0
+offset_top = -388.0
+offset_right = -134.0
+offset_bottom = 382.0
 grow_horizontal = 0
 grow_vertical = 2
 
@@ -100,6 +110,12 @@ offset_top = -100.0
 offset_right = 102.0
 grow_horizontal = 2
 grow_vertical = 0
+
+[node name="GlassSelectionButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+text = "Glass"
 
 [node name="ResetButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer"]
 unique_name_in_owner = true

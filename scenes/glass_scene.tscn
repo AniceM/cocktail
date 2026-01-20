@@ -74,7 +74,6 @@ scale_max = 4.0
 shader = ExtResource("4_qq2fo")
 shader_parameter/mask_texture = ExtResource("7_pr3a7")
 shader_parameter/sdf_texture = ExtResource("8_gs6y7")
-shader_parameter/glass_height = 0.1410000066975
 shader_parameter/glass_bottom_y = 0.4310000204725
 shader_parameter/auto_ellipse_width = true
 shader_parameter/ellipse_width_scale = 0.98600002075593

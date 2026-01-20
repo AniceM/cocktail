@@ -6,23 +6,25 @@ const FlavorStatInfo = preload("uid://dthjdr2uef2ib")
 @onready var liquor_name: Label = %LiquorName
 @onready var flavor_stats_container: VBoxContainer = %FlavorStatsContainer
 
-# Associated liquor
-var liquor: Liquor:
+@export var liquor: Liquor:
 	set(value):
 		liquor = value
 		if is_node_ready():
 			_update_ui()
 
 func _ready() -> void:
-	# Empty the flavor stats container, just in case
-	for child in flavor_stats_container.get_children():
-		child.queue_free()
-	
-	# Update the UI if liquor is already set
-	if liquor:
-		_update_ui()
+	_update_ui()
+
 
 func _update_ui() -> void:
+	# Clear existing flavor stats
+	for child in flavor_stats_container.get_children():
+		child.queue_free()
+
+	if not liquor:
+		liquor_name.text = ""
+		return
+
 	liquor_name.text = liquor.name
 	# liquor_icon.texture = liquor.icon  # TODO
 

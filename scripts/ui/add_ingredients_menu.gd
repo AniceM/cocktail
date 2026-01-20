@@ -1,43 +1,37 @@
 extends Control
 
-# Signals
 signal add_liquor(liquor: Liquor)
 
-# Preload the liquor panel
-const AddLiquorButton = preload("uid://33qrbtnnfjbg")
+const AddLiquorButtonScene = preload("uid://33qrbtnnfjbg")
 
-# List of liquors that can be added
-@onready var add_liquor_list: VBoxContainer = %AddLiquorList
+@onready var _add_liquor_list: VBoxContainer = %AddLiquorList
+@onready var _scroll_container: ScrollContainer = %ScrollContainer
 
-# Handle scrolling
-@onready var scroll_container: ScrollContainer = %ScrollContainer
-@onready var down_arrow: TextureRect = %DownArrow
 
 func _ready() -> void:
-	# Remove the fake liquor list and replace it with the real one
-	for child in add_liquor_list.get_children():
-		child.queue_free()
-	for liquor in PlayerProgression.get_liquors():
-		var add_liquor_button: Button = AddLiquorButton.instantiate()
-		add_liquor_button.liquor = liquor
-		add_liquor_button.pressed.connect(_on_add_liquor_button_pressed.bind(liquor))
-		add_liquor_list.add_child(add_liquor_button)
+	_populate_liquors()
 
-	# Connect the scroll event to _on_scroll
-	scroll_container.get_v_scroll_bar().value_changed.connect(_on_scroll)
+
+func _populate_liquors() -> void:
+	for child in _add_liquor_list.get_children():
+		child.queue_free()
+
+	for liquor in PlayerProgression.get_liquors():
+		var button = AddLiquorButtonScene.instantiate()
+		button.liquor = liquor
+		button.pressed.connect(_on_add_liquor_button_pressed.bind(liquor))
+		_add_liquor_list.add_child(button)
 
 # Switch buttons to disabled/enabled
 func set_disabled(disabled: bool = true) -> void:
-	for child in add_liquor_list.get_children():
+	for child in _add_liquor_list.get_children():
 		if child is Button:
 			child.disabled = disabled
 
-func _on_scroll(value: float) -> void:
-	var v_scroll_bar = scroll_container.get_v_scroll_bar()
-	if value == v_scroll_bar.max_value - v_scroll_bar.page:
-		down_arrow.hide()
-	else:
-		down_arrow.show()
-
 func _on_add_liquor_button_pressed(liquor: Liquor) -> void:
 	add_liquor.emit(liquor)
+
+
+func reset_scroll() -> void:
+	_scroll_container.scroll_vertical = 0
+	_scroll_container.scroll_horizontal = 0
