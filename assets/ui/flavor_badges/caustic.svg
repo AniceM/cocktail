@@ -1,0 +1,49 @@
+
+            <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="caustic-1769293882939-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#00a8ff" stop-opacity="0.6"/>
+                        <stop offset="100%" stop-color="#00a8ff" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="caustic-1769293882939-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="rgb(76, 194, 255)"/>
+                        <stop offset="50%" stop-color="#00a8ff"/>
+                        <stop offset="100%" stop-color="rgb(0, 117, 178)"/>
+                    </linearGradient>
+                    <filter id="caustic-1769293882939-blur">
+                        <feGaussianBlur stdDeviation="2"/>
+                    </filter>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#caustic-1769293882939-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="rgb(0, 50, 76)" stroke="url(#caustic-1769293882939-main)" stroke-width="3"/>
+                
+                <!-- Caustic/acid drip design - corrosive drops eating away -->
+                <g fill="url(#caustic-1769293882939-main)">
+                    <!-- Central flask/beaker shape -->
+                    <path d="M55 45 L55 65 Q50 75 45 90 Q43 100 55 105 L85 105 Q97 100 95 90 Q90 75 85 65 L85 45 Z" 
+                          fill="rgb(0, 84, 127)" stroke="url(#caustic-1769293882939-main)" stroke-width="2"/>
+                    
+                    <!-- Bubbling liquid inside -->
+                    <ellipse cx="70" cy="95" rx="18" ry="6" fill="url(#caustic-1769293882939-main)" opacity="0.8"/>
+                    <circle cx="60" cy="88" r="4" fill="rgb(102, 202, 255)" opacity="0.9"/>
+                    <circle cx="75" cy="85" r="3" fill="rgb(127, 211, 255)" opacity="0.8"/>
+                    <circle cx="68" cy="80" r="2.5" fill="rgb(76, 194, 255)" opacity="0.7"/>
+                    
+                    <!-- Dripping drops -->
+                    <path d="M50 105 Q48 115 52 120 Q56 125 52 120 Q48 115 50 105" fill="url(#caustic-1769293882939-main)" opacity="0.9"/>
+                    <path d="M65 105 Q63 112 66 116 Q70 120 66 116 Q63 112 65 105" fill="url(#caustic-1769293882939-main)" opacity="0.8"/>
+                    <path d="M88 102 Q92 110 88 118 Q84 125 88 118 Q92 110 88 102" fill="url(#caustic-1769293882939-main)" opacity="0.85"/>
+                    
+                    <!-- Vapor wisps -->
+                    <path d="M58 45 Q55 38 60 32 Q65 38 62 45" fill="none" stroke="rgb(102, 202, 255)" stroke-width="1.5" opacity="0.6"/>
+                    <path d="M70 42 Q68 35 73 28 Q78 35 75 42" fill="none" stroke="rgb(102, 202, 255)" stroke-width="1.5" opacity="0.5"/>
+                    <path d="M82 45 Q80 38 85 32 Q90 38 87 45" fill="none" stroke="rgb(102, 202, 255)" stroke-width="1.5" opacity="0.6"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="55" rx="15" ry="8" fill="rgb(127, 211, 255)" opacity="0.15" transform="rotate(-30 55 55)"/>
+            </svg>

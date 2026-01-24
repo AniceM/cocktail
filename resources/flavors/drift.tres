@@ -1,12 +1,14 @@
-[gd_resource type="Resource" script_class="Flavor" load_steps=4 format=3 uid="uid://ch4po4u8501bh"]
+[gd_resource type="Resource" script_class="Flavor" load_steps=5 format=3 uid="uid://ch4po4u8501bh"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_pl0ht"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_55vri"]
+[ext_resource type="Texture2D" uid="uid://dlcsrs5e1o630" path="res://assets/ui/flavor_badges/drift.svg" id="2_badge"]
 [ext_resource type="Resource" uid="uid://dvxri18pfnhjn" path="res://resources/secret_types/deflection.tres" id="3_deflection"]
 
 [resource]
 script = ExtResource("2_55vri")
 name = "Drift"
+icon = ExtResource("2_badge")
 color = Color(0.23529412, 0.7019608, 0.44313726, 1)
 description = "Smooth sea green - evasive, flowing, hard to pin down"
 boosted_secret_types = Array[ExtResource("1_pl0ht")]([ExtResource("3_deflection")])

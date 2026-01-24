@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ccy3bc5n4d4uo"
-path="res://.godot/imported/down_arrow.png-ee2e55018cd8653ea1b630bc3ef8952c.ctex"
+uid="uid://dm03ysmmsuefh"
+path="res://.godot/imported/void.svg-db4b3a6460d6b40802c5f18380a3d857.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/down_arrow.png"
-dest_files=["res://.godot/imported/down_arrow.png-ee2e55018cd8653ea1b630bc3ef8952c.ctex"]
+source_file="res://assets/ui/flavor_badges/void.svg"
+dest_files=["res://.godot/imported/void.svg-db4b3a6460d6b40802c5f18380a3d857.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

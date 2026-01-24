@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1da8ff2og3iu"
-path="res://.godot/imported/spider_chart.png-3863d01eb2e858246d3e5297186639ec.ctex"
+uid="uid://dlcsrs5e1o630"
+path="res://.godot/imported/drift.svg-b3caad36a80af1491a5c6abc1cede55e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/spider_chart.png"
-dest_files=["res://.godot/imported/spider_chart.png-3863d01eb2e858246d3e5297186639ec.ctex"]
+source_file="res://assets/ui/flavor_badges/drift.svg"
+dest_files=["res://.godot/imported/drift.svg-b3caad36a80af1491a5c6abc1cede55e.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

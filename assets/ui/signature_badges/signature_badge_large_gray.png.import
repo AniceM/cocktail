@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://sov1eqaqdi76"
-path="res://.godot/imported/signature_badge_large_gold.png-7e9adf9b3e12c4b33f1b6cf2efbe6afd.ctex"
+uid="uid://d0qecprr74c6f"
+path="res://.godot/imported/signature_badge_large_gray.png-4fd1c71fffefae6515d8865f953eef25.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/signature_badge_large_gold.png"
-dest_files=["res://.godot/imported/signature_badge_large_gold.png-7e9adf9b3e12c4b33f1b6cf2efbe6afd.ctex"]
+source_file="res://assets/ui/signature_badges/signature_badge_large_gray.png"
+dest_files=["res://.godot/imported/signature_badge_large_gray.png-4fd1c71fffefae6515d8865f953eef25.ctex"]
 
 [params]
 

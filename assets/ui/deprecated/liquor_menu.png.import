@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cyqdp06h2ifm"
-path="res://.godot/imported/flavor_profile_frame.png-667bd9bdff104f5e62b1debbbf6265c0.ctex"
+uid="uid://g6xoir61ly83"
+path="res://.godot/imported/liquor_menu.png-eaefc2065a2ce95c1265c1f8be6ca8f1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/flavor_profile_frame.png"
-dest_files=["res://.godot/imported/flavor_profile_frame.png-667bd9bdff104f5e62b1debbbf6265c0.ctex"]
+source_file="res://assets/ui/deprecated/liquor_menu.png"
+dest_files=["res://.godot/imported/liquor_menu.png-eaefc2065a2ce95c1265c1f8be6ca8f1.ctex"]
 
 [params]
 

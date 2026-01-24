@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c026so8km71a3"
-path="res://.godot/imported/signature_badge_gray.png-cdfa4238f056bcf36fdd208b462ec7f5.ctex"
+uid="uid://o8sbydfws1dm"
+path="res://.godot/imported/resonant.svg-0077d320a2f4219136d7436ab0b3aaf5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/signature_badge_gray.png"
-dest_files=["res://.godot/imported/signature_badge_gray.png-cdfa4238f056bcf36fdd208b462ec7f5.ctex"]
+source_file="res://assets/ui/flavor_badges/resonant.svg"
+dest_files=["res://.godot/imported/resonant.svg-0077d320a2f4219136d7436ab0b3aaf5.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

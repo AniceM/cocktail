@@ -36,9 +36,8 @@ func _update_ui() -> void:
 		if flavor_stats[flavor] == 0:
 			continue
 		var flavor_stat_info = FlavorStatInfo.instantiate()
-		flavor_stat_info.color = flavor.color
-		flavor_stat_info.flavor_name = flavor.name
-		flavor_stat_info.value = str(flavor_stats[flavor])
+		flavor_stat_info.flavor = flavor
+		flavor_stat_info.value = flavor_stats[flavor]
 		flavor_stat_info_instances.append(flavor_stat_info)
 
 	# Add in order of biggest to smallest value

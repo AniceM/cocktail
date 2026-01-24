@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0qecprr74c6f"
-path="res://.godot/imported/signature_badge_large_gray.png-dd1147a21329ba13c6f1b27f9f8245da.ctex"
+uid="uid://te3x8luh5wx6"
+path="res://.godot/imported/caustic.svg-c2065ffb45f5615e1b2ceccc029a10c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/signature_badge_large_gray.png"
-dest_files=["res://.godot/imported/signature_badge_large_gray.png-dd1147a21329ba13c6f1b27f9f8245da.ctex"]
+source_file="res://assets/ui/flavor_badges/caustic.svg"
+dest_files=["res://.godot/imported/caustic.svg-c2065ffb45f5615e1b2ceccc029a10c0.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="Flavor" load_steps=5 format=3 uid="uid://b6uqt6sgi44nl"]
+[gd_resource type="Resource" script_class="Flavor" load_steps=6 format=3 uid="uid://b6uqt6sgi44nl"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_hora7"]
+[ext_resource type="Texture2D" uid="uid://o8sbydfws1dm" path="res://assets/ui/flavor_badges/resonant.svg" id="2_badge"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_etmv4"]
 [ext_resource type="Resource" uid="uid://bfnthbt57g12i" path="res://resources/secret_types/echo.tres" id="3_echo"]
 [ext_resource type="Resource" uid="uid://bj350oxh1wbxo" path="res://resources/secret_types/trigger.tres" id="4_trigger"]
@@ -8,6 +9,7 @@
 [resource]
 script = ExtResource("2_etmv4")
 name = "Resonant"
+icon = ExtResource("2_badge")
 color = Color(0.5764706, 0.4392157, 0.85882354, 1)
 description = "Layered purple - echoing, familiar, nostalgic memories"
 boosted_secret_types = Array[ExtResource("1_hora7")]([ExtResource("3_echo"), ExtResource("4_trigger")])

@@ -1,13 +1,15 @@
-[gd_resource type="Resource" script_class="Flavor" load_steps=5 format=3 uid="uid://dqq43sfhndaps"]
+[gd_resource type="Resource" script_class="Flavor" load_steps=6 format=3 uid="uid://dqq43sfhndaps"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_tagnm"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_apay5"]
+[ext_resource type="Texture2D" uid="uid://te3x8luh5wx6" path="res://assets/ui/flavor_badges/caustic.svg" id="2_badge"]
 [ext_resource type="Resource" uid="uid://c1l7qrmfd3fph" path="res://resources/secret_types/lie.tres" id="3_lie"]
 [ext_resource type="Resource" uid="uid://drkqd7ykkmffy" path="res://resources/secret_types/contradiction.tres" id="4_contradiction"]
 
 [resource]
 script = ExtResource("2_apay5")
 name = "Caustic"
+icon = ExtResource("2_badge")
 color = Color(0.25490198, 0.4117647, 0.88235295, 1)
 description = "Sharp, cutting blue - like concentrated truth piercing through"
 boosted_secret_types = Array[ExtResource("1_tagnm")]([ExtResource("3_lie"), ExtResource("4_contradiction")])

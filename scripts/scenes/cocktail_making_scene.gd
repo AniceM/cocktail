@@ -122,10 +122,6 @@ func update_debug_info() -> void:
 				debug_label.text += "  [color=#FFAA00]%s: %.0f%%[/color]\n" % [secret_type.name, reveal_rate * 100]
 
 		debug_label.text += "\n"
-	if glass_scene:
-		debug_label.text += "[color=#00FFFF][b][u]Glass Scene[/u][/b][/color]\n"
-		debug_label.text += "[color=#AAAAAA]Liquid Amount:[/color] %s / %s\n" % [glass_scene.liquid_amount, glass_scene.glass_max_liquids]
-		debug_label.text += "\n"
 
 # Route unhandled input event to the state machine
 # Probably not needed at first (control nodes will handle events themselves),

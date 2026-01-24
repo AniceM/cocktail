@@ -1,0 +1,52 @@
+
+            <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="void-1769293883332-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="rgb(150, 153, 154)" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="#2d3436" stop-opacity="0"/>
+                    </radialGradient>
+                    <radialGradient id="void-1769293883332-hole" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#000000"/>
+                        <stop offset="70%" stop-color="#2d3436"/>
+                        <stop offset="100%" stop-color="rgb(22, 26, 27)"/>
+                    </radialGradient>
+                    <linearGradient id="void-1769293883332-rim" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="rgb(192, 194, 194)"/>
+                        <stop offset="50%" stop-color="rgb(150, 153, 154)"/>
+                        <stop offset="100%" stop-color="rgb(36, 41, 43)"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#void-1769293883332-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="rgb(8, 10, 10)" stroke="url(#void-1769293883332-rim)" stroke-width="3"/>
+                
+                <!-- Void/black hole design -->
+                <g>
+                    <!-- Swirling matter being pulled in -->
+                    <ellipse cx="70" cy="70" rx="45" ry="20" fill="none" stroke="rgb(150, 153, 154)" stroke-width="1" opacity="0.3" transform="rotate(-20 70 70)"/>
+                    <ellipse cx="70" cy="70" rx="40" ry="18" fill="none" stroke="rgb(150, 153, 154)" stroke-width="1.5" opacity="0.4" transform="rotate(10 70 70)"/>
+                    <ellipse cx="70" cy="70" rx="35" ry="15" fill="none" stroke="rgb(150, 153, 154)" stroke-width="2" opacity="0.5" transform="rotate(-5 70 70)"/>
+                    <ellipse cx="70" cy="70" rx="28" ry="12" fill="none" stroke="url(#void-1769293883332-rim)" stroke-width="2" opacity="0.6" transform="rotate(25 70 70)"/>
+                    
+                    <!-- Central void -->
+                    <circle cx="70" cy="70" r="18" fill="url(#void-1769293883332-hole)"/>
+                    <circle cx="70" cy="70" r="10" fill="#000000"/>
+                    
+                    <!-- Event horizon glow -->
+                    <circle cx="70" cy="70" r="20" fill="none" stroke="rgb(192, 194, 194)" stroke-width="1.5" opacity="0.8"/>
+                    
+                    <!-- Scattered stars being consumed -->
+                    <circle cx="95" cy="50" r="1.5" fill="rgb(192, 194, 194)" opacity="0.8"/>
+                    <circle cx="45" cy="55" r="1" fill="rgb(192, 194, 194)" opacity="0.6"/>
+                    <circle cx="50" cy="90" r="1.5" fill="rgb(192, 194, 194)" opacity="0.7"/>
+                    <circle cx="90" cy="85" r="1" fill="rgb(192, 194, 194)" opacity="0.5"/>
+                    <circle cx="35" cy="70" r="1" fill="rgb(150, 153, 154)" opacity="0.4"/>
+                    <circle cx="105" cy="68" r="1" fill="rgb(150, 153, 154)" opacity="0.4"/>
+                </g>
+                
+                <!-- Subtle highlight -->
+                <ellipse cx="55" cy="50" rx="12" ry="6" fill="rgb(192, 194, 194)" opacity="0.08" transform="rotate(-30 55 50)"/>
+            </svg>

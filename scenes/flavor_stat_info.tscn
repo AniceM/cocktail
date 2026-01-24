@@ -1,29 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://dthjdr2uef2ib"]
+[gd_scene load_steps=5 format=3 uid="uid://dthjdr2uef2ib"]
 
 [ext_resource type="Script" uid="uid://xs60t7n34qyi" path="res://scripts/ui/flavor_stat_info.gd" id="1_ci7v3"]
-[ext_resource type="FontFile" uid="uid://q8bvteuqbi7u" path="res://assets/fonts/Courier_Prime/CourierPrime-Regular.ttf" id="2_fy148"]
+[ext_resource type="Texture2D" uid="uid://te3x8luh5wx6" path="res://assets/ui/flavor_badges/caustic.svg" id="2_fy148"]
+[ext_resource type="Resource" uid="uid://ch4po4u8501bh" path="res://resources/flavors/drift.tres" id="2_xypt8"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xypt8"]
+font_size = 18
 
 [node name="FlavorStatInfo" type="MarginContainer"]
 offset_right = 131.0
 offset_bottom = 18.0
 script = ExtResource("1_ci7v3")
+flavor = ExtResource("2_xypt8")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="ColorRect" type="ColorRect" parent="HBoxContainer"]
+[node name="FlavorBadge" type="TextureRect" parent="HBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-color = Color(0.7372549, 0.627451, 0.38431373, 1)
+texture = ExtResource("2_fy148")
+expand_mode = 2
+stretch_mode = 4
 
 [node name="FlavorStatLabel" type="Label" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 1
-theme_override_fonts/font = ExtResource("2_fy148")
-theme_override_font_sizes/font_size = 18
 text = "Temporal +4"
+label_settings = SubResource("LabelSettings_xypt8")

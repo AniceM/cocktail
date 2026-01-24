@@ -1,12 +1,14 @@
-[gd_resource type="Resource" script_class="Flavor" load_steps=4 format=3 uid="uid://coifug6hj7rfw"]
+[gd_resource type="Resource" script_class="Flavor" load_steps=5 format=3 uid="uid://coifug6hj7rfw"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_iv0hy"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_5xixv"]
+[ext_resource type="Texture2D" uid="uid://blnpdfxel8n6n" path="res://assets/ui/flavor_badges/temporal.svg" id="2_badge"]
 [ext_resource type="Resource" uid="uid://dm1h2eg2mgpkl" path="res://resources/secret_types/foreshadow.tres" id="3_foreshadow"]
 
 [resource]
 script = ExtResource("2_5xixv")
 name = "Temporal"
+icon = ExtResource("2_badge")
 color = Color(0.9607843, 0.9607843, 0.9607843, 1)
 description = "Timeless white-silver - ancient, heavy, prophetic"
 boosted_secret_types = Array[ExtResource("1_iv0hy")]([ExtResource("3_foreshadow")])

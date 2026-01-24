@@ -1,20 +1,30 @@
 extends MarginContainer
 
-# @onready var icon: TextureRect = %Icon
-# temporary ColorRect while we don't have icons
-@onready var color_rect: ColorRect = %ColorRect
+@onready var flavor_badge: TextureRect = %FlavorBadge
 @onready var flavor_stat_label: Label = %FlavorStatLabel
 
-var flavor_name: String
+@export var flavor: Flavor:
+	set(new_flavor):
+		flavor = new_flavor
+		if is_node_ready():
+			_update_ui()
 
-var value: int = 0
-
-var color: Color = Color.WHITE
+@export var value: int = 0:
+	set(new_value):
+		value = new_value
+		if is_node_ready():
+			_update_ui()
 
 func _ready() -> void:
 	_update_ui()
 
 func _update_ui() -> void:
-	color_rect.color = color
+	if not flavor:
+		return
+
+	# Update badge texture from flavor resource
+	flavor_badge.texture = flavor.icon
+
+	# Update label text
 	var v_sign = "+" if value >= 0 else "-"
-	flavor_stat_label.text = flavor_name + " " + v_sign + str(abs(value))
+	flavor_stat_label.text = flavor.name + " " + v_sign + str(abs(value))

@@ -1,0 +1,62 @@
+
+            <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="temporal-1769293883433-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#f5f6fa" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="#f5f6fa" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="temporal-1769293883433-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="rgb(247, 247, 251)"/>
+                        <stop offset="50%" stop-color="rgb(147, 147, 150)"/>
+                        <stop offset="100%" stop-color="rgb(171, 172, 175)"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#temporal-1769293883433-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="rgb(208, 209, 212)" stroke="url(#temporal-1769293883433-main)" stroke-width="3"/>
+                
+                <!-- Temporal/time design - hourglass with flowing sand -->
+                <g>
+                    <!-- Hourglass frame -->
+                    <path d="M45 35 L95 35 L75 65 L95 95 L95 105 L45 105 L45 95 L65 65 L45 35 Z" 
+                          fill="none" stroke="url(#temporal-1769293883433-main)" stroke-width="3" stroke-linejoin="round"/>
+                    
+                    <!-- Top glass fill -->
+                    <path d="M50 40 L90 40 L74 60 L66 60 Z" fill="rgb(196, 196, 200)" opacity="0.3"/>
+                    
+                    <!-- Bottom glass fill (accumulated sand) -->
+                    <path d="M50 100 L90 100 L90 95 L75 80 L65 80 L50 95 Z" fill="rgb(196, 196, 200)" opacity="0.6"/>
+                    
+                    <!-- Falling sand stream -->
+                    <line x1="70" y1="62" x2="70" y2="78" stroke="rgb(196, 196, 200)" stroke-width="2" opacity="0.8"/>
+                    
+                    <!-- Sand particles -->
+                    <circle cx="70" cy="65" r="1.5" fill="rgb(196, 196, 200)"/>
+                    <circle cx="70" cy="70" r="1" fill="rgb(196, 196, 200)" opacity="0.8"/>
+                    <circle cx="70" cy="75" r="1.5" fill="rgb(196, 196, 200)" opacity="0.6"/>
+                    
+                    <!-- Time tick marks around edge -->
+                    <g stroke="rgb(147, 147, 150)" stroke-width="1.5" opacity="0.5">
+                        <line x1="70" y1="20" x2="70" y2="26"/>
+                        <line x1="70" y1="114" x2="70" y2="120"/>
+                        <line x1="20" y1="70" x2="26" y2="70"/>
+                        <line x1="114" y1="70" x2="120" y2="70"/>
+                        
+                        <!-- Diagonal marks -->
+                        <line x1="35" y1="35" x2="39" y2="39" opacity="0.3"/>
+                        <line x1="105" y1="35" x2="101" y2="39" opacity="0.3"/>
+                        <line x1="35" y1="105" x2="39" y2="101" opacity="0.3"/>
+                        <line x1="105" y1="105" x2="101" y2="101" opacity="0.3"/>
+                    </g>
+                    
+                    <!-- Circular time arrows -->
+                    <path d="M28 55 Q20 70 28 85" fill="none" stroke="rgb(147, 147, 150)" stroke-width="1.5" opacity="0.4"/>
+                    <path d="M112 55 Q120 70 112 85" fill="none" stroke="rgb(147, 147, 150)" stroke-width="1.5" opacity="0.4"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="50" rx="10" ry="5" fill="rgb(248, 248, 251)" opacity="0.15" transform="rotate(-30 55 50)"/>
+            </svg>

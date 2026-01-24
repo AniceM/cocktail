@@ -1,0 +1,46 @@
+
+            <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="resonant-1769293883233-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#c56cf0" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="#c56cf0" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="resonant-1769293883233-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="rgb(214, 152, 244)"/>
+                        <stop offset="50%" stop-color="#c56cf0"/>
+                        <stop offset="100%" stop-color="rgb(137, 75, 168)"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#resonant-1769293883233-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="rgb(59, 32, 72)" stroke="url(#resonant-1769293883233-main)" stroke-width="3"/>
+                
+                <!-- Resonance/sound wave design -->
+                <g fill="none" stroke="url(#resonant-1769293883233-main)" stroke-linecap="round">
+                    <!-- Central resonating core -->
+                    <circle cx="70" cy="70" r="8" fill="url(#resonant-1769293883233-main)"/>
+                    <circle cx="70" cy="70" r="5" fill="rgb(226, 181, 247)"/>
+                    
+                    <!-- Expanding wave rings -->
+                    <circle cx="70" cy="70" r="18" stroke-width="2.5" opacity="0.9"/>
+                    <circle cx="70" cy="70" r="28" stroke-width="2" opacity="0.7"/>
+                    <circle cx="70" cy="70" r="38" stroke-width="1.5" opacity="0.5"/>
+                    <circle cx="70" cy="70" r="48" stroke-width="1" opacity="0.3"/>
+                    
+                    <!-- Sound wave peaks on sides -->
+                    <path d="M25 70 Q25 55 30 55 Q35 55 35 70 Q35 85 30 85 Q25 85 25 70" fill="url(#resonant-1769293883233-main)" stroke="none" opacity="0.8"/>
+                    <path d="M115 70 Q115 55 110 55 Q105 55 105 70 Q105 85 110 85 Q115 85 115 70" fill="url(#resonant-1769293883233-main)" stroke="none" opacity="0.8"/>
+                    
+                    <!-- Frequency dots -->
+                    <circle cx="70" cy="35" r="2" fill="rgb(220, 166, 246)" stroke="none"/>
+                    <circle cx="70" cy="105" r="2" fill="rgb(220, 166, 246)" stroke="none"/>
+                    <circle cx="35" cy="70" r="2" fill="rgb(220, 166, 246)" stroke="none"/>
+                    <circle cx="105" cy="70" r="2" fill="rgb(220, 166, 246)" stroke="none"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="55" rx="15" ry="8" fill="rgb(226, 181, 247)" opacity="0.12" transform="rotate(-30 55 55)"/>
+            </svg>

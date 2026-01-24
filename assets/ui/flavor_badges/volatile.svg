@@ -1,0 +1,54 @@
+
+            <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="volatile-1769293883032-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ff3838" stop-opacity="0.6"/>
+                        <stop offset="100%" stop-color="#ff3838" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="volatile-1769293883032-main" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="rgb(204, 44, 44)"/>
+                        <stop offset="50%" stop-color="#ff3838"/>
+                        <stop offset="100%" stop-color="rgb(255, 135, 135)"/>
+                    </linearGradient>
+                    <linearGradient id="volatile-1769293883032-flame" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="rgb(178, 39, 39)"/>
+                        <stop offset="40%" stop-color="#ff3838"/>
+                        <stop offset="80%" stop-color="rgb(255, 155, 155)"/>
+                        <stop offset="100%" stop-color="rgb(255, 195, 195)"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#volatile-1769293883032-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="rgb(76, 16, 16)" stroke="url(#volatile-1769293883032-main)" stroke-width="3"/>
+                
+                <!-- Explosion/volatile flame design -->
+                <g fill="url(#volatile-1769293883032-flame)">
+                    <!-- Central explosion burst -->
+                    <path d="M70 30 
+                             Q75 45 85 40 Q80 55 95 55 
+                             Q85 65 95 75 Q80 75 85 90 
+                             Q75 80 70 95 
+                             Q65 80 55 90 Q60 75 45 75 
+                             Q55 65 45 55 Q60 55 55 40 
+                             Q65 45 70 30 Z" 
+                          fill="url(#volatile-1769293883032-flame)"/>
+                    
+                    <!-- Inner core -->
+                    <circle cx="70" cy="62" r="15" fill="rgb(255, 175, 175)" opacity="0.7"/>
+                    <circle cx="70" cy="62" r="8" fill="rgb(255, 215, 215)" opacity="0.9"/>
+                    
+                    <!-- Spark particles -->
+                    <circle cx="45" cy="45" r="3" fill="rgb(255, 155, 155)"/>
+                    <circle cx="95" cy="48" r="2.5" fill="rgb(255, 155, 155)"/>
+                    <circle cx="50" cy="85" r="2" fill="rgb(255, 155, 155)"/>
+                    <circle cx="92" cy="82" r="2.5" fill="rgb(255, 155, 155)"/>
+                    <circle cx="38" cy="65" r="2" fill="rgb(255, 135, 135)"/>
+                    <circle cx="102" cy="62" r="2" fill="rgb(255, 135, 135)"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="50" rx="12" ry="6" fill="rgb(255, 175, 175)" opacity="0.2" transform="rotate(-30 55 50)"/>
+            </svg>

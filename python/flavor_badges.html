@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flavor Profile Badges</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto 50px;
+        }
+        
+        .badge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .badge-container:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .badge-container svg {
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+        }
+        
+        .badge-label {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .badge-desc {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .controls {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .controls h2 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: #aaa;
+        }
+        
+        .color-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        
+        .color-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .color-input label {
+            font-size: 0.9rem;
+            min-width: 80px;
+        }
+        
+        .color-input input[type="color"] {
+            width: 50px;
+            height: 35px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: transparent;
+        }
+        
+        .btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .export-section {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .export-section .btn {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flavor Profile Badges</h1>
+    <p class="subtitle">Cocktail Game • Visual Identity System</p>
+    
+    <div class="controls">
+        <h2>🎨 Customize Colors</h2>
+        <div class="color-inputs">
+            <div class="color-input">
+                <label>Caustic:</label>
+                <input type="color" id="color-caustic" value="#00a8ff">
+            </div>
+            <div class="color-input">
+                <label>Volatile:</label>
+                <input type="color" id="color-volatile" value="#ff3838">
+            </div>
+            <div class="color-input">
+                <label>Drift:</label>
+                <input type="color" id="color-drift" value="#32ff7e">
+            </div>
+            <div class="color-input">
+                <label>Resonant:</label>
+                <input type="color" id="color-resonant" value="#c56cf0">
+            </div>
+            <div class="color-input">
+                <label>Void:</label>
+                <input type="color" id="color-void" value="#2d3436">
+            </div>
+            <div class="color-input">
+                <label>Temporal:</label>
+                <input type="color" id="color-temporal" value="#f5f6fa">
+            </div>
+        </div>
+        <button class="btn" onclick="updateAllBadges()">Apply Colors</button>
+    </div>
+    
+    <div class="badges-grid" id="badges-grid">
+        <!-- Badges will be inserted here -->
+    </div>
+    
+    <div class="export-section">
+        <h2 style="margin-bottom: 20px; color: #aaa;">Export Individual SVGs</h2>
+        <button class="btn" onclick="downloadSVG('caustic')">Download Caustic</button>
+        <button class="btn" onclick="downloadSVG('volatile')">Download Volatile</button>
+        <button class="btn" onclick="downloadSVG('drift')">Download Drift</button>
+        <button class="btn" onclick="downloadSVG('resonant')">Download Resonant</button>
+        <button class="btn" onclick="downloadSVG('void')">Download Void</button>
+        <button class="btn" onclick="downloadSVG('temporal')">Download Temporal</button>
+        <br><br>
+        <button class="btn" onclick="downloadAllSVGs()" style="background: linear-gradient(135deg, #f093fb, #f5576c);">Download All</button>
+    </div>
+
+    <script>
+        // Badge generation functions
+        const badgeSize = 140;
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+        
+        function getLuminance(hex) {
+            const rgb = hexToRgb(hex);
+            return (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+        }
+        
+        function darken(hex, amount) {
+            const rgb = hexToRgb(hex);
+            const factor = 1 - amount;
+            return `rgb(${Math.floor(rgb.r * factor)}, ${Math.floor(rgb.g * factor)}, ${Math.floor(rgb.b * factor)})`;
+        }
+        
+        function lighten(hex, amount) {
+            const rgb = hexToRgb(hex);
+            return `rgb(${Math.min(255, Math.floor(rgb.r + (255 - rgb.r) * amount))}, ${Math.min(255, Math.floor(rgb.g + (255 - rgb.g) * amount))}, ${Math.min(255, Math.floor(rgb.b + (255 - rgb.b) * amount))})`;
+        }
+        
+        function createCausticBadge(color) {
+            const id = 'caustic-' + Date.now();
+            return `
+            <svg width="${badgeSize}" height="${badgeSize}" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="${id}-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="${color}" stop-opacity="0.6"/>
+                        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="${id}-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${lighten(color, 0.3)}"/>
+                        <stop offset="50%" stop-color="${color}"/>
+                        <stop offset="100%" stop-color="${darken(color, 0.3)}"/>
+                    </linearGradient>
+                    <filter id="${id}-blur">
+                        <feGaussianBlur stdDeviation="2"/>
+                    </filter>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#${id}-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="${darken(color, 0.7)}" stroke="url(#${id}-main)" stroke-width="3"/>
+                
+                <!-- Caustic/acid drip design - corrosive drops eating away -->
+                <g fill="url(#${id}-main)">
+                    <!-- Central flask/beaker shape -->
+                    <path d="M55 45 L55 65 Q50 75 45 90 Q43 100 55 105 L85 105 Q97 100 95 90 Q90 75 85 65 L85 45 Z" 
+                          fill="${darken(color, 0.5)}" stroke="url(#${id}-main)" stroke-width="2"/>
+                    
+                    <!-- Bubbling liquid inside -->
+                    <ellipse cx="70" cy="95" rx="18" ry="6" fill="url(#${id}-main)" opacity="0.8"/>
+                    <circle cx="60" cy="88" r="4" fill="${lighten(color, 0.4)}" opacity="0.9"/>
+                    <circle cx="75" cy="85" r="3" fill="${lighten(color, 0.5)}" opacity="0.8"/>
+                    <circle cx="68" cy="80" r="2.5" fill="${lighten(color, 0.3)}" opacity="0.7"/>
+                    
+                    <!-- Dripping drops -->
+                    <path d="M50 105 Q48 115 52 120 Q56 125 52 120 Q48 115 50 105" fill="url(#${id}-main)" opacity="0.9"/>
+                    <path d="M65 105 Q63 112 66 116 Q70 120 66 116 Q63 112 65 105" fill="url(#${id}-main)" opacity="0.8"/>
+                    <path d="M88 102 Q92 110 88 118 Q84 125 88 118 Q92 110 88 102" fill="url(#${id}-main)" opacity="0.85"/>
+                    
+                    <!-- Vapor wisps -->
+                    <path d="M58 45 Q55 38 60 32 Q65 38 62 45" fill="none" stroke="${lighten(color, 0.4)}" stroke-width="1.5" opacity="0.6"/>
+                    <path d="M70 42 Q68 35 73 28 Q78 35 75 42" fill="none" stroke="${lighten(color, 0.4)}" stroke-width="1.5" opacity="0.5"/>
+                    <path d="M82 45 Q80 38 85 32 Q90 38 87 45" fill="none" stroke="${lighten(color, 0.4)}" stroke-width="1.5" opacity="0.6"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="55" rx="15" ry="8" fill="${lighten(color, 0.5)}" opacity="0.15" transform="rotate(-30 55 55)"/>
+            </svg>`;
+        }
+        
+        function createVolatileBadge(color) {
+            const id = 'volatile-' + Date.now();
+            return `
+            <svg width="${badgeSize}" height="${badgeSize}" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="${id}-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="${color}" stop-opacity="0.6"/>
+                        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="${id}-main" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="${darken(color, 0.2)}"/>
+                        <stop offset="50%" stop-color="${color}"/>
+                        <stop offset="100%" stop-color="${lighten(color, 0.4)}"/>
+                    </linearGradient>
+                    <linearGradient id="${id}-flame" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="${darken(color, 0.3)}"/>
+                        <stop offset="40%" stop-color="${color}"/>
+                        <stop offset="80%" stop-color="${lighten(color, 0.5)}"/>
+                        <stop offset="100%" stop-color="${lighten(color, 0.7)}"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#${id}-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="${darken(color, 0.7)}" stroke="url(#${id}-main)" stroke-width="3"/>
+                
+                <!-- Explosion/volatile flame design -->
+                <g fill="url(#${id}-flame)">
+                    <!-- Central explosion burst -->
+                    <path d="M70 30 
+                             Q75 45 85 40 Q80 55 95 55 
+                             Q85 65 95 75 Q80 75 85 90 
+                             Q75 80 70 95 
+                             Q65 80 55 90 Q60 75 45 75 
+                             Q55 65 45 55 Q60 55 55 40 
+                             Q65 45 70 30 Z" 
+                          fill="url(#${id}-flame)"/>
+                    
+                    <!-- Inner core -->
+                    <circle cx="70" cy="62" r="15" fill="${lighten(color, 0.6)}" opacity="0.7"/>
+                    <circle cx="70" cy="62" r="8" fill="${lighten(color, 0.8)}" opacity="0.9"/>
+                    
+                    <!-- Spark particles -->
+                    <circle cx="45" cy="45" r="3" fill="${lighten(color, 0.5)}"/>
+                    <circle cx="95" cy="48" r="2.5" fill="${lighten(color, 0.5)}"/>
+                    <circle cx="50" cy="85" r="2" fill="${lighten(color, 0.5)}"/>
+                    <circle cx="92" cy="82" r="2.5" fill="${lighten(color, 0.5)}"/>
+                    <circle cx="38" cy="65" r="2" fill="${lighten(color, 0.4)}"/>
+                    <circle cx="102" cy="62" r="2" fill="${lighten(color, 0.4)}"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="50" rx="12" ry="6" fill="${lighten(color, 0.6)}" opacity="0.2" transform="rotate(-30 55 50)"/>
+            </svg>`;
+        }
+        
+        function createDriftBadge(color) {
+            const id = 'drift-' + Date.now();
+            return `
+            <svg width="${badgeSize}" height="${badgeSize}" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="${id}-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="${color}" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="${id}-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${lighten(color, 0.3)}"/>
+                        <stop offset="50%" stop-color="${color}"/>
+                        <stop offset="100%" stop-color="${darken(color, 0.3)}"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#${id}-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="${darken(color, 0.7)}" stroke="url(#${id}-main)" stroke-width="3"/>
+                
+                <!-- Drift/flowing wind design -->
+                <g fill="none" stroke="url(#${id}-main)" stroke-linecap="round">
+                    <!-- Main flowing curves - like wind or gentle current -->
+                    <path d="M30 55 Q50 45 70 55 Q90 65 110 55" stroke-width="4" opacity="0.9"/>
+                    <path d="M25 70 Q45 60 70 70 Q95 80 115 70" stroke-width="5"/>
+                    <path d="M30 85 Q50 95 70 85 Q90 75 110 85" stroke-width="4" opacity="0.9"/>
+                    
+                    <!-- Lighter accent streams -->
+                    <path d="M35 48 Q55 42 75 48" stroke-width="2" stroke="${lighten(color, 0.4)}" opacity="0.6"/>
+                    <path d="M65 92 Q85 98 105 92" stroke-width="2" stroke="${lighten(color, 0.4)}" opacity="0.6"/>
+                    
+                    <!-- Floating particles -->
+                    <circle cx="45" cy="60" r="3" fill="url(#${id}-main)" stroke="none" opacity="0.8"/>
+                    <circle cx="70" cy="52" r="2.5" fill="${lighten(color, 0.3)}" stroke="none" opacity="0.7"/>
+                    <circle cx="95" cy="65" r="2" fill="url(#${id}-main)" stroke="none" opacity="0.6"/>
+                    <circle cx="55" cy="78" r="2" fill="${lighten(color, 0.4)}" stroke="none" opacity="0.7"/>
+                    <circle cx="85" cy="82" r="3" fill="url(#${id}-main)" stroke="none" opacity="0.8"/>
+                    <circle cx="40" cy="75" r="1.5" fill="${lighten(color, 0.5)}" stroke="none" opacity="0.5"/>
+                    <circle cx="100" cy="78" r="1.5" fill="${lighten(color, 0.5)}" stroke="none" opacity="0.5"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="55" rx="15" ry="8" fill="${lighten(color, 0.5)}" opacity="0.12" transform="rotate(-30 55 55)"/>
+            </svg>`;
+        }
+        
+        function createResonantBadge(color) {
+            const id = 'resonant-' + Date.now();
+            return `
+            <svg width="${badgeSize}" height="${badgeSize}" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="${id}-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="${color}" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="${id}-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${lighten(color, 0.3)}"/>
+                        <stop offset="50%" stop-color="${color}"/>
+                        <stop offset="100%" stop-color="${darken(color, 0.3)}"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#${id}-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="${darken(color, 0.7)}" stroke="url(#${id}-main)" stroke-width="3"/>
+                
+                <!-- Resonance/sound wave design -->
+                <g fill="none" stroke="url(#${id}-main)" stroke-linecap="round">
+                    <!-- Central resonating core -->
+                    <circle cx="70" cy="70" r="8" fill="url(#${id}-main)"/>
+                    <circle cx="70" cy="70" r="5" fill="${lighten(color, 0.5)}"/>
+                    
+                    <!-- Expanding wave rings -->
+                    <circle cx="70" cy="70" r="18" stroke-width="2.5" opacity="0.9"/>
+                    <circle cx="70" cy="70" r="28" stroke-width="2" opacity="0.7"/>
+                    <circle cx="70" cy="70" r="38" stroke-width="1.5" opacity="0.5"/>
+                    <circle cx="70" cy="70" r="48" stroke-width="1" opacity="0.3"/>
+                    
+                    <!-- Sound wave peaks on sides -->
+                    <path d="M25 70 Q25 55 30 55 Q35 55 35 70 Q35 85 30 85 Q25 85 25 70" fill="url(#${id}-main)" stroke="none" opacity="0.8"/>
+                    <path d="M115 70 Q115 55 110 55 Q105 55 105 70 Q105 85 110 85 Q115 85 115 70" fill="url(#${id}-main)" stroke="none" opacity="0.8"/>
+                    
+                    <!-- Frequency dots -->
+                    <circle cx="70" cy="35" r="2" fill="${lighten(color, 0.4)}" stroke="none"/>
+                    <circle cx="70" cy="105" r="2" fill="${lighten(color, 0.4)}" stroke="none"/>
+                    <circle cx="35" cy="70" r="2" fill="${lighten(color, 0.4)}" stroke="none"/>
+                    <circle cx="105" cy="70" r="2" fill="${lighten(color, 0.4)}" stroke="none"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="55" rx="15" ry="8" fill="${lighten(color, 0.5)}" opacity="0.12" transform="rotate(-30 55 55)"/>
+            </svg>`;
+        }
+        
+        function createVoidBadge(color) {
+            const id = 'void-' + Date.now();
+            const isVeryDark = getLuminance(color) < 0.15;
+            const accentColor = isVeryDark ? '#6c5ce7' : lighten(color, 0.5);
+            const rimColor = isVeryDark ? '#a29bfe' : lighten(color, 0.7);
+            
+            return `
+            <svg width="${badgeSize}" height="${badgeSize}" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="${id}-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="${accentColor}" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+                    </radialGradient>
+                    <radialGradient id="${id}-hole" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#000000"/>
+                        <stop offset="70%" stop-color="${color}"/>
+                        <stop offset="100%" stop-color="${darken(color, 0.5)}"/>
+                    </radialGradient>
+                    <linearGradient id="${id}-rim" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${rimColor}"/>
+                        <stop offset="50%" stop-color="${accentColor}"/>
+                        <stop offset="100%" stop-color="${darken(color, 0.2)}"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#${id}-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="${darken(color, 0.8)}" stroke="url(#${id}-rim)" stroke-width="3"/>
+                
+                <!-- Void/black hole design -->
+                <g>
+                    <!-- Swirling matter being pulled in -->
+                    <ellipse cx="70" cy="70" rx="45" ry="20" fill="none" stroke="${accentColor}" stroke-width="1" opacity="0.3" transform="rotate(-20 70 70)"/>
+                    <ellipse cx="70" cy="70" rx="40" ry="18" fill="none" stroke="${accentColor}" stroke-width="1.5" opacity="0.4" transform="rotate(10 70 70)"/>
+                    <ellipse cx="70" cy="70" rx="35" ry="15" fill="none" stroke="${accentColor}" stroke-width="2" opacity="0.5" transform="rotate(-5 70 70)"/>
+                    <ellipse cx="70" cy="70" rx="28" ry="12" fill="none" stroke="url(#${id}-rim)" stroke-width="2" opacity="0.6" transform="rotate(25 70 70)"/>
+                    
+                    <!-- Central void -->
+                    <circle cx="70" cy="70" r="18" fill="url(#${id}-hole)"/>
+                    <circle cx="70" cy="70" r="10" fill="#000000"/>
+                    
+                    <!-- Event horizon glow -->
+                    <circle cx="70" cy="70" r="20" fill="none" stroke="${rimColor}" stroke-width="1.5" opacity="0.8"/>
+                    
+                    <!-- Scattered stars being consumed -->
+                    <circle cx="95" cy="50" r="1.5" fill="${rimColor}" opacity="0.8"/>
+                    <circle cx="45" cy="55" r="1" fill="${rimColor}" opacity="0.6"/>
+                    <circle cx="50" cy="90" r="1.5" fill="${rimColor}" opacity="0.7"/>
+                    <circle cx="90" cy="85" r="1" fill="${rimColor}" opacity="0.5"/>
+                    <circle cx="35" cy="70" r="1" fill="${accentColor}" opacity="0.4"/>
+                    <circle cx="105" cy="68" r="1" fill="${accentColor}" opacity="0.4"/>
+                </g>
+                
+                <!-- Subtle highlight -->
+                <ellipse cx="55" cy="50" rx="12" ry="6" fill="${rimColor}" opacity="0.08" transform="rotate(-30 55 50)"/>
+            </svg>`;
+        }
+        
+        function createTemporalBadge(color) {
+            const id = 'temporal-' + Date.now();
+            const isVeryLight = getLuminance(color) > 0.85;
+            const strokeColor = isVeryLight ? darken(color, 0.4) : color;
+            const fillColor = isVeryLight ? darken(color, 0.2) : lighten(color, 0.3);
+            const bgColor = isVeryLight ? darken(color, 0.15) : darken(color, 0.7);
+            
+            return `
+            <svg width="${badgeSize}" height="${badgeSize}" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="${id}-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="${color}" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="${id}-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${lighten(color, 0.2)}"/>
+                        <stop offset="50%" stop-color="${strokeColor}"/>
+                        <stop offset="100%" stop-color="${darken(color, 0.3)}"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Outer glow -->
+                <circle cx="70" cy="70" r="65" fill="url(#${id}-glow)"/>
+                
+                <!-- Main badge circle -->
+                <circle cx="70" cy="70" r="55" fill="${bgColor}" stroke="url(#${id}-main)" stroke-width="3"/>
+                
+                <!-- Temporal/time design - hourglass with flowing sand -->
+                <g>
+                    <!-- Hourglass frame -->
+                    <path d="M45 35 L95 35 L75 65 L95 95 L95 105 L45 105 L45 95 L65 65 L45 35 Z" 
+                          fill="none" stroke="url(#${id}-main)" stroke-width="3" stroke-linejoin="round"/>
+                    
+                    <!-- Top glass fill -->
+                    <path d="M50 40 L90 40 L74 60 L66 60 Z" fill="${fillColor}" opacity="0.3"/>
+                    
+                    <!-- Bottom glass fill (accumulated sand) -->
+                    <path d="M50 100 L90 100 L90 95 L75 80 L65 80 L50 95 Z" fill="${fillColor}" opacity="0.6"/>
+                    
+                    <!-- Falling sand stream -->
+                    <line x1="70" y1="62" x2="70" y2="78" stroke="${fillColor}" stroke-width="2" opacity="0.8"/>
+                    
+                    <!-- Sand particles -->
+                    <circle cx="70" cy="65" r="1.5" fill="${fillColor}"/>
+                    <circle cx="70" cy="70" r="1" fill="${fillColor}" opacity="0.8"/>
+                    <circle cx="70" cy="75" r="1.5" fill="${fillColor}" opacity="0.6"/>
+                    
+                    <!-- Time tick marks around edge -->
+                    <g stroke="${strokeColor}" stroke-width="1.5" opacity="0.5">
+                        <line x1="70" y1="20" x2="70" y2="26"/>
+                        <line x1="70" y1="114" x2="70" y2="120"/>
+                        <line x1="20" y1="70" x2="26" y2="70"/>
+                        <line x1="114" y1="70" x2="120" y2="70"/>
+                        
+                        <!-- Diagonal marks -->
+                        <line x1="35" y1="35" x2="39" y2="39" opacity="0.3"/>
+                        <line x1="105" y1="35" x2="101" y2="39" opacity="0.3"/>
+                        <line x1="35" y1="105" x2="39" y2="101" opacity="0.3"/>
+                        <line x1="105" y1="105" x2="101" y2="101" opacity="0.3"/>
+                    </g>
+                    
+                    <!-- Circular time arrows -->
+                    <path d="M28 55 Q20 70 28 85" fill="none" stroke="${strokeColor}" stroke-width="1.5" opacity="0.4"/>
+                    <path d="M112 55 Q120 70 112 85" fill="none" stroke="${strokeColor}" stroke-width="1.5" opacity="0.4"/>
+                </g>
+                
+                <!-- Highlight -->
+                <ellipse cx="55" cy="50" rx="10" ry="5" fill="${lighten(color, 0.3)}" opacity="0.15" transform="rotate(-30 55 50)"/>
+            </svg>`;
+        }
+        
+        const badgeGenerators = {
+            caustic: createCausticBadge,
+            volatile: createVolatileBadge,
+            drift: createDriftBadge,
+            resonant: createResonantBadge,
+            void: createVoidBadge,
+            temporal: createTemporalBadge
+        };
+        
+        const badgeDescriptions = {
+            caustic: "Corrosive • Acidic • Dissolving",
+            volatile: "Explosive • Unstable • Reactive",
+            drift: "Flowing • Ethereal • Weightless",
+            resonant: "Harmonic • Vibrating • Echoing",
+            void: "Emptiness • Absorption • Infinite",
+            temporal: "Time • Transient • Cyclical"
+        };
+        
+        function getColors() {
+            return {
+                caustic: document.getElementById('color-caustic').value,
+                volatile: document.getElementById('color-volatile').value,
+                drift: document.getElementById('color-drift').value,
+                resonant: document.getElementById('color-resonant').value,
+                void: document.getElementById('color-void').value,
+                temporal: document.getElementById('color-temporal').value
+            };
+        }
+        
+        function updateAllBadges() {
+            const colors = getColors();
+            const grid = document.getElementById('badges-grid');
+            grid.innerHTML = '';
+            
+            Object.entries(badgeGenerators).forEach(([name, generator]) => {
+                const container = document.createElement('div');
+                container.className = 'badge-container';
+                container.id = `badge-${name}`;
+                
+                const svg = generator(colors[name]);
+                container.innerHTML = svg;
+                
+                const label = document.createElement('div');
+                label.className = 'badge-label';
+                label.style.color = colors[name];
+                label.textContent = name;
+                container.appendChild(label);
+                
+                const desc = document.createElement('div');
+                desc.className = 'badge-desc';
+                desc.textContent = badgeDescriptions[name];
+                container.appendChild(desc);
+                
+                grid.appendChild(container);
+            });
+        }
+        
+        function downloadSVG(name) {
+            const colors = getColors();
+            const svg = badgeGenerators[name](colors[name]);
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `badge_${name}_${colors[name].replace('#', '')}.svg`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function downloadAllSVGs() {
+            Object.keys(badgeGenerators).forEach(name => {
+                setTimeout(() => downloadSVG(name), 100 * Object.keys(badgeGenerators).indexOf(name));
+            });
+        }
+        
+        // Initialize on load
+        updateAllBadges();
+    </script>
+</body>
+</html>

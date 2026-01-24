@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://rubxbrjldnjr"]
 
 [ext_resource type="Script" uid="uid://cdxxh61ecf007" path="res://scripts/ui/flavor_profile_chart.gd" id="1_bopkx"]
-[ext_resource type="Texture2D" uid="uid://d1da8ff2og3iu" path="res://assets/ui/spider_chart.png" id="1_lvgli"]
+[ext_resource type="Texture2D" uid="uid://d1da8ff2og3iu" path="res://assets/ui/deprecated/spider_chart.png" id="1_lvgli"]
 [ext_resource type="Shader" uid="uid://cykyoxtd4o6uw" path="res://resources/shaders/flavor_profile.gdshader" id="2_2owfg"]
 [ext_resource type="FontFile" uid="uid://q8bvteuqbi7u" path="res://assets/fonts/Courier_Prime/CourierPrime-Regular.ttf" id="3_i8gcd"]
 
