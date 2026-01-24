@@ -10,6 +10,9 @@ var glass: GlassType
 # A layer is a collection of liquors mixed together
 var layers: Array[CocktailLayer] = []
 
+# Total number of liquors poured (doesn't change when mixing)
+var liquors_poured: int = 0
+
 # Special ingredient added to the cocktail, if any
 var special_ingredient: SpecialIngredient = null
 
@@ -25,6 +28,7 @@ func _init(glass_type: GlassType) -> void:
 
 func reset() -> void:
 	layers.clear()
+	liquors_poured = 0
 	special_ingredient = null
 	signatures.clear()
 	_recalculate_flavor_stats()
@@ -32,9 +36,11 @@ func reset() -> void:
 # Add a liquor to the cocktail
 # Returns [success, is_new_layer]
 func add_liquor(liquor: Liquor) -> Array[bool]:
-	if get_total_liquor_count() >= glass.capacity:
+	if liquors_poured >= glass.capacity:
 		print("Glass is full!")
 		return [false, false]
+
+	liquors_poured += 1
 
 	# If the liquor is different from the last one, create a new layer
 	if layers.size() == 0 or !layers[-1].is_unique_liquor(liquor):
@@ -98,22 +104,11 @@ func _apply_glass_bonuses() -> void:
 				flavor_stats.set_value(flavor, flavor_stats.get_value(flavor) * 2)
 		# Add more cases as needed
 
-# func detect_signatures(signature_database: Array[Signature]) -> void:
-# 	signatures.clear()
-# 	for sig in signature_database:
-# 		if check_signature_match(sig):
-# 			signatures.append(sig)
+func detect_signatures(signature_database: Array[Signature]) -> void:
+	signatures = SignatureValidator.detect_signatures(self, signature_database)
 
-# func check_signature_match(sig: Signature) -> bool:
-# 	# Implement signature detection logic
-# 	# This will check flavor thresholds, color patterns, etc.
-# 	return false
-
-func get_total_liquor_count() -> int:
-	var count = 0
-	for layer in layers:
-		count += layer.liquors.size()
-	return count
+func check_signature_match(sig: Signature) -> bool:
+	return SignatureValidator.check_signature(self, sig)
 
 func get_reveal_rate(secret_type: SecretType) -> float:
 	var base_rate = 0.0

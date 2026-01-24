@@ -76,9 +76,39 @@ func update_debug_info() -> void:
 	if cocktail:
 		debug_label.text += "[color=#00FFFF][b][u]Cocktail[/u][/b][/color]\n"
 		debug_label.text += "[color=#AAAAAA]Glass:[/color] %s\n" % cocktail.glass.name
-		debug_label.text += "[color=#AAAAAA]Capacity:[/color] %s / %s\n" % [cocktail.get_total_liquor_count(), cocktail.glass.capacity]
+		debug_label.text += "[color=#AAAAAA]Liquors Poured:[/color] [color=#FFFF00]%s[/color] / %s\n" % [cocktail.liquors_poured, cocktail.glass.capacity]
+		debug_label.text += "[color=#AAAAAA]Layers:[/color] [color=#FFFF00]%s[/color]\n" % cocktail.layers.size()
 
-		debug_label.text += "[color=#AAAAAA]Flavor Stats:[/color]\n"
+		# Layer breakdown
+		if cocktail.layers.size() > 0:
+			debug_label.text += "\n[color=#AAAAAA]Layer Breakdown:[/color]\n"
+			for i in range(cocktail.layers.size()):
+				var layer = cocktail.layers[i]
+				var dominant = layer.flavor_stats.get_dominant_flavor()
+				var dominant_value = layer.flavor_stats.get_value(dominant) if dominant else 0
+				var layer_color_hex = layer.color.to_html(false)
+				var color_names_enums = ColorUtils.get_matching_color_names(layer.color)
+				var color_names_str = "/".join(color_names_enums.map(func(e): return ColorUtils.ColorName.keys()[e]))
+
+				debug_label.text += "  [bgcolor=#%s]   [/bgcolor] " % layer_color_hex
+				debug_label.text += "[color=#CCCCCC]Layer %d:[/color] " % (i + 1)
+				if dominant:
+					debug_label.text += "[color=#00FF88]%s[/color] (%d) " % [dominant.name, dominant_value]
+				debug_label.text += "[color=#888888]%s[/color]\n" % color_names_str
+
+			# Layer colors sequence
+			debug_label.text += "\n[color=#AAAAAA]Color Sequence:[/color] "
+			for i in range(cocktail.layers.size()):
+				var layer = cocktail.layers[i]
+				var color_names_enums = ColorUtils.get_matching_color_names(layer.color)
+				var color_names_str = "/".join(color_names_enums.map(func(e): return ColorUtils.ColorName.keys()[e]))
+				var layer_color_hex = layer.color.to_html(false)
+				debug_label.text += "[bgcolor=#%s][color=#000000] %s [/color][/bgcolor]" % [layer_color_hex, color_names_str]
+				if i < cocktail.layers.size() - 1:
+					debug_label.text += " → "
+			debug_label.text += "\n"
+
+		debug_label.text += "\n[color=#AAAAAA]Total Flavor Stats:[/color]\n"
 		for flavor in cocktail.flavor_stats.stats:
 			var value = cocktail.flavor_stats.get_value(flavor)
 			if value != 0:

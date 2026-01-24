@@ -417,7 +417,6 @@ func _reset_base_shader_state() -> void:
 	# Visual Aspect
 	_set_shader_parameter(base_shader, "show_ellipse", true)
 	_set_shader_parameter(base_shader, "show_fill", true)
-	_set_shader_parameter(base_shader, "use_top_clip", false)
 	_set_shader_parameter(base_shader, "top_fade_height", 0.0)
 
 
@@ -437,9 +436,8 @@ func _create_new_layer(color: Color) -> Sprite2D:
 	# Set the color of the new layer
 	_set_liquid_color(new_shader, color)
 
-	# Hide the ellipse of the layer below and enable top clip
+	# Hide the ellipse of the layer below
 	_set_shader_parameter(current_shader, "show_ellipse", false)
-	_set_shader_parameter(current_shader, "use_top_clip", true)
 
 	# Mark the current layer as needing fade when animation runs
 	layer_to_fade = current_liquid

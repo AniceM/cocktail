@@ -19,13 +19,6 @@ uniform float ellipse_ratio : hint_range(0.0, 1.0) = 0.5; // Height/Width ratio 
 uniform float ellipse_center_y : hint_range(0.0, 1.0) = 0.281; // 0.0=Top, 1.0=Bottom
 uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426; // Width of the liquid surface
 
-// Top clip (for stacking layers)
-// Used when this liquid is BELOW another liquid layer
-uniform bool use_top_clip = false;
-uniform float top_clip_center_y : hint_range(0.0, 1.0) = 0.3;
-uniform float top_clip_radius_x : hint_range(0.0, 1.0) = 0.45;
-uniform float top_clip_radius_y : hint_range(0.0, 0.5) = 0.15;
-
 // ============================================================================
 // Animation (Wobble & Wave/Splash)
 // ============================================================================
@@ -365,24 +358,10 @@ void fragment() {
 	// Pixel is in the body if: inside mask AND below the surface curve
 	bool in_body = inside_mask && (pos.y > surface_y_wobbled);
 
-	// C. Top Clip Logic (Masking for Layers)
-	// If this liquid is covered by another layer, we subtract the top layer's shape
-	bool clipped_by_top = false;
-	if (use_top_clip && in_body) {
-		vec2 top_clip_center = vec2(0.5, top_clip_center_y);
-		vec2 top_clip_pos = UV - top_clip_center;
-		float top_wobble = get_sync_wobble(top_clip_pos.x);
-		top_clip_pos.y -= top_wobble;
-		// Reuse existing SDF function to check if we are "inside" the layer above us
-		if (ellipse_sdf(top_clip_pos, vec2(top_clip_radius_x, top_clip_radius_y)) < 0.0) {
-			clipped_by_top = true;
-		}
-	}
-
 	// 4. Region Checks
 	// ========================================================================
 	bool in_ellipse = show_ellipse && dist_surface < 0.0 && inside_mask;
-	bool in_fill = show_fill && in_body && !clipped_by_top;
+	bool in_fill = show_fill && in_body;
 
 	// 5. Coloring
 	// ========================================================================
