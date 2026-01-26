@@ -6,19 +6,19 @@ extends Node
 signal liquor_unlocked(liquor: Liquor)
 signal glass_unlocked(glass: GlassType)
 signal special_ingredient_unlocked(ingredient: SpecialIngredient)
-signal signature_discovered(signature: Signature)
+signal signature_unlocked(signature: Signature)
 
 # Unlocked items (stored as names for save/load compatibility)
 var unlocked_liquor_names: Array[String] = []
 var unlocked_glass_names: Array[String] = []
 var unlocked_ingredient_names: Array[String] = []
-var discovered_signature_names: Array[String] = []
+var unlocked_signature_names: Array[String] = []
 
 func _ready() -> void:
 	# Wait for GameDataRegistry to load first
 	_unlock_everything()
 
-# Temporary: Unlock everything until save/load is implemented
+# Temporary: Unlock (almost) everything until save/load is implemented
 func _unlock_everything() -> void:
 	for liquor in GameDataRegistry.all_liquors:
 		unlocked_liquor_names.append(liquor.name)
@@ -30,7 +30,8 @@ func _unlock_everything() -> void:
 		unlocked_ingredient_names.append(ingredient.name)
 
 	for signature in GameDataRegistry.all_signatures:
-		discovered_signature_names.append(signature.name)
+		if !signature.name.contains("Purity"):
+			unlocked_signature_names.append(signature.name)
 
 	print("Player progression initialized (everything unlocked for testing)")
 
@@ -53,7 +54,7 @@ func get_special_ingredients() -> Array[SpecialIngredient]:
 
 func get_signatures() -> Array[Signature]:
 	return GameDataRegistry.all_signatures.filter(
-		func(signature): return signature.name in discovered_signature_names
+		func(signature): return signature.name in unlocked_signature_names
 	)
 
 # Check methods
@@ -66,8 +67,8 @@ func is_glass_unlocked(glass: GlassType) -> bool:
 func is_special_ingredient_unlocked(ingredient: SpecialIngredient) -> bool:
 	return ingredient.name in unlocked_ingredient_names
 
-func is_signature_discovered(signature: Signature) -> bool:
-	return signature.name in discovered_signature_names
+func is_signature_unlocked(signature: Signature) -> bool:
+	return signature.name in unlocked_signature_names
 
 # Unlock methods - called by game events
 func unlock_liquor(liquor_name: String) -> void:
@@ -97,14 +98,14 @@ func unlock_special_ingredient(ingredient_name: String) -> void:
 	if ingredient:
 		special_ingredient_unlocked.emit(ingredient)
 
-func discover_signature(signature_name: String) -> void:
-	if signature_name in discovered_signature_names:
+func unlock_signature(signature_name: String) -> void:
+	if signature_name in unlocked_signature_names:
 		return
 
-	discovered_signature_names.append(signature_name)
+	unlocked_signature_names.append(signature_name)
 	var signature = GameDataRegistry.get_signature(signature_name)
 	if signature:
-		signature_discovered.emit(signature)
+		signature_unlocked.emit(signature)
 
 # Save/load methods (to be implemented later)
 func get_save_data() -> Dictionary:
@@ -112,11 +113,11 @@ func get_save_data() -> Dictionary:
 		"unlocked_liquors": unlocked_liquor_names,
 		"unlocked_glasses": unlocked_glass_names,
 		"unlocked_ingredients": unlocked_ingredient_names,
-		"discovered_signatures": discovered_signature_names,
+		"unlocked_signatures": unlocked_signature_names,
 	}
 
 func load_save_data(data: Dictionary) -> void:
 	unlocked_liquor_names = data.get("unlocked_liquors", [])
 	unlocked_glass_names = data.get("unlocked_glasses", [])
 	unlocked_ingredient_names = data.get("unlocked_ingredients", [])
-	discovered_signature_names = data.get("discovered_signatures", [])
+	unlocked_signature_names = data.get("unlocked_signatures", [])

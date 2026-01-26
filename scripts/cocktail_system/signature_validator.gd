@@ -29,11 +29,11 @@ static func check_signature(cocktail: Cocktail, signature: Signature) -> bool:
 
 	return true
 
-# Detect all matching signatures from a database
-static func detect_signatures(cocktail: Cocktail, signature_database: Array[Signature]) -> Array[Signature]:
+# Detect all matching signatures from the game registry
+static func detect_signatures(cocktail: Cocktail) -> Array[Signature]:
 	var matching: Array[Signature] = []
 
-	for signature in signature_database:
+	for signature in GameDataRegistry.all_signatures:
 		if check_signature(cocktail, signature):
 			matching.append(signature)
 

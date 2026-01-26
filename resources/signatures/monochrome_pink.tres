@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Signature" load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="1_signature"]
+
+[resource]
+script = ExtResource("1_signature")
+name = "Pink Purity"
+condition_description = "Create exactly 1 layer of pink color"
+min_capacity = 1
+min_layers = 1
+max_layers = 1
+color_requirement = 3
+required_color_names = Array[int]([8])
+metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

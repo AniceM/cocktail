@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://xvh17tek7uhl"]
+[gd_scene load_steps=9 format=3 uid="uid://xvh17tek7uhl"]
 
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/scenes/cocktail_making_scene.gd" id="1_ac75x"]
 [ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="2_slgu4"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://d1pifdvndfi24" path="res://scenes/add_ingredients_menu.tscn" id="4_fcfq3"]
 [ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://scenes/glass_scene.tscn" id="5_b2ome"]
 [ext_resource type="PackedScene" uid="uid://b37dhsp4c70nr" path="res://scenes/glass_selection_menu.tscn" id="5_slgu4"]
+[ext_resource type="PackedScene" uid="uid://tsexmwlm2tey" path="res://scenes/signature_badges_container.tscn" id="6_sc0oj"]
 [ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="6_vlt8w"]
 
 [node name="CocktailMakingScene" type="Node2D"]
@@ -78,25 +79,11 @@ offset_right = 75.0
 offset_bottom = 37.565002
 grow_horizontal = 1
 
-[node name="DebugPanel" type="PanelContainer" parent="HUD/FullScreenControl"]
-layout_mode = 0
-offset_right = 407.0
-offset_bottom = 500.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HUD/FullScreenControl/DebugPanel"]
-layout_mode = 2
-
-[node name="DebugTitle" type="Label" parent="HUD/FullScreenControl/DebugPanel/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 25
-text = "Debug"
-horizontal_alignment = 1
-
-[node name="DebugLabel" type="RichTextLabel" parent="HUD/FullScreenControl/DebugPanel/VBoxContainer"]
+[node name="SignatureBadgesContainer" parent="HUD/FullScreenControl" instance=ExtResource("6_sc0oj")]
 unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-bbcode_enabled = true
+layout_mode = 1
+offset_top = 200.0
+offset_bottom = 200.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="HUD/FullScreenControl"]
 layout_mode = 1
@@ -105,9 +92,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -102.0
+offset_left = -154.0
 offset_top = -100.0
-offset_right = 102.0
+offset_right = 154.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -129,6 +116,26 @@ custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 text = "Mix"
 
+[node name="DebugPanel" type="PanelContainer" parent="HUD/FullScreenControl"]
+layout_mode = 0
+offset_right = 407.0
+offset_bottom = 500.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/FullScreenControl/DebugPanel"]
+layout_mode = 2
+
+[node name="DebugTitle" type="Label" parent="HUD/FullScreenControl/DebugPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "Debug"
+horizontal_alignment = 1
+
+[node name="DebugLabel" type="RichTextLabel" parent="HUD/FullScreenControl/DebugPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+
 [node name="Camera2D" type="Camera2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(1147, 754)
@@ -136,7 +143,7 @@ zoom = Vector2(2, 2)
 
 [node name="GlassScene" parent="." instance=ExtResource("5_b2ome")]
 unique_name_in_owner = true
-position = Vector2(1145, 884.68)
+position = Vector2(1152, 884.68)
 scale = Vector2(0.3, 0.3)
 
 [node name="Jigger" type="Sprite2D" parent="."]

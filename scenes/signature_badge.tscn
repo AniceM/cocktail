@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://ck5xwpk0y67nc"]
+
+[ext_resource type="Script" uid="uid://tqcg3ojmtv5v" path="res://scripts/ui/signature_badge.gd" id="1_3fkkn"]
+[ext_resource type="Texture2D" uid="uid://cxcg6xsx3r5tv" path="res://assets/ui/signature_badges/signature_badge_gold.png" id="1_8uig6"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_3fkkn"]
+font_size = 30
+font_color = Color(0.97760254, 0.75380677, 0.250326, 1)
+shadow_size = 2
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(5, 5)
+
+[node name="SignatureBadge" type="Control"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_3fkkn")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+texture = ExtResource("1_8uig6")
+
+[node name="Label" type="Label" parent="TextureRect"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -28.0
+offset_right = 1.0
+offset_bottom = 35.00003
+grow_horizontal = 2
+grow_vertical = 0
+text = "Name"
+label_settings = SubResource("LabelSettings_3fkkn")
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,82 @@
+[gd_scene load_steps=3 format=3 uid="uid://tsexmwlm2tey"]
+
+[ext_resource type="Script" uid="uid://dchqhpq2sopfu" path="res://scripts/ui/signature_badges_container.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://ck5xwpk0y67nc" path="res://scenes/signature_badge.tscn" id="2_rw8ay"]
+
+[node name="SignatureBadgesContainer" type="Control"]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_script")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 64.0
+grow_horizontal = 2
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer"]
+layout_mode = 2
+columns = 10
+
+[node name="SignatureBadge" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge2" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge3" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge4" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge5" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge6" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge7" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge8" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge9" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge10" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge11" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge12" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge13" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge14" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge15" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge16" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge17" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge18" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge19" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2
+
+[node name="SignatureBadge20" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+layout_mode = 2

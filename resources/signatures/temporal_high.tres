@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Signature" load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="1_flavor"]
+[ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="1_signature"]
+[ext_resource type="Resource" uid="uid://coifug6hj7rfw" path="res://resources/flavors/temporal.tres" id="2_flavor_resource"]
+
+[resource]
+script = ExtResource("1_signature")
+name = "Temporal Surge"
+condition_description = "Achieve Temporal ≥ 7 with max 3 liquors"
+min_capacity = 0
+max_capacity = 3
+required_flavors = Dictionary[ExtResource("1_flavor"), int]({
+ExtResource("2_flavor_resource"): 7
+})
+metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

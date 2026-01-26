@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Signature" load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="1_flavor"]
+[ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="1_signature"]
+[ext_resource type="Resource" uid="uid://ch4po4u8501bh" path="res://resources/flavors/drift.tres" id="2_flavor_resource"]
+
+[resource]
+script = ExtResource("1_signature")
+name = "Drift Void"
+condition_description = "Achieve Drift = 0 with at least 3 liquors"
+min_capacity = 3
+max_capacity = 999
+required_flavors = Dictionary[ExtResource("1_flavor"), int]({
+ExtResource("2_flavor_resource"): 0
+})
+metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

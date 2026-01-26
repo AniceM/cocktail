@@ -29,6 +29,7 @@ const CAMERA_ZOOM_DURATION := 0.5
 @onready var flavor_profile_chart: Control = %FlavorProfileChart
 @onready var reset_button: Button = %ResetButton
 @onready var mix_button: Button = %MixButton
+@onready var signature_badges: Control = %SignatureBadgesContainer
 
 # Debug
 @onready var debug_label: RichTextLabel = %DebugLabel
@@ -146,15 +147,36 @@ func _on_add_liquor(liquor: Liquor) -> void:
 		# Update UI
 		glass_scene.add_liquid(liquor.color, is_new_layer, true)
 		flavor_profile_chart.update_flavor_profile(cocktail.flavor_stats, true)
+		_update_mix_button()
+
+		# Check if glass is full - detect and show signatures
+		if cocktail.liquors_poured == cocktail.glass.capacity:
+			cocktail.detect_signatures()
+			signature_badges.show_signatures(cocktail.signatures)
 
 func _on_reset_button_pressed() -> void:
 	cocktail.reset()
 	glass_scene.reset()
 	flavor_profile_chart.reset()
+	signature_badges.hide_signatures()
+	_update_mix_button()
 
 func _on_mix_button_pressed() -> void:
-	cocktail.mix()
-	glass_scene.mix(true)
+	var success = cocktail.mix()
+
+	if success:
+		# Update UI
+		glass_scene.mix(true)
+		_update_mix_button()
+
+		# Re-detect signatures if glass is full (mixing changes layer structure)
+		if cocktail.liquors_poured == cocktail.glass.capacity:
+			cocktail.detect_signatures()
+			signature_badges.show_signatures(cocktail.signatures)
+
+
+func _update_mix_button() -> void:
+	mix_button.disabled = cocktail == null or cocktail.layers.size() <= 1
 
 
 func _on_glass_selected(glass: GlassType) -> void:
@@ -173,6 +195,7 @@ func _on_glass_selection_button_pressed() -> void:
 	GameSession.current_cocktail = null
 	# Reset visuals
 	flavor_profile_chart.reset()
+	signature_badges.hide_signatures()
 	# Animate glass disappearing, then reset and return to glass selection
 	_animate_glass_out(func():
 		glass_scene.reset()

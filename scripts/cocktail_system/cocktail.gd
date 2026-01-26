@@ -56,9 +56,10 @@ func add_liquor(liquor: Liquor) -> Array[bool]:
 		_recalculate_flavor_stats()
 		return [true, false]
 
-func mix() -> void:
-	if layers.is_empty():
-		return
+func mix() -> bool:
+	# Need at least 2 layers to mix
+	if layers.size() <= 1:
+		return false
 
 	# Combine all layers into one
 	var combined_layer = CocktailLayer.new()
@@ -72,6 +73,7 @@ func mix() -> void:
 	layers.clear()
 	layers.append(combined_layer)
 	_recalculate_flavor_stats()
+	return true
 
 func add_special_ingredient(ingredient: SpecialIngredient) -> bool:
 	if special_ingredient != null:
@@ -104,8 +106,8 @@ func _apply_glass_bonuses() -> void:
 				flavor_stats.set_value(flavor, flavor_stats.get_value(flavor) * 2)
 		# Add more cases as needed
 
-func detect_signatures(signature_database: Array[Signature]) -> void:
-	signatures = SignatureValidator.detect_signatures(self, signature_database)
+func detect_signatures() -> void:
+	signatures = SignatureValidator.detect_signatures(self)
 
 func check_signature_match(sig: Signature) -> bool:
 	return SignatureValidator.check_signature(self, sig)
