@@ -29,9 +29,11 @@ var is_unlocked: bool = false
 # ============================================================================
 var unlock_tween: Tween
 var focus_tween: Tween
+var original_scale: Vector2
+
+# Animation durations
 const FOCUS_TWEEN_DURATION: float = 0.2
 const UNFOCUS_TWEEN_DURATION: float = 0.15
-var original_scale: Vector2
 
 # ============================================================================
 # Lifecycle
@@ -150,6 +152,65 @@ func unlock_with_animation() -> void:
 # Animation
 # ============================================================================
 
+func _elastic_overshoot(t: float) -> float:
+	"""Custom elastic interpolator with more pronounced overshoot.
+	t ranges from 0.0 to 1.0, return value should also be in similar range."""
+	# Enhanced elastic easing with more bounces
+	const AMPLITUDE = 1.5 # How much it overshoots (higher = more overshoot)
+	const PERIOD = 0.25 # Frequency of bounces (lower = more bounces)
+
+	if t == 0.0 or t == 1.0:
+		return t
+
+	# Exponential decay with sine wave for elastic effect
+	return pow(2.0, -10.0 * t) * sin((t - PERIOD / 4.0) * (2.0 * PI) / PERIOD) * AMPLITUDE + 1.0
+
+
+func animate_entrance(delay: float = 0.0) -> void:
+	"""Animate the badge entrance with staggered delay.
+	Uses Tweens to achieve TRANS_BACK and TRANS_ELASTIC effects."""
+	const ENTRANCE_DURATION: float = 0.25 # Scale up & fade in
+	const DROP_DURATION: float = 0.2 # Quick slam down
+	const BOUNCE_DURATION: float = 0.5 # Elastic bounce back
+	const DROP_DISTANCE: float = 10.0 # Initial drop distance
+
+	# Store original texture position for drop animation
+	var original_texture_pos = texture_rect.position
+
+	# Initialize in hidden state
+	modulate.a = 0
+	texture_rect.scale = original_scale * 0.5
+	texture_rect.position.y = original_texture_pos.y - DROP_DISTANCE
+
+	# Create animation sequence
+	var entrance_tween = create_tween()
+
+	# Fade in
+	entrance_tween.tween_property(self, "modulate:a", 1.0, ENTRANCE_DURATION).set_delay(delay)
+
+	# Scale up with TRANS_BACK
+	entrance_tween.parallel().tween_property(texture_rect, "scale", original_scale * 1.2, ENTRANCE_DURATION) \
+		.set_trans(Tween.TRANS_BACK) \
+		.set_ease(Tween.EASE_OUT) \
+		.set_delay(delay)
+
+	# Quick drop down with EASE_IN (accelerating impact)
+	entrance_tween.tween_property(texture_rect, "position:y", original_texture_pos.y, DROP_DURATION) \
+		.set_trans(Tween.TRANS_CUBIC) \
+		.set_ease(Tween.EASE_IN)
+
+	# Slam down to squashed scale (synchronized with position landing)
+	entrance_tween.parallel().tween_property(texture_rect, "scale", original_scale * 0.8, DROP_DURATION) \
+		.set_trans(Tween.TRANS_CUBIC) \
+		.set_ease(Tween.EASE_IN)
+
+	# Elastic bounce back to normal scale with custom interpolator for more control
+	entrance_tween.tween_property(texture_rect, "scale", original_scale, BOUNCE_DURATION) \
+		# .set_trans(Tween.TRANS_ELASTIC) \
+		# .set_ease(Tween.EASE_OUT) \
+		.set_custom_interpolator(_elastic_overshoot)
+
+
 func _animate_unlock() -> void:
 	"""Animate the transition from locked to unlocked state."""
 	# Kill any existing unlock animation
@@ -198,7 +259,7 @@ func _on_mouse_entered() -> void:
 		.set_ease(Tween.EASE_OUT)
 
 	# Tween shader parameters for smooth glow transition
-	focus_tween.tween_method(func(v): _set_shader_parameter("glow_intensity", v), GLOW_INTENSITY, 3.5, FOCUS_TWEEN_DURATION / 2)
+	focus_tween.tween_method(func(v): _set_shader_parameter("glow_intensity", v), GLOW_INTENSITY, 10.0, FOCUS_TWEEN_DURATION / 2)
 	focus_tween.tween_method(func(v): _set_shader_parameter("inner_glow_intensity", v), INNER_GLOW_INTENSITY, 0.3, FOCUS_TWEEN_DURATION / 2)
 	focus_tween.tween_method(func(v): _set_shader_parameter("pulse_amount", v), PULSE_AMOUNT, 0.0, FOCUS_TWEEN_DURATION / 2)
 

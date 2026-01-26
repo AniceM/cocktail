@@ -7,10 +7,11 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hnucp"]
 shader = ExtResource("2_re5w6")
 shader_parameter/glow_color = Color(1, 0.85, 0.4, 1)
-shader_parameter/glow_intensity = 1.5000000712500001
-shader_parameter/glow_size = 0.0400000019
+shader_parameter/glow_intensity = 1.5
+shader_parameter/glow_size = 0.04
 shader_parameter/pulse_speed = 3.0000001425
 shader_parameter/pulse_amount = 0.90000004275
+shader_parameter/inner_glow_color = Color(1, 0.85, 0.4, 1)
 shader_parameter/inner_glow_intensity = 0.250000011875
 shader_parameter/enable_shimmer = false
 shader_parameter/shimmer_interval = 2.0000000475
@@ -35,8 +36,9 @@ script = ExtResource("1_3fkkn")
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_hnucp")
 layout_mode = 0
-offset_right = 64.0
-offset_bottom = 64.0
+offset_right = 80.0
+offset_bottom = 80.0
+pivot_offset = Vector2(40, 40)
 texture = ExtResource("1_8uig6")
 
 [node name="Label" type="Label" parent="TextureRect"]

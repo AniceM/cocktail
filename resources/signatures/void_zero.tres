@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1_signature")
-name = "Void Void"
+name = "Void Zero"
 condition_description = "Achieve Void = 0 with at least 3 liquors"
 min_capacity = 3
 required_flavors = Dictionary[ExtResource("1_flavor"), int]({

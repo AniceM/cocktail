@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("1_signature")
-name = "Drift Void"
+name = "Drift Zero"
 condition_description = "Achieve Drift = 0 with at least 3 liquors"
 min_capacity = 3
 max_capacity = 999

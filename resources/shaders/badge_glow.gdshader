@@ -8,6 +8,7 @@ uniform float pulse_speed : hint_range(0.0, 5.0) = 3.0;
 uniform float pulse_amount : hint_range(0.0, 1.0) = 0.9;
 
 // Inner luminance
+uniform vec4 inner_glow_color : source_color = vec4(1.0, 0.85, 0.4, 1.0);
 uniform float inner_glow_intensity : hint_range(0.0, 1.0) = 0.25;
 
 // Optional shimmer - single band that sweeps across periodically
@@ -74,8 +75,8 @@ void fragment() {
     // Combine effects
     vec3 final_color = tex_color.rgb;
 
-    // Add inner glow to existing pixels
-    final_color += glow_color.rgb * inner_pulse * original_alpha;
+    // Add inner glow to existing pixels (uses separate inner_glow_color)
+    final_color += inner_glow_color.rgb * inner_pulse * original_alpha;
 
     // Add shimmer
     final_color += vec3(shimmer);
@@ -85,6 +86,9 @@ void fragment() {
 
     // Final alpha combines original + outer glow
     float final_alpha = max(original_alpha, outer_glow * 0.8);
+
+    // Respect parent modulate alpha
+    final_alpha *= COLOR.a;
 
     COLOR = vec4(final_color, final_alpha);
 }

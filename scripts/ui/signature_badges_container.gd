@@ -46,9 +46,12 @@ func show_signatures(signatures: Array[Signature]) -> void:
 
 	# Create and animate badges
 	for i in range(sorted_signatures.size()):
+		# Create badge
 		var signature = sorted_signatures[i]
 		var badge = _create_badge(signature)
-		_animate_badge_entrance(badge, i)
+		# Animate entrance
+		var delay = i * STAGGER_DELAY
+		badge.animate_entrance(delay)
 
 
 func hide_signatures() -> void:
@@ -79,48 +82,7 @@ func _create_badge(signature: Signature) -> Control:
 	grid_container.add_child(badge)
 	active_badges.append(badge)
 
-	# Initialize in hidden state for animation
-	badge.modulate.a = 0
-
 	return badge
-
-
-func _animate_badge_entrance(badge: Control, index: int) -> void:
-	"""Animate a single badge entrance with staggered delay."""
-	var delay = index * STAGGER_DELAY
-	var texture_rect = badge.texture_rect
-	var original_scale = badge.original_scale
-
-	# Store original texture position for drop animation
-	var original_texture_pos = texture_rect.position
-
-	# Initialize texture in scaled-down state
-	texture_rect.scale = original_scale * 0.5
-
-	# Displace texture upward
-	texture_rect.position.y -= DROP_DISTANCE
-
-	# Animate
-	var tween = create_tween()
-
-	# Fade in and scale up
-	tween.tween_property(badge, "modulate:a", 1.0, ENTRANCE_DURATION).set_delay(delay)
-
-	tween.parallel().tween_property(texture_rect, "scale", original_scale * 1.2, ENTRANCE_DURATION) \
-		.set_trans(Tween.TRANS_BACK) \
-		.set_ease(Tween.EASE_OUT) \
-		.set_delay(delay)
-
-	# Drop texture down and scale back with elastic
-	tween.tween_property(texture_rect, "position:y", original_texture_pos.y, SETTLE_DURATION) \
-		.set_trans(Tween.TRANS_BACK) \
-		.set_ease(Tween.EASE_OUT) \
-		.set_delay(delay)
-
-	tween.parallel().tween_property(texture_rect, "scale", original_scale, SETTLE_DURATION) \
-		.set_trans(Tween.TRANS_ELASTIC) \
-		.set_ease(Tween.EASE_OUT) \
-		.set_delay(delay)
 
 
 func _clear_badges() -> void:
