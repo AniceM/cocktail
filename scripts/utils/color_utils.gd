@@ -167,3 +167,53 @@ static func get_matching_color_names(color: Color, tolerance: float = 30.0) -> A
 static func get_closest_color_name(color: Color) -> ColorName:
 	var matches = get_matching_color_names(color)
 	return matches[0] if matches.size() > 0 else ColorName.NONE
+
+
+# Blend multiple colors together (simple RGB average)
+static func blend_colors(colors: Array[Color]) -> Color:
+	if colors.is_empty():
+		return Color.WHITE
+
+	if colors.size() == 1:
+		return colors[0]
+
+	var blended := Color(0, 0, 0, 1)
+	for color in colors:
+		blended.r += color.r
+		blended.g += color.g
+		blended.b += color.b
+
+	blended.r /= colors.size()
+	blended.g /= colors.size()
+	blended.b /= colors.size()
+
+	return blended
+
+
+# Convert a ColorName enum to an actual Color value
+static func color_name_to_color(color_name: ColorName) -> Color:
+	match color_name:
+		ColorName.RED:
+			return Color(1.0, 0.2, 0.2)
+		ColorName.ORANGE:
+			return Color(1.0, 0.6, 0.2)
+		ColorName.YELLOW:
+			return Color(1.0, 0.95, 0.3)
+		ColorName.GREEN:
+			return Color(0.3, 1.0, 0.4)
+		ColorName.CYAN:
+			return Color(0.3, 1.0, 1.0)
+		ColorName.BLUE:
+			return Color(0.3, 0.5, 1.0)
+		ColorName.PURPLE:
+			return Color(0.7, 0.3, 1.0)
+		ColorName.PINK:
+			return Color(1.0, 0.5, 0.8)
+		ColorName.WHITE:
+			return Color(1.0, 1.0, 1.0)
+		ColorName.BLACK:
+			return Color(0.2, 0.2, 0.25)
+		ColorName.GRAY:
+			return Color(0.6, 0.6, 0.65)
+		_:
+			return Color.WHITE

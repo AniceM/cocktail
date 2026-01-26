@@ -123,9 +123,6 @@ func _animate_badge_entrance(badge: Control, index: int, is_unlocked: bool) -> v
 		.set_ease(Tween.EASE_OUT) \
 		.set_delay(delay)
 
-	# Trigger glow effect after entrance
-	tween.tween_callback(func(): badge.play_glow(is_unlocked))
-
 
 func _clear_badges() -> void:
 	"""Remove all badge instances."""

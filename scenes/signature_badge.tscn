@@ -1,11 +1,26 @@
-[gd_scene load_steps=4 format=3 uid="uid://ck5xwpk0y67nc"]
+[gd_scene load_steps=6 format=3 uid="uid://ck5xwpk0y67nc"]
 
 [ext_resource type="Script" uid="uid://tqcg3ojmtv5v" path="res://scripts/ui/signature_badge.gd" id="1_3fkkn"]
 [ext_resource type="Texture2D" uid="uid://cxcg6xsx3r5tv" path="res://assets/ui/signature_badges/signature_badge_gold.png" id="1_8uig6"]
+[ext_resource type="Shader" uid="uid://xkodesld70ba" path="res://resources/shaders/badge_glow.gdshader" id="2_re5w6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hnucp"]
+shader = ExtResource("2_re5w6")
+shader_parameter/glow_color = Color(1, 0.85, 0.4, 1)
+shader_parameter/glow_intensity = 1.5000000712500001
+shader_parameter/glow_size = 0.0400000019
+shader_parameter/pulse_speed = 3.0000001425
+shader_parameter/pulse_amount = 0.90000004275
+shader_parameter/inner_glow_intensity = 0.250000011875
+shader_parameter/enable_shimmer = false
+shader_parameter/shimmer_interval = 2.0000000475
+shader_parameter/shimmer_duration = 1.00000004424012
+shader_parameter/shimmer_width = 0.25000001024506
+shader_parameter/shimmer_intensity = 0.50000002375
 
 [sub_resource type="LabelSettings" id="LabelSettings_3fkkn"]
 font_size = 30
-font_color = Color(0.97760254, 0.75380677, 0.250326, 1)
+font_color = Color(0.98, 0.85913336, 0.2548, 1)
 shadow_size = 2
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(5, 5)
@@ -17,6 +32,8 @@ anchors_preset = 0
 script = ExtResource("1_3fkkn")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_hnucp")
 layout_mode = 0
 offset_right = 64.0
 offset_bottom = 64.0

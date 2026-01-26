@@ -3,8 +3,17 @@ extends Control
 # ============================================================================
 # Visuals & References
 # ============================================================================
-@onready var texture_rect: TextureRect = $TextureRect
+@onready var texture_rect: TextureRect = %TextureRect
 @onready var label: Label = %Label
+
+# Badge glow shader
+var base_shader: ShaderMaterial # Cached shader material for direct access
+
+# Default shader parameters
+const GLOW_INTENSITY: float = 1.5
+const INNER_GLOW_INTENSITY: float = 0.2
+const PULSE_AMOUNT: float = 0.9
+const ENABLE_SHIMMER: bool = false
 
 # ============================================================================
 # Badge State
@@ -19,7 +28,9 @@ var is_unlocked: bool = false
 # Animation State
 # ============================================================================
 var unlock_tween: Tween
-var hover_tween: Tween
+var focus_tween: Tween
+const FOCUS_TWEEN_DURATION: float = 0.2
+const UNFOCUS_TWEEN_DURATION: float = 0.15
 var original_scale: Vector2
 
 # ============================================================================
@@ -27,6 +38,19 @@ var original_scale: Vector2
 # ============================================================================
 
 func _ready() -> void:
+	# Validate shader exists
+	base_shader = texture_rect.material as ShaderMaterial
+	if not base_shader:
+		push_error("SignatureBadge's TextureRect does not have a ShaderMaterial!")
+		return
+
+	# Duplicate the shader material so changes don't affect other badges
+	base_shader = base_shader.duplicate()
+	texture_rect.material = base_shader
+
+	# Reset shader to default values
+	reset_shader()
+
 	# Store original scale from scene
 	original_scale = texture_rect.scale
 
@@ -52,6 +76,12 @@ func set_signature(sig: Signature) -> void:
 	# Update UI to reflect the new signature's unlock state
 	_update_ui()
 
+func reset_shader() -> void:
+	"""Reset the shader to default values."""
+	base_shader.set_shader_parameter("glow_intensity", GLOW_INTENSITY)
+	base_shader.set_shader_parameter("inner_glow_intensity", INNER_GLOW_INTENSITY)
+	base_shader.set_shader_parameter("pulse_amount", PULSE_AMOUNT)
+	base_shader.set_shader_parameter("enable_shimmer", ENABLE_SHIMMER)
 
 # ============================================================================
 # UI Update
@@ -74,13 +104,18 @@ func _update_ui() -> void:
 	# Check if this signature has been unlocked by the player
 	if PlayerProgression.is_signature_unlocked(signature):
 		_set_unlocked()
-		label.label_settings.font_color = "#f9c040"
+		# Update label
+		label.label_settings.font_color = "#fadb41"
 		label.text = signature.name
+		# Update shader
+		base_shader.set_shader_parameter("glow_color", signature.get_glow_color())
 	else:
 		_set_locked()
+		# Update label
 		label.label_settings.font_color = "#42a3c3"
 		label.text = "???"
-
+		# Update shader
+		base_shader.set_shader_parameter("glow_color", Color.BLUE_VIOLET)
 
 # ============================================================================
 # Internal State Setters
@@ -136,46 +171,69 @@ func _animate_unlock() -> void:
 	# unlock_tween.tween_property(texture_rect, "modulate", Color.WHITE, 0.25)
 
 
-func play_glow(_is_unlocked_glow: bool) -> void:
-	"""Play glow effect after badge entrance. Shader implementation pending."""
-	# TODO: Implement glow shader
-	# is_unlocked_glow = true: gold/warm glow for unlocked badges
-	# is_unlocked_glow = false: blue/mysterious glow for locked badges
-	pass
-
-
 # ============================================================================
 # Hover Effects
 # ============================================================================
 
 func _on_mouse_entered() -> void:
 	"""Scale up the badge on hover."""
-	z_index = 1 # Draw on top of other badges
+	# Draw on top of other badges
+	z_index = 1
+	# Show label
 	label.show()
 	label.modulate.a = 0
-	if hover_tween:
-		hover_tween.kill()
-	hover_tween = create_tween().set_parallel()
-	hover_tween.tween_property(texture_rect, "scale", original_scale * 1.2, 0.2) \
+	# Enable shimmer immediately (boolean, can't tween)
+	base_shader.set_shader_parameter("enable_shimmer", true)
+
+	if focus_tween:
+		focus_tween.kill()
+	focus_tween = create_tween().set_parallel()
+
+	# Scale up and fade in label
+	focus_tween.tween_property(texture_rect, "scale", original_scale * 1.2, FOCUS_TWEEN_DURATION) \
 		.set_trans(Tween.TRANS_BACK) \
 		.set_ease(Tween.EASE_OUT)
-	hover_tween.tween_property(label, "modulate:a", 1.0, 0.2) \
+	focus_tween.tween_property(label, "modulate:a", 1.0, FOCUS_TWEEN_DURATION) \
 		.set_trans(Tween.TRANS_BACK) \
 		.set_ease(Tween.EASE_OUT)
+
+	# Tween shader parameters for smooth glow transition
+	focus_tween.tween_method(func(v): _set_shader_parameter("glow_intensity", v), GLOW_INTENSITY, 3.5, FOCUS_TWEEN_DURATION / 2)
+	focus_tween.tween_method(func(v): _set_shader_parameter("inner_glow_intensity", v), INNER_GLOW_INTENSITY, 0.3, FOCUS_TWEEN_DURATION / 2)
+	focus_tween.tween_method(func(v): _set_shader_parameter("pulse_amount", v), PULSE_AMOUNT, 0.0, FOCUS_TWEEN_DURATION / 2)
 
 
 func _on_mouse_exited() -> void:
 	"""Return badge to normal scale."""
+	# Reset z-index
 	z_index = 0
-	if hover_tween:
-		hover_tween.kill()
-	hover_tween = create_tween().set_parallel()
-	hover_tween.tween_property(texture_rect, "scale", original_scale, 0.1) \
+
+	if focus_tween:
+		focus_tween.kill()
+	focus_tween = create_tween().set_parallel()
+
+	# Scale down and fade out label
+	focus_tween.tween_property(texture_rect, "scale", original_scale, UNFOCUS_TWEEN_DURATION) \
 		.set_trans(Tween.TRANS_BACK) \
 		.set_ease(Tween.EASE_IN)
-	hover_tween.tween_property(label, "modulate:a", 0.0, 0.1) \
+	focus_tween.tween_property(label, "modulate:a", 0.0, UNFOCUS_TWEEN_DURATION) \
 		.set_trans(Tween.TRANS_BACK) \
 		.set_ease(Tween.EASE_IN)
-	hover_tween.finished.connect(func():
+
+	# Tween shader parameters back to defaults
+	var current_glow := base_shader.get_shader_parameter("glow_intensity") as float
+	var current_inner := base_shader.get_shader_parameter("inner_glow_intensity") as float
+	var current_pulse := base_shader.get_shader_parameter("pulse_amount") as float
+	focus_tween.tween_method(func(v): _set_shader_parameter("glow_intensity", v), current_glow, GLOW_INTENSITY, UNFOCUS_TWEEN_DURATION)
+	focus_tween.tween_method(func(v): _set_shader_parameter("inner_glow_intensity", v), current_inner, INNER_GLOW_INTENSITY, UNFOCUS_TWEEN_DURATION)
+	focus_tween.tween_method(func(v): _set_shader_parameter("pulse_amount", v), current_pulse, PULSE_AMOUNT, UNFOCUS_TWEEN_DURATION)
+
+	# Disable shimmer after tween completes
+	focus_tween.finished.connect(func():
+		base_shader.set_shader_parameter("enable_shimmer", ENABLE_SHIMMER)
 		label.hide()
-	)
+	, CONNECT_ONE_SHOT)
+
+
+func _set_shader_parameter(param: String, value: Variant) -> void:
+	base_shader.set_shader_parameter(param, value)
