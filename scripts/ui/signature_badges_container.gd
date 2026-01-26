@@ -48,8 +48,7 @@ func show_signatures(signatures: Array[Signature]) -> void:
 	for i in range(sorted_signatures.size()):
 		var signature = sorted_signatures[i]
 		var badge = _create_badge(signature)
-		var is_unlocked = PlayerProgression.is_signature_unlocked(signature)
-		_animate_badge_entrance(badge, i, is_unlocked)
+		_animate_badge_entrance(badge, i)
 
 
 func hide_signatures() -> void:
@@ -86,7 +85,7 @@ func _create_badge(signature: Signature) -> Control:
 	return badge
 
 
-func _animate_badge_entrance(badge: Control, index: int, is_unlocked: bool) -> void:
+func _animate_badge_entrance(badge: Control, index: int) -> void:
 	"""Animate a single badge entrance with staggered delay."""
 	var delay = index * STAGGER_DELAY
 	var texture_rect = badge.texture_rect
