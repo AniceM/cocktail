@@ -1,82 +1,82 @@
-[gd_scene load_steps=3 format=3 uid="uid://tsexmwlm2tey"]
+[gd_scene format=3 uid="uid://tsexmwlm2tey"]
 
 [ext_resource type="Script" uid="uid://dchqhpq2sopfu" path="res://scripts/ui/signature_badges_container.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://ck5xwpk0y67nc" path="res://scenes/signature_badge.tscn" id="2_rw8ay"]
 
-[node name="SignatureBadgesContainer" type="Control"]
+[node name="SignatureBadgesContainer" type="Control" unique_id=1436597023]
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
 script = ExtResource("1_script")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=2006137599]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 64.0
 grow_horizontal = 2
 
-[node name="GridContainer" type="GridContainer" parent="CenterContainer"]
+[node name="GridContainer" type="GridContainer" parent="CenterContainer" unique_id=1192293226]
 layout_mode = 2
 columns = 10
 
-[node name="SignatureBadge" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge" parent="CenterContainer/GridContainer" unique_id=1706024563 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge2" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge2" parent="CenterContainer/GridContainer" unique_id=539807568 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge3" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge3" parent="CenterContainer/GridContainer" unique_id=288216023 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge4" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge4" parent="CenterContainer/GridContainer" unique_id=1120959344 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge5" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge5" parent="CenterContainer/GridContainer" unique_id=567615909 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge6" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge6" parent="CenterContainer/GridContainer" unique_id=1866525368 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge7" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge7" parent="CenterContainer/GridContainer" unique_id=1989201969 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge8" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge8" parent="CenterContainer/GridContainer" unique_id=1341517396 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge9" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge9" parent="CenterContainer/GridContainer" unique_id=1765192341 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge10" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge10" parent="CenterContainer/GridContainer" unique_id=673172844 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge11" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge11" parent="CenterContainer/GridContainer" unique_id=1396235125 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge12" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge12" parent="CenterContainer/GridContainer" unique_id=139882466 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge13" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge13" parent="CenterContainer/GridContainer" unique_id=2035615169 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge14" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge14" parent="CenterContainer/GridContainer" unique_id=102059263 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge15" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge15" parent="CenterContainer/GridContainer" unique_id=1624647348 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge16" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge16" parent="CenterContainer/GridContainer" unique_id=1768216476 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge17" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge17" parent="CenterContainer/GridContainer" unique_id=1899697754 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge18" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge18" parent="CenterContainer/GridContainer" unique_id=1925580214 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge19" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge19" parent="CenterContainer/GridContainer" unique_id=1651094459 instance=ExtResource("2_rw8ay")]
 layout_mode = 2
 
-[node name="SignatureBadge20" parent="CenterContainer/GridContainer" instance=ExtResource("2_rw8ay")]
+[node name="SignatureBadge20" parent="CenterContainer/GridContainer" unique_id=416764028 instance=ExtResource("2_rw8ay")]
 layout_mode = 2

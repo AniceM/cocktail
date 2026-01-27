@@ -568,7 +568,6 @@ func _update_liquid_properties(sprite: Sprite2D, target_center_y: float, target_
 		var current_color = _get_liquid_color(sprite_shader)
 
 		# Tween fill level (ellipse_center_y)
-		print("Tween center Y from", current_center_y, "to", target_center_y)
 		fill_tween.tween_method(
 			func(value: float): _set_shader_parameter(sprite_shader, "ellipse_center_y", value),
 			current_center_y,

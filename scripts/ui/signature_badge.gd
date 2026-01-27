@@ -57,8 +57,7 @@ func _ready() -> void:
 	original_scale = texture_rect.scale
 
 	# Set pivot to center for hover scaling
-	var texture_size = texture_rect.texture.get_size()
-	texture_rect.pivot_offset = texture_size / 2.0
+	texture_rect.pivot_offset_ratio = Vector2(0.5, 0.5)
 
 	# Connect mouse signals for hover effect
 	mouse_entered.connect(_on_mouse_entered)
