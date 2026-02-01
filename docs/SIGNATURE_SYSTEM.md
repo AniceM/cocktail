@@ -44,7 +44,7 @@ cocktail.detect_signatures(all_signatures)
 - `max_layers: int` - Maximum layers allowed (default: 999)
 
 ### Flavor Requirements
-- `required_flavors: Dictionary[Flavor, int]` - Flavor minimums (e.g., {Caustic: 5, Volatile: 3})
+- `min_flavors: Dictionary[Flavor, int]` - Flavor minimums (e.g., {Caustic: 5, Volatile: 3})
 
 ### Flavor Progression (across layers)
 - `progression_flavor: Flavor` - Which flavor to track

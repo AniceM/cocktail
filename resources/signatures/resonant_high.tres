@@ -10,7 +10,7 @@ name = "Resonant Surge"
 condition_description = "Achieve Resonant ≥ 7 with max 3 liquors"
 min_capacity = 0
 max_capacity = 3
-required_flavors = Dictionary[ExtResource("1_flavor"), int]({
+min_flavors = Dictionary[ExtResource("1_flavor"), int]({
 ExtResource("2_flavor_resource"): 7
 })
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

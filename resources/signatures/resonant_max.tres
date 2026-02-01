@@ -10,7 +10,7 @@ name = "Resonant Overdrive"
 condition_description = "Achieve Resonant = 10 with at least 2 liquors"
 min_capacity = 2
 max_capacity = 999
-required_flavors = Dictionary[ExtResource("1_flavor"), int]({
+min_flavors = Dictionary[ExtResource("1_flavor"), int]({
 ExtResource("2_flavor_resource"): 10
 })
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

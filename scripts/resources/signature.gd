@@ -39,7 +39,8 @@ enum ColorRequirement {
 @export var max_layers: int = 999
 
 # Flavor requirements
-@export var required_flavors: Dictionary[Flavor, int] = {} # Flavor -> min_value
+@export var min_flavors: Dictionary[Flavor, int] = {} # Flavor -> min_value
+@export var max_flavors: Dictionary[Flavor, int] = {} # Flavor -> max_value (optional upper bound)
 
 # Flavor progression across layers
 @export var progression_flavor: Flavor = null # Which flavor to track
@@ -79,20 +80,20 @@ func get_glow_color() -> Color:
 
 func _get_single_flavor_color() -> Color:
 	# Use the first (and typically only) required flavor's color
-	if required_flavors.is_empty():
+	if min_flavors.is_empty():
 		return Color(1.0, 0.85, 0.4) # Default gold
 
-	var flavor: Flavor = required_flavors.keys()[0]
+	var flavor: Flavor = min_flavors.keys()[0]
 	return flavor.color if flavor else Color(1.0, 0.85, 0.4)
 
 
 func _get_multi_flavor_color() -> Color:
 	# Blend all required flavor colors
-	if required_flavors.is_empty():
+	if min_flavors.is_empty():
 		return Color(1.0, 0.85, 0.4) # Default gold
 
 	var colors: Array[Color] = []
-	for flavor: Flavor in required_flavors.keys():
+	for flavor: Flavor in min_flavors.keys():
 		if flavor:
 			colors.append(flavor.color)
 

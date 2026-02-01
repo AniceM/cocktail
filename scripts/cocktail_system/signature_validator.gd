@@ -39,13 +39,22 @@ static func detect_signatures(cocktail: Cocktail) -> Array[Signature]:
 
 	return matching
 
-# Check if cocktail meets required flavor minimums
+# Check if cocktail meets required flavor minimums and maximums
 static func _check_required_flavors(cocktail: Cocktail, signature: Signature) -> bool:
-	for flavor in signature.required_flavors:
-		var required_value = signature.required_flavors[flavor]
+	# Check minimum requirements
+	for flavor in signature.min_flavors:
+		var min_value = signature.min_flavors[flavor]
 		var actual_value = cocktail.flavor_stats.get_value(flavor)
-		if actual_value < required_value:
+		if actual_value < min_value:
 			return false
+
+	# Check maximum requirements
+	for flavor in signature.max_flavors:
+		var max_value = signature.max_flavors[flavor]
+		var actual_value = cocktail.flavor_stats.get_value(flavor)
+		if actual_value > max_value:
+			return false
+
 	return true
 
 # Check flavor progression patterns across layers
