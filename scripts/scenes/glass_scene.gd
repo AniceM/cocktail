@@ -14,6 +14,7 @@ signal animation_finished()
 @onready var bubbles: GPUParticles2D = %Bubbles
 @onready var droplets: GPUParticles2D = %DropletsGlobal
 @onready var droplets_container: Node2D = %DropletsContainer
+@onready var liquid_pour: Node2D = %LiquidPour
 
 # Shader representing the liquid (top ellipse with a rim, and fill content below)
 var base_shader: ShaderMaterial # Cached shader material for direct access
@@ -44,7 +45,7 @@ var glass_bottom_uv: float = 1.0 # Last row where glass exists (UV Y)
 # ============================================================================
 # Animation State
 # ============================================================================
-var fill_tween: Tween
+var fill_tween: Tween # Main animation tween controlling entire pour sequence
 var wobble_tween: Tween
 var splash_tween: Tween
 var pour_animation_duration: float = 0.5
@@ -199,10 +200,31 @@ func set_glass(glass: GlassType) -> void:
 	# (The _ready() call happened before we knew min_fill_center_y)
 	_set_liquid_amount(0, false)
 
+	# =========================================================================
+	# Configure Jigger Pour
+	# =========================================================================
+	# Position jigger above the glass opening (glass_top_uv with margin)
+	# and size stream to reach from there to glass bottom
+	var jigger_margin = 25 # pixels units above glass top
+	var jigger_global_y = _get_surface_global_y(glass_top_uv) - jigger_margin
+
+	# Calculate stream length (from jigger to glass bottom)
+	var bottom_global_y = _get_surface_global_y(glass_bottom_uv)
+	var stream_length = (bottom_global_y - jigger_global_y) / liquid_pour.global_scale.y
+
+	# Convert jigger global Y to local Y (relative to GlassScene)
+	var jigger_local_y = (jigger_global_y - global_position.y) / global_scale.y
+
+	liquid_pour.configure_for_glass(jigger_local_y, stream_length)
+
 	print("Glass '%s' loaded: bottom=%.3f, capacity=%d" % [glass.name, glass_bottom_uv, glass.capacity])
 
 
 func reset() -> void:
+	# Stop any running animations
+	if fill_tween:
+		_interrupt_current_animation()
+
 	# Switch to the original liquid sprite
 	current_liquid = liquid_sprite
 
@@ -218,6 +240,9 @@ func reset() -> void:
 	# Reset liquid amount
 	_set_liquid_amount(0, false)
 
+	# Reset jigger pour target for empty glass
+	liquid_pour.reset_target()
+
 # ============================================================================
 # Public API - Liquid Management
 # ============================================================================
@@ -229,8 +254,7 @@ func add_liquid(color: Color, is_new_layer: bool, animate: bool = false) -> void
 	# If it is a new layer and not the first, duplicate Sprite2D
 	# and add it to the scene to show the separation between layers
 	elif is_new_layer:
-		var new_liquid_sprite = _create_new_layer(color)
-		current_liquid = new_liquid_sprite
+		_create_new_layer(color)
 	else:
 		# Just update the color of current liquid sprite
 		_set_liquid_color(current_liquid.material as ShaderMaterial, color)
@@ -424,7 +448,7 @@ func _reset_base_shader_state() -> void:
 # Layer Management Helpers
 # ============================================================================
 
-func _create_new_layer(color: Color) -> Sprite2D:
+func _create_new_layer(color: Color):
 	# Duplicate to create new layer (will have all parts visible)
 	var new_liquid_sprite = current_liquid.duplicate() as Sprite2D
 
@@ -436,11 +460,9 @@ func _create_new_layer(color: Color) -> Sprite2D:
 	# Set the color of the new layer
 	_set_liquid_color(new_shader, color)
 
-	# Hide the ellipse of the layer below
-	_set_shader_parameter(current_shader, "show_ellipse", false)
-
-	# Mark the current layer as needing fade when animation runs
-	layer_to_fade = current_liquid
+	# Hide the new layer's ellipse initially - it will be shown when fill animation starts
+	# This prevents the surface color from changing before the jigger animation completes
+	_set_shader_parameter(new_shader, "show_ellipse", false)
 
 	# Add to the liquid layers container
 	liquid_layers.add_child(new_liquid_sprite)
@@ -451,7 +473,11 @@ func _create_new_layer(color: Color) -> Sprite2D:
 	# Track it
 	extra_liquid_sprites.append(new_liquid_sprite)
 
-	return new_liquid_sprite
+	# Mark the current layer as needing fade when animation runs
+	layer_to_fade = current_liquid
+
+	# Mark the new layer as the current
+	current_liquid = new_liquid_sprite
 
 
 func _free_extra_liquid_sprites() -> void:
@@ -532,77 +558,38 @@ func _calculate_center_y(amount: int) -> float:
 	return target_y
 
 
+func _get_surface_global_y(center_y: float) -> float:
+	"""Convert a UV center_y value to global Y position of the liquid surface.
+
+	The ellipse center_y can be anywhere in UV space, but the actual glass only exists
+	between glass_top_uv and glass_bottom_uv. When center_y is beyond the glass bottom
+	(empty glass), we clamp to the glass bottom.
+	"""
+	var tex_h = liquid_sprite.texture.get_height()
+
+	# Clamp center_y to the actual glass bounds
+	var valid_center_y = clampf(center_y, glass_top_uv, glass_bottom_uv)
+
+	# UV 0.5 is the center of the sprite (pivot point). Offset is distance from center.
+	var uv_offset_from_center = valid_center_y - 0.5
+	var pixel_offset = uv_offset_from_center * tex_h * liquid_sprite.global_scale.y
+	return liquid_sprite.global_position.y + pixel_offset
+
+
 # ============================================================================
 # Animation
 # ============================================================================
 
 func _update_liquid_properties(sprite: Sprite2D, target_center_y: float, target_color: Color, animate: bool, is_mix: bool = false) -> void:
 	"""Update a liquid sprite's fill level and shader color. Can animate or set instantly."""
-	var sprite_shader = sprite.material as ShaderMaterial
-
 	if animate:
-		# Kill any existing tween
-		if fill_tween:
-			fill_tween.kill()
-
-		# Create new tween
-		fill_tween = create_tween()
-		fill_tween.set_parallel(true) # Animate fill level and color simultaneously
-
-		# Emit animation started signal
-		animation_started.emit()
-
-		# Start droplets emission for pours (not for mixes)
-		if not is_mix:
-			_set_droplets_color(target_color)
-			var start_center_y = sprite_shader.get_shader_parameter("ellipse_center_y") as float
-			_sync_droplets_position(start_center_y)
-			droplets.emitting = true
-
-		# Start wobble and splash animation (non-blocking; animation_finished signal doesn't wait for it)
-		_animate_wobble()
-		_animate_splash(is_mix)
-
-		# Get current values to animate from
-		var current_center_y = sprite_shader.get_shader_parameter("ellipse_center_y") as float
-		var current_color = _get_liquid_color(sprite_shader)
-
-		# Tween fill level (ellipse_center_y)
-		fill_tween.tween_method(
-			func(value: float): _set_shader_parameter(sprite_shader, "ellipse_center_y", value),
-			current_center_y,
-			target_center_y,
-			pour_animation_duration
-		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-
-		# Tween shader color parameter
-		if target_color != current_color:
-			fill_tween.tween_method(
-				func(value: Color): _set_shader_parameter(sprite_shader, "liquid_color", value),
-				current_color,
-				target_color,
-				pour_animation_duration
-			).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-
-		# Tween fade on the layer below (if one exists)
-		if layer_to_fade:
-			var fade_shader = layer_to_fade.material as ShaderMaterial
-			fill_tween.tween_method(
-				func(value: float): _set_shader_parameter(fade_shader, "top_fade_height", value),
-				0.0,
-				TOP_FADE_HEIGHT,
-				pour_animation_duration
-			).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-
-		# Emit animation finished signal when done
-		fill_tween.finished.connect(func():
-			# Stop droplet emission after pour animation finishes
-			if not is_mix:
-				droplets.emitting = false
-			animation_finished.emit()
-		, CONNECT_ONE_SHOT)
+		if is_mix:
+			_animate_mix(sprite, target_center_y, target_color)
+		else:
+			_animate_pour_with_jigger(sprite, target_center_y, target_color)
 	else:
 		# Set values directly without animation
+		var sprite_shader = sprite.material as ShaderMaterial
 		sprite_shader.set_shader_parameter("ellipse_center_y", target_center_y)
 		# Also sync ellipse_radius_x from LUT to match the new center_y
 		var radius_x = _get_radius_at_center_y(target_center_y)
@@ -658,19 +645,163 @@ func _animate_splash(is_mix: bool = false) -> void:
 
 
 func _sync_droplets_position(center_y: float) -> void:
-	"""Sync droplets container position to match the current liquid surface level.
-	
-	The ellipse center_y can be anywhere in UV space, but the actual glass only exists
-	between glass_top_uv and glass_bottom_uv. When center_y is beyond the glass bottom
-	(empty glass), we clamp to the glass bottom so droplets appear at the correct position.
+	"""Sync droplets container position to match the current liquid surface level."""
+	droplets_container.global_position.y = _get_surface_global_y(center_y)
+
+
+# ============================================================================
+# Animation Cleanup
+# ============================================================================
+
+func _interrupt_current_animation() -> void:
+	"""Clean up any currently running animation before starting a new one.
+
+	Since all animations are controlled by fill_tween, killing it stops everything.
 	"""
-	var tex_h = liquid_sprite.texture.get_height()
-	
-	# Clamp center_y to the actual glass bounds
-	# When center_y > glass_bottom_uv, the ellipse is below the visible glass
-	var valid_center_y = clampf(center_y, glass_top_uv, glass_bottom_uv)
-	
-	# UV 0.5 is the center of the sprite (pivot point). Offset is distance from center.
-	var uv_offset_from_center = valid_center_y - 0.5
-	var pixel_offset = uv_offset_from_center * tex_h * liquid_sprite.global_scale.y
-	droplets_container.global_position.y = liquid_sprite.global_position.y + pixel_offset
+	if fill_tween:
+		fill_tween.kill()
+		fill_tween = null
+
+	# Stop droplets
+	droplets.emitting = false
+
+	# Reset jigger to hidden state
+	liquid_pour.reset_to_hidden()
+
+	# Emit animation_finished for the interrupted animation
+	animation_finished.emit()
+
+
+# ============================================================================
+# Jigger Pour Choreography
+# ============================================================================
+
+func _animate_pour_with_jigger(sprite: Sprite2D, target_center_y: float, target_color: Color) -> void:
+	"""Choreograph the full jigger pour sequence using a single tween.
+
+	Sequence:
+	1. Jigger enters from right, rotating into pour position
+	2. Pour stream extends down to current liquid surface
+	3. Liquid fills while stream follows the rising surface (with droplets)
+	4. Stream retracts and jigger exits
+	"""
+	# Clean up any running animation first
+	if fill_tween:
+		_interrupt_current_animation()
+
+	var sprite_shader = sprite.material as ShaderMaterial
+	var start_center_y = sprite_shader.get_shader_parameter("ellipse_center_y") as float
+	var target_surface_y = _get_surface_global_y(target_center_y)
+
+	# Create the master tween that controls the entire sequence
+	fill_tween = create_tween()
+
+	animation_started.emit()
+
+	# === Phase 1: Jigger enters ===
+	liquid_pour.add_enter(fill_tween, target_color)
+
+	# === Phase 2: Pour stream extends ===
+	liquid_pour.add_start_pour(fill_tween)
+
+	# === Phase 3: Fill animation (parallel with stream following and droplets) ===
+	fill_tween.tween_callback(func():
+		_set_droplets_color(target_color)
+		_sync_droplets_position(start_center_y)
+		droplets.emitting = true
+		# Swap ellipse visibility for layers
+		_set_shader_parameter(sprite_shader, "show_ellipse", true)
+		if layer_to_fade:
+			_set_shader_parameter(layer_to_fade.material as ShaderMaterial, "show_ellipse", false)
+		# Start wobble and splash effects (these run on their own tweens)
+		_animate_wobble()
+		_animate_splash(false)
+	)
+
+	# Parallel: fill level + color + layer fade + stream following
+	fill_tween.set_parallel(true)
+
+	# Fill level (ellipse_center_y)
+	fill_tween.tween_method(
+		func(value: float): _set_shader_parameter(sprite_shader, "ellipse_center_y", value),
+		start_center_y,
+		target_center_y,
+		pour_animation_duration
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+
+	# Color transition if different
+	var current_color = _get_liquid_color(sprite_shader)
+	if target_color != current_color:
+		fill_tween.tween_method(
+			func(value: Color): _set_shader_parameter(sprite_shader, "liquid_color", value),
+			current_color,
+			target_color,
+			pour_animation_duration
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+
+	# Layer fade (if layering)
+	if layer_to_fade:
+		var fade_shader = layer_to_fade.material as ShaderMaterial
+		fill_tween.tween_method(
+			func(value: float): _set_shader_parameter(fade_shader, "top_fade_height", value),
+			0.0,
+			TOP_FADE_HEIGHT,
+			pour_animation_duration
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+
+	# Stream follows rising liquid
+	liquid_pour.add_follow_surface(fill_tween, target_surface_y, pour_animation_duration)
+
+	fill_tween.set_parallel(false)
+
+	# === Phase 4: Stop droplets, stream retracts ===
+	fill_tween.tween_callback(func(): droplets.emitting = false)
+	liquid_pour.add_stop_pour(fill_tween)
+
+	# === Phase 5: Jigger exits ===
+	liquid_pour.add_exit(fill_tween)
+
+	# === Done ===
+	fill_tween.finished.connect(func(): animation_finished.emit(), CONNECT_ONE_SHOT)
+
+
+func _animate_mix(sprite: Sprite2D, target_center_y: float, target_color: Color) -> void:
+	"""Animate mixing layers together (wobble/splash effects, no jigger)."""
+	# Clean up any running animation first (no jigger/droplets for mix, but ensures clean state)
+	if fill_tween:
+		_interrupt_current_animation()
+
+	var sprite_shader = sprite.material as ShaderMaterial
+
+	fill_tween = create_tween()
+	fill_tween.set_parallel(true)
+
+	animation_started.emit()
+
+	# Mixing gets stronger wobble/splash effects
+	_animate_wobble()
+	_animate_splash(true)
+
+	var current_center_y = sprite_shader.get_shader_parameter("ellipse_center_y") as float
+	var current_color = _get_liquid_color(sprite_shader)
+
+	# Tween fill level
+	fill_tween.tween_method(
+		func(value: float): _set_shader_parameter(sprite_shader, "ellipse_center_y", value),
+		current_center_y,
+		target_center_y,
+		pour_animation_duration
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+
+	# Tween color
+	if target_color != current_color:
+		fill_tween.tween_method(
+			func(value: Color): _set_shader_parameter(sprite_shader, "liquid_color", value),
+			current_color,
+			target_color,
+			pour_animation_duration
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+
+	fill_tween.finished.connect(func():
+		animation_finished.emit()
+	, CONNECT_ONE_SHOT)

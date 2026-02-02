@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bt2ltrb4erqxi"]
+[gd_scene format=3 uid="uid://bt2ltrb4erqxi"]
 
 [ext_resource type="Script" uid="uid://blsnwivy3x00f" path="res://scripts/scenes/glass_scene.gd" id="1_8267a"]
 [ext_resource type="Shader" uid="uid://b0ws308m5no1r" path="res://resources/shaders/fake_liquid_mask.gdshader" id="4_qq2fo"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://b8y4x21aj8n1" path="res://resources/textures/simple_noise.tres" id="5_ooemy"]
 [ext_resource type="Texture2D" uid="uid://cn055br52odyy" path="res://assets/utensils/glasses/coupe/coupe_glass_mask.png" id="7_pr3a7"]
 [ext_resource type="Texture2D" uid="uid://cvu2dsoaf5yb2" path="res://assets/utensils/glasses/coupe/coupe_glass_mask_sdf.png" id="8_gs6y7"]
+[ext_resource type="PackedScene" uid="uid://c066248idjxd4" path="res://scenes/liquid_pour.tscn" id="9_01sys"]
 [ext_resource type="Texture2D" uid="uid://mp3wges2unvt" path="res://assets/utensils/glasses/coupe/coupe_glass_front.png" id="13_gs6y7"]
 [ext_resource type="Texture2D" uid="uid://dxt3ofa440mma" path="res://assets/utensils/glasses/coupe/coupe_glass_back.png" id="14_xpfmm"]
 
@@ -80,10 +81,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.290000013775
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.0050000002375
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -131,15 +128,15 @@ shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
 shader_parameter/show_bottom_rim = true
 
-[node name="GlassScene" type="Node2D"]
-scale = Vector2(0.13, 0.13)
+[node name="GlassScene" type="Node2D" unique_id=1254782354]
+scale = Vector2(0.3, 0.3)
 script = ExtResource("1_8267a")
 
-[node name="DropletsContainer" type="Node2D" parent="."]
+[node name="DropletsContainer" type="Node2D" parent="." unique_id=1089774280]
 unique_name_in_owner = true
 position = Vector2(0, -700)
 
-[node name="Droplets" type="GPUParticles2D" parent="DropletsContainer"]
+[node name="Droplets" type="GPUParticles2D" parent="DropletsContainer" unique_id=1581111515]
 unique_name_in_owner = true
 z_index = 1
 emitting = false
@@ -153,7 +150,7 @@ trail_lifetime = 0.4
 process_material = SubResource("ParticleProcessMaterial_01sys")
 metadata/_edit_lock_ = true
 
-[node name="DropletsGlobal" type="GPUParticles2D" parent="DropletsContainer"]
+[node name="DropletsGlobal" type="GPUParticles2D" parent="DropletsContainer" unique_id=334358218]
 unique_name_in_owner = true
 z_index = 1
 emitting = false
@@ -166,7 +163,7 @@ trail_lifetime = 0.4
 process_material = SubResource("ParticleProcessMaterial_droplets")
 metadata/_edit_lock_ = true
 
-[node name="Bubbles" type="GPUParticles2D" parent="."]
+[node name="Bubbles" type="GPUParticles2D" parent="." unique_id=227060666]
 unique_name_in_owner = true
 visible = false
 self_modulate = Color(0, 0, 0, 0.29411766)
@@ -176,24 +173,29 @@ amount = 100
 process_material = SubResource("ParticleProcessMaterial_8267a")
 metadata/_edit_lock_ = true
 
-[node name="Glass" type="Node2D" parent="."]
+[node name="Glass" type="Node2D" parent="." unique_id=113397308]
 unique_name_in_owner = true
 position = Vector2(0, 40)
 
-[node name="LiquidLayers" type="Node2D" parent="Glass"]
+[node name="LiquidLayers" type="Node2D" parent="Glass" unique_id=1185462197]
 unique_name_in_owner = true
 position = Vector2(0, -40)
 
-[node name="LiquidSprite" type="Sprite2D" parent="Glass/LiquidLayers"]
+[node name="LiquidSprite" type="Sprite2D" parent="Glass/LiquidLayers" unique_id=1684009769]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_xpfmm")
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("7_pr3a7")
 
-[node name="GlassFront" type="Sprite2D" parent="Glass"]
+[node name="GlassFront" type="Sprite2D" parent="Glass" unique_id=284902634]
 unique_name_in_owner = true
 texture = ExtResource("13_gs6y7")
 
-[node name="GlassBack" type="Sprite2D" parent="Glass"]
+[node name="LiquidPour" parent="Glass" unique_id=1604870246 instance=ExtResource("9_01sys")]
+unique_name_in_owner = true
+visible = false
+position = Vector2(-279.99997, -1196.6665)
+
+[node name="GlassBack" type="Sprite2D" parent="Glass" unique_id=1521096998]
 unique_name_in_owner = true
 texture = ExtResource("14_xpfmm")

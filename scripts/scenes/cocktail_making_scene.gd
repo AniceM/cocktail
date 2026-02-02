@@ -249,8 +249,10 @@ func _on_state_changed(old_state: CocktailMakingStateMachine.StateName, new_stat
 			if old_state == CocktailMakingStateMachine.StateName.GLASS_SELECTION:
 				_transition_menus(add_ingredients_menu, glass_selection_menu)
 				_animate_chart_in()
+			elif old_state == CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
+				add_ingredients_menu.set_disabled(false)
 		CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
-			pass
+			add_ingredients_menu.set_disabled(true)
 
 
 func _animate_camera_zoom(target_zoom: Vector2) -> void:

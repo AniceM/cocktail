@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://c066248idjxd4"]
+
+[ext_resource type="Script" uid="uid://6d0i1bl2jhrc" path="res://scripts/scenes/liquid_pour.gd" id="1_hgvk7"]
+[ext_resource type="Shader" uid="uid://cac2lmsv4de50" path="res://resources/shaders/liquid_pour.gdshader" id="1_wgwmk"]
+[ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="2_k3exx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k3exx"]
+shader = ExtResource("1_wgwmk")
+shader_parameter/liquid_color = Color(0.8, 0.4, 0.1, 1)
+shader_parameter/highlight_color = Color(0.9, 0.6, 0.3, 1)
+shader_parameter/pour_progress = 1.0
+shader_parameter/flow_speed = 2.0
+shader_parameter/width_top = 0.05000000167648
+shader_parameter/width_bottom = 0.25
+shader_parameter/wobble_amount = 0.02
+shader_parameter/drip_frequency = 1.5
+shader_parameter/drip_size = 0.06
+shader_parameter/drip_length = 0.12
+shader_parameter/drip_speed = 1.2
+shader_parameter/curve_amount = 0.2
+shader_parameter/curve_height = 0.25000001024506
+shader_parameter/curve_power = 2.0
+shader_parameter/flow_pattern_intensity = 0.05
+shader_parameter/flow_pattern_frequency = 40.0
+shader_parameter/rim_intensity = 0.6
+shader_parameter/rim_power = 2.0
+shader_parameter/bottom_fade_start = 0.85
+shader_parameter/bottom_fade_strength = 0.70000003325
+
+[node name="LiquidPour" type="Node2D" unique_id=1604870246]
+script = ExtResource("1_hgvk7")
+
+[node name="Jigger" type="Sprite2D" parent="." unique_id=1623492563]
+unique_name_in_owner = true
+position = Vector2(652, -19.999996)
+rotation = -1.282817
+scale = Vector2(0.26, 0.26)
+texture = ExtResource("2_k3exx")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=796848278]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_k3exx")
+offset_right = 568.0
+offset_bottom = 800.0

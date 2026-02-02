@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://xvh17tek7uhl"]
+[gd_scene format=3 uid="uid://xvh17tek7uhl"]
 
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/scenes/cocktail_making_scene.gd" id="1_ac75x"]
 [ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="2_slgu4"]
@@ -9,10 +9,10 @@
 [ext_resource type="PackedScene" uid="uid://tsexmwlm2tey" path="res://scenes/signature_badges_container.tscn" id="6_sc0oj"]
 [ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="6_vlt8w"]
 
-[node name="CocktailMakingScene" type="Node2D"]
+[node name="CocktailMakingScene" type="Node2D" unique_id=715446421]
 script = ExtResource("1_ac75x")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=647221188]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,11 +20,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="CanvasLayer" parent="."]
+[node name="Background" type="CanvasLayer" parent="." unique_id=215811529]
 layer = -1
 follow_viewport_enabled = true
 
-[node name="BackgroundImage" type="TextureRect" parent="Background"]
+[node name="BackgroundImage" type="TextureRect" parent="Background" unique_id=115040071]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -32,9 +32,9 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_slgu4")
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=258872744]
 
-[node name="FullScreenControl" type="Control" parent="HUD"]
+[node name="FullScreenControl" type="Control" parent="HUD" unique_id=121467769]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,7 +42,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GlassSelectionMenu" parent="HUD/FullScreenControl" instance=ExtResource("5_slgu4")]
+[node name="GlassSelectionMenu" parent="HUD/FullScreenControl" unique_id=496920495 instance=ExtResource("5_slgu4")]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 1700.0
@@ -50,7 +50,7 @@ offset_top = 260.0
 offset_right = 1700.0
 offset_bottom = 260.0
 
-[node name="AddIngredientsMenu" parent="HUD/FullScreenControl" instance=ExtResource("4_fcfq3")]
+[node name="AddIngredientsMenu" parent="HUD/FullScreenControl" unique_id=572828417 instance=ExtResource("4_fcfq3")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -66,7 +66,7 @@ offset_bottom = 382.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="FlavorProfileChart" parent="HUD/FullScreenControl" instance=ExtResource("4_ac75x")]
+[node name="FlavorProfileChart" parent="HUD/FullScreenControl" unique_id=310669508 instance=ExtResource("4_ac75x")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 4
@@ -79,13 +79,13 @@ offset_right = 75.0
 offset_bottom = 37.565002
 grow_horizontal = 1
 
-[node name="SignatureBadgesContainer" parent="HUD/FullScreenControl" instance=ExtResource("6_sc0oj")]
+[node name="SignatureBadgesContainer" parent="HUD/FullScreenControl" unique_id=264998897 instance=ExtResource("6_sc0oj")]
 unique_name_in_owner = true
 layout_mode = 1
 offset_top = 200.0
 offset_bottom = 200.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HUD/FullScreenControl"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/FullScreenControl" unique_id=1034310619]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -98,55 +98,55 @@ offset_right = 154.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="GlassSelectionButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer"]
+[node name="GlassSelectionButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer" unique_id=1396800080]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 text = "Glass"
 
-[node name="ResetButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer"]
+[node name="ResetButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer" unique_id=773134263]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 text = "Reset"
 
-[node name="MixButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer"]
+[node name="MixButton" type="Button" parent="HUD/FullScreenControl/HBoxContainer" unique_id=1708488417]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 text = "Mix"
 
-[node name="DebugPanel" type="PanelContainer" parent="HUD/FullScreenControl"]
+[node name="DebugPanel" type="PanelContainer" parent="HUD/FullScreenControl" unique_id=1075063139]
 layout_mode = 0
 offset_right = 407.0
 offset_bottom = 500.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HUD/FullScreenControl/DebugPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/FullScreenControl/DebugPanel" unique_id=171497467]
 layout_mode = 2
 
-[node name="DebugTitle" type="Label" parent="HUD/FullScreenControl/DebugPanel/VBoxContainer"]
+[node name="DebugTitle" type="Label" parent="HUD/FullScreenControl/DebugPanel/VBoxContainer" unique_id=465150304]
 layout_mode = 2
 theme_override_font_sizes/font_size = 25
 text = "Debug"
 horizontal_alignment = 1
 
-[node name="DebugLabel" type="RichTextLabel" parent="HUD/FullScreenControl/DebugPanel/VBoxContainer"]
+[node name="DebugLabel" type="RichTextLabel" parent="HUD/FullScreenControl/DebugPanel/VBoxContainer" unique_id=1279154214]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=263267087]
 unique_name_in_owner = true
 position = Vector2(1147, 754)
 zoom = Vector2(2, 2)
 
-[node name="GlassScene" parent="." instance=ExtResource("5_b2ome")]
+[node name="GlassScene" parent="." unique_id=2046183509 instance=ExtResource("5_b2ome")]
 unique_name_in_owner = true
 position = Vector2(1152, 884.68)
-scale = Vector2(0.3, 0.3)
 
-[node name="Jigger" type="Sprite2D" parent="."]
+[node name="Jigger" type="Sprite2D" parent="." unique_id=231502311]
+visible = false
 position = Vector2(852.99994, 935)
 scale = Vector2(0.09, 0.09)
 texture = ExtResource("6_vlt8w")

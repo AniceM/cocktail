@@ -35,14 +35,13 @@ func change_state(new_state: StateName) -> void:
         StateName.SPECIAL_INGREDIENT_SELECTION:
             pass
         StateName.ADDING_INGREDIENT:
-            # Disable input while adding ingredients
             pass
         StateName.REVIEW:
             pass
         StateName.FINISHED:
             pass
     # Update current state
-    current_state = new_state    
+    current_state = new_state
     # Emit signal to notify change of state
     emit_signal("state_changed", old_state, new_state)
 
