@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://clamglqovxxxo"]
+[gd_scene format=3 uid="uid://clamglqovxxxo"]
 
 [ext_resource type="Shader" uid="uid://b0ws308m5no1r" path="res://resources/shaders/fake_liquid_mask.gdshader" id="1_8nuwv"]
 [ext_resource type="Script" uid="uid://bfjh4tulnmtup" path="res://scripts/cocktail_system/liquid_shader_calibrator.gd" id="1_ounc1"]
@@ -53,10 +53,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.290000013775
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -99,6 +95,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -114,10 +114,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.1550000073625
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -160,6 +156,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -175,10 +175,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.150000007125
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -221,6 +217,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -236,10 +236,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.22000001045
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -282,6 +278,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -297,10 +297,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.170000008075
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -343,6 +339,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = true
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -358,10 +358,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.2150000102125
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -404,6 +400,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -419,10 +419,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.1650000078375
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -465,6 +461,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -480,10 +480,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.3810000180975
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -526,6 +522,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -541,10 +541,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.238000011305
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -587,6 +583,10 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
@@ -602,10 +602,6 @@ shader_parameter/ellipse_width_scale = 0.98600002075593
 shader_parameter/ellipse_ratio = 0.0790000037525
 shader_parameter/ellipse_center_y = 0.2000000095
 shader_parameter/ellipse_radius_x = 0.30000001425
-shader_parameter/use_top_clip = false
-shader_parameter/top_clip_center_y = 0.162000007695
-shader_parameter/top_clip_radius_x = 0.750000035625
-shader_parameter/top_clip_radius_y = 0.15
 shader_parameter/wobble_strength = 0.005
 shader_parameter/wobble_speed = 2.0
 shader_parameter/wobble_ripple_count = 1
@@ -648,12 +644,16 @@ shader_parameter/side_darkening = 0.15
 shader_parameter/center_darkening = 0.1
 shader_parameter/top_fade_height = 0.0
 shader_parameter/top_fade_compensation = true
+shader_parameter/clip_enabled = false
+shader_parameter/clip_ellipse_center_y = 1.5
+shader_parameter/clip_ellipse_radius_x = 0.5
+shader_parameter/clip_fade_height = 0.0
 shader_parameter/show_ellipse = true
 shader_parameter/show_fill = true
 shader_parameter/show_top_rim = true
 shader_parameter/show_bottom_rim = true
 
-[node name="LiquidShaderCalibrator" type="Node2D"]
+[node name="LiquidShaderCalibrator" type="Node2D" unique_id=1922721044]
 script = ExtResource("1_ounc1")
 debug_info = Array[String](["CoupeSprite: bottom=0.431, surface=0.290", "CollinsLiquid: bottom=0.744, surface=0.155", "FluteLiquid: bottom=0.529, surface=0.150", "HighballLiquid: bottom=0.744, surface=0.220", "HurricaneLiquid: bottom=0.783, surface=0.170", "MartiniLiquid: bottom=0.412, surface=0.215", "PocoGrandeLiquid: bottom=0.626, surface=0.165", "RocksLiquid: bottom=0.666, surface=0.381", "SnifterLiquid: bottom=0.607, surface=0.238", "WineLiquid: bottom=0.568, surface=0.200"])
 wobble_strength = 0.005
@@ -696,156 +696,156 @@ surface_darken_amount = 0.25
 side_darkening = 0.15
 center_darkening = 0.1
 
-[node name="CoupeGlass" type="Node2D" parent="."]
+[node name="CoupeGlass" type="Node2D" parent="." unique_id=1197484142]
 position = Vector2(0, 40)
 
-[node name="CoupeSprite" type="Sprite2D" parent="CoupeGlass"]
+[node name="CoupeSprite" type="Sprite2D" parent="CoupeGlass" unique_id=1568392790]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_vqlff")
 position = Vector2(0, -37)
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("2_bs5a0")
 
-[node name="CoupeGlassFront" type="Sprite2D" parent="CoupeGlass"]
+[node name="CoupeGlassFront" type="Sprite2D" parent="CoupeGlass" unique_id=689212543]
 texture = ExtResource("5_6j7fh")
 
-[node name="CoupeGlassBack" type="Sprite2D" parent="CoupeGlass"]
+[node name="CoupeGlassBack" type="Sprite2D" parent="CoupeGlass" unique_id=1514212757]
 texture = ExtResource("6_habbc")
 
-[node name="CollinsGlass" type="Node2D" parent="."]
+[node name="CollinsGlass" type="Node2D" parent="." unique_id=796990108]
 position = Vector2(550, -90)
 
-[node name="CollinsLiquid" type="Sprite2D" parent="CollinsGlass"]
+[node name="CollinsLiquid" type="Sprite2D" parent="CollinsGlass" unique_id=259489643]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_a6jol")
 position = Vector2(0, 9)
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("2_tue24")
 
-[node name="CollinsGlassFront" type="Sprite2D" parent="CollinsGlass"]
+[node name="CollinsGlassFront" type="Sprite2D" parent="CollinsGlass" unique_id=1819940891]
 texture = ExtResource("5_bs5a0")
 
-[node name="CollinsGlassBack" type="Sprite2D" parent="CollinsGlass"]
+[node name="CollinsGlassBack" type="Sprite2D" parent="CollinsGlass" unique_id=1337447185]
 texture = ExtResource("6_ounc1")
 
-[node name="FluteGlass" type="Node2D" parent="."]
+[node name="FluteGlass" type="Node2D" parent="." unique_id=376070275]
 position = Vector2(1050, -152.55)
 
-[node name="FluteLiquid" type="Sprite2D" parent="FluteGlass"]
+[node name="FluteLiquid" type="Sprite2D" parent="FluteGlass" unique_id=1439413823]
 material = SubResource("ShaderMaterial_2xaxn")
 position = Vector2(0, -37)
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("7_6j7fh")
 
-[node name="FluteGlassFront" type="Sprite2D" parent="FluteGlass"]
+[node name="FluteGlassFront" type="Sprite2D" parent="FluteGlass" unique_id=1354238446]
 texture = ExtResource("9_vqlff")
 
-[node name="FluteGlassBack" type="Sprite2D" parent="FluteGlass"]
+[node name="FluteGlassBack" type="Sprite2D" parent="FluteGlass" unique_id=1317371205]
 texture = ExtResource("10_wek34")
 
-[node name="HighballGlass" type="Node2D" parent="."]
+[node name="HighballGlass" type="Node2D" parent="." unique_id=566836046]
 position = Vector2(1500, -97.24)
 
-[node name="HighballLiquid" type="Sprite2D" parent="HighballGlass"]
+[node name="HighballLiquid" type="Sprite2D" parent="HighballGlass" unique_id=523186242]
 material = SubResource("ShaderMaterial_lo5qc")
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("11_xfjg5")
 
-[node name="HighballGlassFront" type="Sprite2D" parent="HighballGlass"]
+[node name="HighballGlassFront" type="Sprite2D" parent="HighballGlass" unique_id=1390049064]
 texture = ExtResource("13_kmorp")
 
-[node name="HighballGlassBack" type="Sprite2D" parent="HighballGlass"]
+[node name="HighballGlassBack" type="Sprite2D" parent="HighballGlass" unique_id=1400658798]
 texture = ExtResource("14_m3fkj")
 
-[node name="HurricaneGlass" type="Node2D" parent="."]
+[node name="HurricaneGlass" type="Node2D" parent="." unique_id=1162319427]
 position = Vector2(2100, -147.12)
 
-[node name="HurricaneLiquid" type="Sprite2D" parent="HurricaneGlass"]
+[node name="HurricaneLiquid" type="Sprite2D" parent="HurricaneGlass" unique_id=389304748]
 material = SubResource("ShaderMaterial_lm7wq")
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("15_qnwke")
 
-[node name="HurricaneGlassFront" type="Sprite2D" parent="HurricaneGlass"]
+[node name="HurricaneGlassFront" type="Sprite2D" parent="HurricaneGlass" unique_id=1976987356]
 texture = ExtResource("17_r83n2")
 
-[node name="HurricaneGlassBack" type="Sprite2D" parent="HurricaneGlass"]
+[node name="HurricaneGlassBack" type="Sprite2D" parent="HurricaneGlass" unique_id=1626475605]
 texture = ExtResource("18_jcbag")
 
-[node name="MartiniGlass" type="Node2D" parent="."]
+[node name="MartiniGlass" type="Node2D" parent="." unique_id=284329601]
 position = Vector2(2800, 53.51)
 
-[node name="MartiniLiquid" type="Sprite2D" parent="MartiniGlass"]
+[node name="MartiniLiquid" type="Sprite2D" parent="MartiniGlass" unique_id=2111224753]
 material = SubResource("ShaderMaterial_na8kj")
 position = Vector2(0, -37)
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("19_piy5h")
 
-[node name="MartiniGlassFront" type="Sprite2D" parent="MartiniGlass"]
+[node name="MartiniGlassFront" type="Sprite2D" parent="MartiniGlass" unique_id=1396706637]
 texture = ExtResource("21_6v1bi")
 
-[node name="MartiniGlassBack" type="Sprite2D" parent="MartiniGlass"]
+[node name="MartiniGlassBack" type="Sprite2D" parent="MartiniGlass" unique_id=1099739490]
 texture = ExtResource("22_tk1lq")
 
-[node name="PocoGrandeGlass" type="Node2D" parent="."]
+[node name="PocoGrandeGlass" type="Node2D" parent="." unique_id=896520182]
 position = Vector2(3500, -47.93)
 
-[node name="PocoGrandeLiquid" type="Sprite2D" parent="PocoGrandeGlass"]
+[node name="PocoGrandeLiquid" type="Sprite2D" parent="PocoGrandeGlass" unique_id=830050863]
 material = SubResource("ShaderMaterial_ygnkr")
 position = Vector2(0, -14.17)
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("23_wp1fs")
 
-[node name="PocoGrandeGlassFront" type="Sprite2D" parent="PocoGrandeGlass"]
+[node name="PocoGrandeGlassFront" type="Sprite2D" parent="PocoGrandeGlass" unique_id=547849438]
 texture = ExtResource("25_hevnx")
 
-[node name="PocoGrandeGlassBack" type="Sprite2D" parent="PocoGrandeGlass"]
+[node name="PocoGrandeGlassBack" type="Sprite2D" parent="PocoGrandeGlass" unique_id=1884918706]
 texture = ExtResource("26_svlsn")
 
-[node name="RocksGlass" type="Node2D" parent="."]
+[node name="RocksGlass" type="Node2D" parent="." unique_id=1109633177]
 position = Vector2(4100, 35.83)
 
-[node name="RocksLiquid" type="Sprite2D" parent="RocksGlass"]
+[node name="RocksLiquid" type="Sprite2D" parent="RocksGlass" unique_id=2102617237]
 material = SubResource("ShaderMaterial_wek34")
 position = Vector2(0, -14.17)
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("32_habbc")
 
-[node name="RocksGlassFront" type="Sprite2D" parent="RocksGlass"]
+[node name="RocksGlassFront" type="Sprite2D" parent="RocksGlass" unique_id=917279237]
 texture = ExtResource("34_vqlff")
 
-[node name="RocksGlassBack" type="Sprite2D" parent="RocksGlass"]
+[node name="RocksGlassBack" type="Sprite2D" parent="RocksGlass" unique_id=55121741]
 texture = ExtResource("34_vqlff")
 
-[node name="SnifterGlass" type="Node2D" parent="."]
+[node name="SnifterGlass" type="Node2D" parent="." unique_id=395512999]
 position = Vector2(4800, -36.52)
 
-[node name="SnifterLiquid" type="Sprite2D" parent="SnifterGlass"]
+[node name="SnifterLiquid" type="Sprite2D" parent="SnifterGlass" unique_id=801715950]
 material = SubResource("ShaderMaterial_r83n2")
 position = Vector2(0, -14.17)
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("35_kmorp")
 
-[node name="SnifterGlassFront" type="Sprite2D" parent="SnifterGlass"]
+[node name="SnifterGlassFront" type="Sprite2D" parent="SnifterGlass" unique_id=1948916927]
 texture = ExtResource("37_qnwke")
 
-[node name="SnifterGlassBack" type="Sprite2D" parent="SnifterGlass"]
+[node name="SnifterGlassBack" type="Sprite2D" parent="SnifterGlass" unique_id=1276882362]
 texture = ExtResource("38_wmm7x")
 
-[node name="WineGlass" type="Node2D" parent="."]
+[node name="WineGlass" type="Node2D" parent="." unique_id=651884090]
 position = Vector2(5500, -201.5)
 
-[node name="WineLiquid" type="Sprite2D" parent="WineGlass"]
+[node name="WineLiquid" type="Sprite2D" parent="WineGlass" unique_id=873372539]
 material = SubResource("ShaderMaterial_6v1bi")
 position = Vector2(0, -14.17)
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("39_r83n2")
 
-[node name="WineGlassFront" type="Sprite2D" parent="WineGlass"]
+[node name="WineGlassFront" type="Sprite2D" parent="WineGlass" unique_id=932893617]
 texture = ExtResource("41_piy5h")
 
-[node name="WineGlassBack" type="Sprite2D" parent="WineGlass"]
+[node name="WineGlassBack" type="Sprite2D" parent="WineGlass" unique_id=1749741513]
 texture = ExtResource("42_i85fp")
 
-[node name="Ground" type="Line2D" parent="."]
+[node name="Ground" type="Line2D" parent="." unique_id=994768621]
 position = Vector2(0, 500)
 points = PackedVector2Array(-10000, 0, 10000, 0)

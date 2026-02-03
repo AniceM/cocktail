@@ -67,7 +67,8 @@ var splash_mix_recovery_duration: float = 3.5
 var extra_liquid_sprites: Array[Sprite2D] = []
 var current_liquid: Sprite2D # The liquid sprite we're currently working with
 var layer_to_fade: Sprite2D # The layer below current_liquid that should fade when pouring
-const TOP_FADE_HEIGHT: float = 0.4 # The height of the fade at the top of the liquid (0.0 = top, 1.0 = bottom)
+const FADE_HEIGHT: float = 0.4 # The height of the fade at the top of the liquid (0.0 = top, 1.0 = bottom)
+const CLIP_FADE_HEIGHT: float = 0.2 # Softness for clipping against the layer below (0.0 = hard cut)
 
 # ============================================================================
 # Lifecycle
@@ -442,6 +443,11 @@ func _reset_base_shader_state() -> void:
 	_set_shader_parameter(base_shader, "show_ellipse", true)
 	_set_shader_parameter(base_shader, "show_fill", true)
 	_set_shader_parameter(base_shader, "top_fade_height", 0.0)
+	# Layer clipping (disabled for base)
+	_set_shader_parameter(base_shader, "clip_enabled", false)
+	_set_shader_parameter(base_shader, "clip_fade_height", 0.0)
+	_set_shader_parameter(base_shader, "clip_ellipse_center_y", 1.5)
+	_set_shader_parameter(base_shader, "clip_ellipse_radius_x", 0.5)
 
 
 # ============================================================================
@@ -459,6 +465,15 @@ func _create_new_layer(color: Color):
 
 	# Set the color of the new layer
 	_set_liquid_color(new_shader, color)
+
+	# Clip the new layer against the layer below (prevents translucent color bleeding)
+	# Note: current_liquid is the "below" layer at this moment.
+	var below_center_y = current_shader.get_shader_parameter("ellipse_center_y") as float
+	var below_radius_x = current_shader.get_shader_parameter("ellipse_radius_x") as float
+	_set_shader_parameter(new_shader, "clip_enabled", true)
+	_set_shader_parameter(new_shader, "clip_ellipse_center_y", below_center_y)
+	_set_shader_parameter(new_shader, "clip_ellipse_radius_x", below_radius_x)
+	_set_shader_parameter(new_shader, "clip_fade_height", CLIP_FADE_HEIGHT)
 
 	# Hide the new layer's ellipse initially - it will be shown when fill animation starts
 	# This prevents the surface color from changing before the jigger animation completes
@@ -745,7 +760,7 @@ func _animate_pour_with_jigger(sprite: Sprite2D, target_center_y: float, target_
 		fill_tween.tween_method(
 			func(value: float): _set_shader_parameter(fade_shader, "top_fade_height", value),
 			0.0,
-			TOP_FADE_HEIGHT,
+			FADE_HEIGHT,
 			pour_animation_duration
 		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 

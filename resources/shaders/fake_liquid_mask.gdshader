@@ -101,6 +101,14 @@ uniform float top_fade_height : hint_range(0.0, 0.5) = 0.0; // Height of fade zo
 uniform bool top_fade_compensation = true; // If true, visually raises the liquid to compensate for transparency volume loss
 
 // ============================================================================
+// Layer Clipping (prevents color bleeding through transparent layers)
+// ============================================================================
+uniform bool clip_enabled = false;
+uniform float clip_ellipse_center_y : hint_range(0.0, 1.5) = 1.5; // Center Y of the ellipse to clip against
+uniform float clip_ellipse_radius_x : hint_range(0.0, 1.0) = 0.5; // Radius X of the ellipse to clip against
+uniform float clip_fade_height : hint_range(0.0, 0.5) = 0.0; // Soft fade below clip surface (0 = hard cut), normalized by clip ellipse height
+
+// ============================================================================
 // Visibility Toggles
 // ============================================================================
 uniform bool show_ellipse = true; // Show the top surface
@@ -306,6 +314,27 @@ void fragment() {
 	float radius_x = auto_ellipse_width ? find_ellipse_radius_x(mask_texture, ellipse_center_y) : ellipse_radius_x;
 	float ellipse_radius_y = radius_x * ellipse_ratio;
 
+	// Layer clipping: restrict this layer to pixels above the "below layer" surface.
+	// This avoids the current (possibly transparent) layer tinting all pixels below it.
+	float clip_surface_y = 2.0; // Sentinel (below texture)
+	float clip_radius_y = 1.0;
+	if (clip_enabled) {
+		float computed_clip_radius_x = auto_ellipse_width ? find_ellipse_radius_x(mask_texture, clip_ellipse_center_y) : clip_ellipse_radius_x;
+		float safe_clip_radius_x = max(computed_clip_radius_x, 0.0001);
+
+		clip_radius_y = max(safe_clip_radius_x * ellipse_ratio, 0.0001);
+
+		float clip_x_offset = UV.x - 0.5;
+		float clip_x_norm = clip_x_offset / safe_clip_radius_x;
+		float clip_x_norm_abs = abs(clip_x_norm);
+
+		float clip_edge_attenuation = 1.0 - smoothstep(0.7, 1.0, clip_x_norm_abs);
+		float clip_wobble = get_sync_wobble(clip_x_offset) * clip_edge_attenuation;
+
+		float clip_curve_y = clip_radius_y * sqrt(max(0.0, 1.0 - clip_x_norm * clip_x_norm));
+		clip_surface_y = clip_ellipse_center_y + clip_curve_y + clip_wobble;
+	}
+
 	// Visual Compensation for Fade
 	// If fade is active, the top of the liquid becomes transparent, reducing visual volume.
 	// We offset the center Y upwards to compensate.
@@ -385,6 +414,24 @@ void fragment() {
 
 		// --- Volume Lighting (Body) ---
 		if (in_fill) {
+			// Clip against layer below (optional)
+			if (clip_enabled) {
+				if (clip_fade_height <= 0.0) {
+					// Hard cut below clip surface
+					if (UV.y > clip_surface_y) {
+						discard;
+					}
+				} else {
+					// Soft fade below clip surface, normalized by clip ellipse height
+					float dist_below_clip = clamp((UV.y - clip_surface_y) / clip_radius_y, 0.0, 1.0);
+					float clip_alpha = 1.0 - smoothstep(0.0, clip_fade_height, dist_below_clip);
+					final_color.a *= clip_alpha;
+					if (final_color.a <= 0.0) {
+						discard;
+					}
+				}
+			}
+
 			// Depth Darkening (vertical gradient, darker at bottom)
 			// Use fixed glass_bottom_y so darkening is consistent as the glass fills
 			float distance_from_bottom = glass_bottom_y - UV.y;
