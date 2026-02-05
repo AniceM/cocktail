@@ -4,9 +4,6 @@ extends Node2D
 @onready var camera: Camera2D = %Camera2D
 @onready var glass_scene: Node2D = %GlassScene
 
-# Data
-var cocktail: Cocktail
-
 # State Machine
 var state_machine: CocktailMakingStateMachine
 
@@ -69,6 +66,7 @@ func _process(_delta: float) -> void:
 	update_debug_info()
 
 func update_debug_info() -> void:
+	var cocktail := GameSession.current_cocktail
 	debug_label.text = ""
 	if state_machine:
 		debug_label.text += "[color=#00FFFF][b][u]State Machine[/u][/b][/color]\n"
@@ -139,6 +137,10 @@ func _on_glass_animation_finished() -> void:
 
 # Add a liquor to the cocktail
 func _on_add_liquor(liquor: Liquor) -> void:
+	var cocktail := GameSession.current_cocktail
+	if cocktail == null:
+		return
+
 	var result = cocktail.add_liquor(liquor)
 	var success = result[0]
 	var is_new_layer = result[1]
@@ -153,15 +155,25 @@ func _on_add_liquor(liquor: Liquor) -> void:
 		if cocktail.liquors_poured == cocktail.glass.capacity:
 			cocktail.detect_signatures()
 			signature_badges.show_signatures(cocktail.signatures)
+		GameSession.notify_cocktail_updated()
 
 func _on_reset_button_pressed() -> void:
+	var cocktail := GameSession.current_cocktail
+	if cocktail == null:
+		return
+
 	cocktail.reset()
 	glass_scene.reset()
 	flavor_profile_chart.reset()
 	signature_badges.hide_signatures()
 	_update_mix_button()
+	GameSession.notify_cocktail_updated()
 
 func _on_mix_button_pressed() -> void:
+	var cocktail := GameSession.current_cocktail
+	if cocktail == null:
+		return
+
 	var success = cocktail.mix()
 
 	if success:
@@ -173,15 +185,17 @@ func _on_mix_button_pressed() -> void:
 		if cocktail.liquors_poured == cocktail.glass.capacity:
 			cocktail.detect_signatures()
 			signature_badges.show_signatures(cocktail.signatures)
+		GameSession.notify_cocktail_updated()
 
 
 func _update_mix_button() -> void:
+	var cocktail := GameSession.current_cocktail
 	mix_button.disabled = cocktail == null or cocktail.layers.size() <= 1
 
 
 func _on_glass_selected(glass: GlassType) -> void:
 	# Create Cocktail object with selected glass
-	cocktail = Cocktail.new(glass)
+	GameSession.set_current_cocktail(Cocktail.new(glass))
 	glass_scene.set_glass(glass)
 	# Animate glass appearing
 	_animate_glass_in()
@@ -191,8 +205,7 @@ func _on_glass_selected(glass: GlassType) -> void:
 
 func _on_glass_selection_button_pressed() -> void:
 	# Reset current cocktail
-	cocktail = null
-	GameSession.current_cocktail = null
+	GameSession.clear_current_cocktail()
 	# Reset visuals
 	flavor_profile_chart.reset()
 	signature_badges.hide_signatures()
