@@ -24,6 +24,9 @@ const GLOW_BASE_COLOR := Color(1.0, 0.85, 0.4)
 
 ## Returns true if the given cocktail satisfies all conditions.
 func is_met(cocktail: Cocktail) -> bool:
+	if conditions.is_empty():
+		push_warning("Signature '%s' has no conditions; treating as not met." % name)
+		return false
 	for condition in conditions:
 		if not condition.is_met(cocktail):
 			return false

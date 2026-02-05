@@ -22,7 +22,5 @@ ExtResource("2_flavor_resource"): 7
 script = ExtResource("1_signature")
 name = "Temporal Surge"
 condition_description = "Achieve Temporal ≥ 7 with max 3 liquors"
-ExtResource("2_flavor_resource"): 7
-})
 conditions = Array[ExtResource("2_i6nri")]([SubResource("Resource_b7jb6"), SubResource("Resource_kytm7")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

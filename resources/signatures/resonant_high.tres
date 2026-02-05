@@ -22,7 +22,5 @@ ExtResource("2_flavor_resource"): 7
 script = ExtResource("1_signature")
 name = "Resonant Surge"
 condition_description = "Achieve Resonant ≥ 7 with max 3 liquors"
-ExtResource("2_flavor_resource"): 7
-})
 conditions = Array[ExtResource("2_4c17i")]([SubResource("Resource_q1pba"), SubResource("Resource_1qy4g")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

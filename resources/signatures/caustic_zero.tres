@@ -22,7 +22,5 @@ ExtResource("2_flavor_resource"): 0
 script = ExtResource("1_signature")
 name = "Caustic Zero"
 condition_description = "Achieve Caustic = 0 with at least 3 liquors"
-ExtResource("2_flavor_resource"): 0
-})
 conditions = Array[ExtResource("2_jn52o")]([SubResource("Resource_yvf0e"), SubResource("Resource_dilqu")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

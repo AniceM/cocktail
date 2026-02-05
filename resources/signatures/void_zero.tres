@@ -22,7 +22,5 @@ ExtResource("2_flavor_resource"): 0
 script = ExtResource("1_signature")
 name = "Void Zero"
 condition_description = "Achieve Void = 0 with at least 3 liquors"
-ExtResource("2_flavor_resource"): 0
-})
 conditions = Array[ExtResource("2_pvxf7")]([SubResource("Resource_70fkp"), SubResource("Resource_q5x2y")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

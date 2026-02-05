@@ -22,7 +22,5 @@ ExtResource("2_flavor_resource"): 10
 script = ExtResource("1_signature")
 name = "Volatile Overdrive"
 condition_description = "Achieve Volatile = 10 with at least 2 liquors"
-ExtResource("2_flavor_resource"): 10
-})
 conditions = Array[ExtResource("2_t58vn")]([SubResource("Resource_tsdjc"), SubResource("Resource_vnc40")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

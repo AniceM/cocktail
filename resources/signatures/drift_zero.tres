@@ -22,7 +22,5 @@ ExtResource("2_flavor_resource"): 0
 script = ExtResource("1_signature")
 name = "Drift Zero"
 condition_description = "Achieve Drift = 0 with at least 3 liquors"
-ExtResource("2_flavor_resource"): 0
-})
 conditions = Array[ExtResource("2_wf7bh")]([SubResource("Resource_7gj5r"), SubResource("Resource_qmbqq")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

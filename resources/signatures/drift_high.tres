@@ -22,7 +22,5 @@ ExtResource("2_flavor_resource"): 7
 script = ExtResource("1_signature")
 name = "Drift Surge"
 condition_description = "Achieve Drift ≥ 7 with max 3 liquors"
-ExtResource("2_flavor_resource"): 7
-})
 conditions = Array[ExtResource("2_y1ptd")]([SubResource("Resource_k6m8m"), SubResource("Resource_hyach")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

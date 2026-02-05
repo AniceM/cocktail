@@ -22,7 +22,5 @@ ExtResource("2_flavor_resource"): 0
 script = ExtResource("1_signature")
 name = "Temporal Zero"
 condition_description = "Achieve Temporal = 0 with at least 3 liquors"
-ExtResource("2_flavor_resource"): 0
-})
 conditions = Array[ExtResource("2_f1p56")]([SubResource("Resource_5nptv"), SubResource("Resource_h5cet")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

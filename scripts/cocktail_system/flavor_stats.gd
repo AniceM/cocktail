@@ -32,8 +32,9 @@ func get_dominant_flavor() -> Flavor:
 	return dominant
 
 func get_all_flavors() -> Array[Flavor]:
-	# TODO: Load from a global registry or preload
-	return []
+	# Initialize from the FlavorRegistry autoload.
+	# This helps ensure flavor dictionaries have consistent keys across the game.
+	return FlavorRegistry.get_all_flavors()
 
 func duplicate_stats() -> FlavorStats:
 	var new_stats = FlavorStats.new()
