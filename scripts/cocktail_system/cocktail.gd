@@ -22,6 +22,9 @@ var signatures: Array[Signature] = []
 # Cached flavor stats calculation (sum of all liquors' stats + special ingredient + glass bonuses)
 var flavor_stats: FlavorStats = FlavorStats.new()
 
+# Ordered history of actions performed on this cocktail (for recipe matching)
+var action_history: Array[RecipeStep] = []
+
 func _init(glass_type: GlassType) -> void:
 	glass = glass_type
 	_recalculate_flavor_stats()
@@ -31,6 +34,7 @@ func reset() -> void:
 	liquors_poured = 0
 	special_ingredient = null
 	signatures.clear()
+	action_history.clear()
 	_recalculate_flavor_stats()
 
 # Add a liquor to the cocktail
@@ -41,6 +45,7 @@ func add_liquor(liquor: Liquor) -> Array[bool]:
 		return [false, false]
 
 	liquors_poured += 1
+	_record_action(RecipeStep.Action.ADD_LIQUOR, liquor, null)
 
 	# If the liquor is different from the last one, create a new layer
 	if layers.size() == 0 or !layers[-1].is_unique_liquor(liquor):
@@ -73,6 +78,7 @@ func mix() -> bool:
 	layers.clear()
 	layers.append(combined_layer)
 	_recalculate_flavor_stats()
+	_record_action(RecipeStep.Action.MIX, null, null)
 	return true
 
 func add_special_ingredient(ingredient: SpecialIngredient) -> bool:
@@ -80,6 +86,7 @@ func add_special_ingredient(ingredient: SpecialIngredient) -> bool:
 		return false
 	special_ingredient = ingredient
 	_recalculate_flavor_stats()
+	_record_action(RecipeStep.Action.ADD_SPECIAL_INGREDIENT, null, ingredient)
 	return true
 
 func _recalculate_flavor_stats() -> void:
@@ -107,10 +114,10 @@ func _apply_glass_bonuses() -> void:
 		# Add more cases as needed
 
 func detect_signatures() -> void:
-	signatures = SignatureValidator.detect_signatures(self)
-
-func check_signature_match(sig: Signature) -> bool:
-	return SignatureValidator.check_signature(self, sig)
+	signatures = []
+	for sig in GameDataRegistry.all_signatures:
+		if sig.is_met(self ):
+			signatures.append(sig)
 
 func get_reveal_rate(secret_type: SecretType) -> float:
 	var base_rate = 0.0
@@ -126,3 +133,11 @@ func get_reveal_rate(secret_type: SecretType) -> float:
 			base_rate += sig.reveal_bonus_percent / 100.0
 
 	return clamp(base_rate, 0.0, 1.0)
+
+
+func _record_action(action: RecipeStep.Action, liquor: Liquor, ingredient: SpecialIngredient) -> void:
+	var step := RecipeStep.new()
+	step.action = action
+	step.liquor = liquor
+	step.special_ingredient = ingredient
+	action_history.append(step)

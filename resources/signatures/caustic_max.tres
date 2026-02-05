@@ -1,16 +1,28 @@
-[gd_resource type="Resource" script_class="Signature" load_steps=5 format=3 uid="uid://b228bqkjoejog"]
+[gd_resource type="Resource" script_class="Signature" format=3 uid="uid://b228bqkjoejog"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_d4sxv"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="1_flavor"]
 [ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="1_signature"]
+[ext_resource type="Script" uid="uid://c45c5c1lmy0fw" path="res://scripts/cocktail_system/conditions/cocktail_condition.gd" id="2_53riv"]
 [ext_resource type="Resource" uid="uid://dqq43sfhndaps" path="res://resources/flavors/caustic.tres" id="2_flavor_resource"]
+[ext_resource type="Script" uid="uid://ddtt4h1o8g70" path="res://scripts/cocktail_system/conditions/capacity_condition.gd" id="3_337q3"]
+[ext_resource type="Script" uid="uid://dr747pycnab11" path="res://scripts/cocktail_system/conditions/flavor_condition.gd" id="6_4lfco"]
+
+[sub_resource type="Resource" id="Resource_cc1qh"]
+script = ExtResource("3_337q3")
+min_capacity = 2
+
+[sub_resource type="Resource" id="Resource_pvkpq"]
+script = ExtResource("6_4lfco")
+min_flavors = Dictionary[ExtResource("1_flavor"), int]({
+ExtResource("2_flavor_resource"): 10
+})
 
 [resource]
 script = ExtResource("1_signature")
 name = "Caustic Overdrive"
 condition_description = "Achieve Caustic = 10 with at least 2 liquors"
-min_capacity = 2
-min_flavors = Dictionary[ExtResource("1_flavor"), int]({
 ExtResource("2_flavor_resource"): 10
 })
+conditions = Array[ExtResource("2_53riv")]([SubResource("Resource_cc1qh"), SubResource("Resource_pvkpq")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

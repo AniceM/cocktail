@@ -4,13 +4,25 @@
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="1_flavor"]
 [ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="1_signature"]
 [ext_resource type="Resource" uid="uid://dqfbs2lug8qb3" path="res://resources/flavors/abyss.tres" id="2_flavor_resource"]
+[ext_resource type="Script" uid="uid://c45c5c1lmy0fw" path="res://scripts/cocktail_system/conditions/cocktail_condition.gd" id="2_pvxf7"]
+[ext_resource type="Script" uid="uid://ddtt4h1o8g70" path="res://scripts/cocktail_system/conditions/capacity_condition.gd" id="3_4hjqf"]
+[ext_resource type="Script" uid="uid://dr747pycnab11" path="res://scripts/cocktail_system/conditions/flavor_condition.gd" id="6_y1ir0"]
+
+[sub_resource type="Resource" id="Resource_70fkp"]
+script = ExtResource("3_4hjqf")
+min_capacity = 3
+
+[sub_resource type="Resource" id="Resource_q5x2y"]
+script = ExtResource("6_y1ir0")
+max_flavors = Dictionary[ExtResource("1_flavor"), int]({
+ExtResource("2_flavor_resource"): 0
+})
 
 [resource]
 script = ExtResource("1_signature")
 name = "Void Zero"
 condition_description = "Achieve Void = 0 with at least 3 liquors"
-min_capacity = 3
-max_flavors = Dictionary[ExtResource("1_flavor"), int]({
 ExtResource("2_flavor_resource"): 0
 })
+conditions = Array[ExtResource("2_pvxf7")]([SubResource("Resource_70fkp"), SubResource("Resource_q5x2y")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"

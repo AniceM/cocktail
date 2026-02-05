@@ -7,6 +7,7 @@ var all_liquors: Array[Liquor] = []
 var all_glasses: Array[GlassType] = []
 var all_signatures: Array[Signature] = []
 var all_special_ingredients: Array[SpecialIngredient] = []
+var all_recipes: Array[Recipe] = []
 
 func _ready() -> void:
 	_load_all_data()
@@ -16,12 +17,14 @@ func _load_all_data() -> void:
 	_load_resources("res://resources/glasses/", all_glasses)
 	_load_resources("res://resources/signatures/", all_signatures)
 	_load_resources("res://resources/special_ingredients/", all_special_ingredients)
+	_load_resources("res://resources/recipes/", all_recipes)
 
 	print("Game data loaded:")
 	print("  - %d liquors" % all_liquors.size())
 	print("  - %d glasses" % all_glasses.size())
 	print("  - %d signatures" % all_signatures.size())
 	print("  - %d special ingredients" % all_special_ingredients.size())
+	print("  - %d recipes" % all_recipes.size())
 
 func _load_resources(path: String, target_array: Array) -> void:
 	target_array.clear()
@@ -67,4 +70,11 @@ func get_signature(signature_name: String) -> Signature:
 		if signature.name == signature_name:
 			return signature
 	push_error("Signature not found: " + signature_name)
+	return null
+
+func get_recipe(recipe_name: String) -> Recipe:
+	for recipe in all_recipes:
+		if recipe.name == recipe_name:
+			return recipe
+	push_error("Recipe not found: " + recipe_name)
 	return null

@@ -1,26 +1,41 @@
-# Signature System Documentation
+# Signature & Condition System Documentation
 
 ## Overview
 
-The signature system allows you to define complex cocktail patterns that unlock special effects. Signatures are defined as resources (`Signature.tres` files) with declarative conditions that are automatically validated.
+The signature system allows you to define complex cocktail patterns that unlock special effects. Signatures are defined as resources (`Signature.tres` files) containing an array of reusable `CocktailCondition` sub-resources.
 
 ## Architecture
 
 ### Core Components
 
-1. **Signature** (`scripts/resources/signature.gd`) - Resource defining conditions and effects
-2. **SignatureValidator** (`scripts/cocktail_system/signature_validator.gd`) - Validates cocktails against signatures
+1. **Signature** (`scripts/resources/signature.gd`) - Resource combining conditions and effects
+2. **CocktailCondition** (`scripts/cocktail_system/conditions/`) - Polymorphic condition resources
 3. **ColorUtils** (`scripts/utils/color_utils.gd`) - Color matching and pattern detection
+
+### Condition Types
+
+| Class | Fields | What it checks |
+|-------|--------|---------------|
+| `CapacityCondition` | `min_capacity`, `max_capacity` | Number of liquors poured |
+| `LayerCondition` | `min_layers`, `max_layers` | Number of layers |
+| `FlavorCondition` | `min_flavors`, `max_flavors` | Total cocktail flavor stats |
+| `FlavorProgressionCondition` | `flavor`, `progression`, `constant_tolerance` | Flavor pattern across layers |
+| `ColorCondition` | `requirement`, `required_color_names` | Color pattern across layers |
+
+Each condition implements `is_met(cocktail: Cocktail) -> bool`.
 
 ### How It Works
 
 ```gdscript
-# In your cocktail mixing logic:
-var all_signatures: Array[Signature] = load_all_signatures()
-cocktail.detect_signatures(all_signatures)
+# After each cocktail change (pour, mix, add ingredient):
+cocktail.detect_signatures()
 
-# Signatures are now stored in cocktail.signatures
-# And automatically boost secret reveal rates
+# Check what's unlocked:
+for sig in cocktail.signatures:
+    print("Unlocked: ", sig.name)
+
+# Signatures automatically affect reveal rates:
+var lie_reveal_rate = cocktail.get_reveal_rate(LIE_SECRET_TYPE)
 ```
 
 ## Signature Resource Fields
@@ -28,103 +43,89 @@ cocktail.detect_signatures(all_signatures)
 ### Basic Info
 - `name: String` - Display name
 - `icon: Texture2D` - Visual icon
-- `signature_type: SignatureType` - Category (SINGLE_FLAVOR, MULTI_FLAVOR, COLOR_BASED, RARE)
 - `condition_description: String` - Human-readable conditions
 - `effect_description: String` - Human-readable effects
 
-### Capacity Requirements
-- `min_capacity: int` - Minimum liquors that must be poured (default: 0)
-  - **Note**: This counts total pours, not layers. Mixing doesn't change this count.
-  - Example: Pour 5 liquors → mix → still 5 capacity used
-- `max_capacity: int` - Maximum liquors allowed (default: 999)
+### Conditions
+- `conditions: Array[CocktailCondition]` - All conditions must be met for the signature to unlock
 
-### Layer Requirements
-- `min_layers: int` - Minimum layers required (default: 0)
-  - **Note**: Layer count changes when you mix. Pour 3 liquors = 3 layers, then mix = 1 layer.
-- `max_layers: int` - Maximum layers allowed (default: 999)
-
-### Flavor Requirements
-- `min_flavors: Dictionary[Flavor, int]` - Flavor minimums (e.g., {Caustic: 5, Volatile: 3})
-
-### Flavor Progression (across layers)
-- `progression_flavor: Flavor` - Which flavor to track
-- `flavor_progression: FlavorProgression` - Pattern type:
-  - `NONE` - No progression requirement
-  - `SAME_DOMINANT` - Same flavor dominant in all layers
-  - `CRESCENDO` - Flavor increases bottom→top
-  - `DECRESCENDO` - Flavor decreases bottom→top
-  - `CONSTANT` - Flavor stays roughly same
-
-### Color Requirements
-- `color_requirement: ColorRequirement` - Pattern type:
-  - `NONE` - No color requirement
-  - `GRADIENT` - Smooth transition toward target
-  - `ALTERNATING` - Layers alternate between colors
-  - `MONOCHROME` - All layers same color
-  - `SPECIFIC_SEQUENCE` - Exact color order
-- `required_color_names: Array[ColorUtils.ColorName]` - Color(s) to match
-  - `GRADIENT`: Requires 1 color (target)
-  - `ALTERNATING`: Requires 2 colors
-  - `MONOCHROME`: Requires 1 color
-  - `SPECIFIC_SEQUENCE`: Requires N colors (matches layer count)
+Glow color is inferred from the condition types present. A signature with all three types (color, progression, and flavors) is considered **rare** and gets a special glow.
 
 ### Effects
 - `boosted_secret_types: Array[SecretType]` - Which secrets get revealed more
 - `suspicion_modifier: int` - Suspicion level change
 - `reveal_bonus_percent: int` - Percentage boost to reveal rate
 
+## Condition Details
+
+### CapacityCondition
+- `min_capacity: int` (default: 0) - Minimum liquors poured
+- `max_capacity: int` (default: 999) - Maximum liquors allowed
+- **Note**: Counts total pours. Mixing doesn't change this count.
+
+### LayerCondition
+- `min_layers: int` (default: 0) - Minimum layers required
+- `max_layers: int` (default: 999) - Maximum layers allowed
+- **Note**: Layer count changes when you mix. Pour 3 liquors = 3 layers, then mix = 1 layer.
+
+### FlavorCondition
+- `min_flavors: Dictionary[Flavor, int]` - Flavor minimums (e.g., {Caustic: 5, Volatile: 3})
+- `max_flavors: Dictionary[Flavor, int]` - Flavor maximums (optional upper bounds)
+
+### FlavorProgressionCondition
+- `flavor: Flavor` - Which flavor to track across layers
+- `progression: Progression` - Pattern type:
+  - `SAME_DOMINANT` - Same flavor dominant in all layers
+  - `CRESCENDO` - Flavor increases bottom→top
+  - `DECRESCENDO` - Flavor decreases bottom→top
+  - `CONSTANT` - Flavor stays roughly same (within `constant_tolerance`)
+- `constant_tolerance: int` (default: 1) - Allowed deviation for CONSTANT
+
+### ColorCondition
+- `requirement: Requirement` - Pattern type:
+  - `GRADIENT` - Smooth transition toward target (requires 1 color)
+  - `ALTERNATING` - Layers alternate between colors (requires 2 colors)
+  - `MONOCHROME` - All layers same color (requires 1 color)
+  - `SPECIFIC_SEQUENCE` - Exact color order (requires N colors matching layer count)
+- `required_color_names: Array[ColorUtils.ColorName]` - Color(s) to match
+
 ## Example Signatures
 
 ### Simple Flavor Signature
 ```
 Name: "Nebula"
-Type: MULTI_FLAVOR
-Required Flavors: {Resonant: 4, Abyss: 4}
-Min Capacity: 2
+Conditions:
+  - CapacityCondition(min_capacity=2)
+  - FlavorCondition(min_flavors={Resonant: 4, Abyss: 4})
 ```
 
 ### Crescendo Pattern
 ```
 Name: "Rising Heat"
-Type: MULTI_FLAVOR
-Min Layers: 3
-Progression Flavor: Caustic
-Flavor Progression: CRESCENDO
-Condition: "Caustic increases with each layer"
+Conditions:
+  - LayerCondition(min_layers=3)
+  - FlavorProgressionCondition(flavor=Caustic, progression=CRESCENDO)
 ```
 
-### Color Gradient
+### Color Monochrome
 ```
-Name: "Blue Depths"
-Type: COLOR_BASED
-Min Layers: 2
-Color Requirement: GRADIENT
-Required Color Names: [BLUE]
-Condition: "Layers form blue gradient"
-```
-
-### Alternating Colors
-```
-Name: "Sunset Stripes"
-Type: COLOR_BASED
-Min Layers: 2
-Color Requirement: ALTERNATING
-Required Color Names: [RED, ORANGE]
-Condition: "Red and orange layers alternate"
+Name: "Blue Purity"
+Conditions:
+  - CapacityCondition(min_capacity=1)
+  - LayerCondition(min_layers=1, max_layers=1)
+  - ColorCondition(requirement=MONOCHROME, colors=[BLUE])
 ```
 
-### Complex Multi-Condition
+### Complex Multi-Condition (Rare)
 ```
 Name: "Paradox"
-Type: RARE
-Min Layers: 3
-Required Flavors: {Temporal: 5, Void: 5}
-Progression Flavor: Temporal
-Flavor Progression: SAME_DOMINANT
-Color Requirement: MONOCHROME
-Required Color Names: [PURPLE]
-Condition: "3+ purple layers, all Temporal-dominant, 5+ Temporal and Void"
+Conditions:
+  - LayerCondition(min_layers=3)
+  - FlavorCondition(min_flavors={Temporal: 5, Void: 5})
+  - FlavorProgressionCondition(flavor=Temporal, progression=SAME_DOMINANT)
+  - ColorCondition(requirement=MONOCHROME, colors=[PURPLE])
 ```
+*Glow: **Rare** (has color + progression + flavor conditions)*
 
 ## ColorUtils.ColorName Enum
 
@@ -142,36 +143,11 @@ Available color names for matching:
 
 Color matching uses HSV with 30° hue tolerance by default.
 
-## Performance Considerations
-
-The validator checks conditions in order of computational cost:
-1. Capacity (cheapest - simple counter)
-2. Layer count (cheap - array size)
-3. Required flavors (medium - dictionary lookups)
-4. Flavor progression (expensive - iterates layers)
-5. Color requirements (expensive - iterates layers + color math)
-
-Early exits prevent unnecessary computation. With hundreds of signatures, only relevant ones should be in the database to check.
-
-## Usage in Code
-
-```gdscript
-# Create a signature database (load from files or directory)
-var signature_db: Array[Signature] = []
-signature_db.append(preload("res://resources/signatures/nebula.tres"))
-# ... add more
-
-# After each cocktail change (pour, mix, add ingredient):
-cocktail.detect_signatures(signature_db)
-
-# Check what's unlocked:
-for sig in cocktail.signatures:
-    print("Unlocked: ", sig.name)
-
-# Signatures automatically affect reveal rates:
-var lie_reveal_rate = cocktail.get_reveal_rate(LIE_SECRET_TYPE)
-```
-
 ## Extending the System
 
-For signatures with unique conditions not covered by the declarative system, you can add new enum values or create custom validator functions in `SignatureValidator`. Keep most signatures declarative for easy iteration.
+To add a new condition type:
+1. Create a new class extending `CocktailCondition` in `scripts/cocktail_system/conditions/`
+2. Implement `is_met(cocktail: Cocktail) -> bool`
+3. The new type automatically appears in the Godot inspector dropdown when adding conditions to a Signature
+
+CocktailConditions are reusable beyond signatures — any system that needs to check cocktail state (story gates, tutorials, achievements) can use them directly.

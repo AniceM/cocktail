@@ -1,16 +1,29 @@
-[gd_resource type="Resource" script_class="Signature" load_steps=4 format=3 uid="uid://dmkdnk5hu1yk0"]
+[gd_resource type="Resource" script_class="Signature" format=3 uid="uid://dmkdnk5hu1yk0"]
 
 [ext_resource type="Script" uid="uid://bbc0rsqg0ecwd" path="res://scripts/resources/secret_type.gd" id="1_1ijji"]
 [ext_resource type="Script" uid="uid://cte8xpy3vdqgp" path="res://scripts/resources/signature.gd" id="1_signature"]
+[ext_resource type="Script" uid="uid://c45c5c1lmy0fw" path="res://scripts/cocktail_system/conditions/cocktail_condition.gd" id="2_jvmab"]
 [ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_w6itw"]
+[ext_resource type="Script" uid="uid://ddtt4h1o8g70" path="res://scripts/cocktail_system/conditions/capacity_condition.gd" id="3_ke3wy"]
+[ext_resource type="Script" uid="uid://bt4ujtdrisf5r" path="res://scripts/cocktail_system/conditions/layer_condition.gd" id="4_tlwtx"]
+[ext_resource type="Script" uid="uid://bvipcvwwtwpx3" path="res://scripts/cocktail_system/conditions/color_condition.gd" id="5_65qvh"]
+
+[sub_resource type="Resource" id="Resource_pbau7"]
+script = ExtResource("3_ke3wy")
+min_capacity = 1
+
+[sub_resource type="Resource" id="Resource_n4a8b"]
+script = ExtResource("4_tlwtx")
+min_layers = 1
+max_layers = 1
+
+[sub_resource type="Resource" id="Resource_k5j47"]
+script = ExtResource("5_65qvh")
+required_color_names = Array[int]([10])
 
 [resource]
 script = ExtResource("1_signature")
 name = "Black Purity"
 condition_description = "Create exactly 1 layer of black color"
-min_capacity = 1
-min_layers = 1
-max_layers = 1
-color_requirement = 3
-required_color_names = Array[int]([10])
+conditions = Array[ExtResource("2_jvmab")]([SubResource("Resource_pbau7"), SubResource("Resource_n4a8b"), SubResource("Resource_k5j47")])
 metadata/_custom_type_script = "uid://cte8xpy3vdqgp"
