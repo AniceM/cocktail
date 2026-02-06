@@ -33,15 +33,20 @@ func _load_resources(path: String, target_array: Array) -> void:
 		push_error("Failed to open directory: " + path)
 		return
 
+	var file_names: Array[String] = []
 	dir.list_dir_begin()
 	var file_name = dir.get_next()
 	while file_name != "":
 		if file_name.ends_with(".tres"):
-			var resource = load(path + file_name)
-			if resource:
-				target_array.append(resource)
+			file_names.append(file_name)
 		file_name = dir.get_next()
 	dir.list_dir_end()
+
+	file_names.sort()
+	for sorted_file_name in file_names:
+		var resource = load(path + sorted_file_name)
+		if resource:
+			target_array.append(resource)
 
 # Lookup helpers
 func get_liquor(liquor_name: String) -> Liquor:

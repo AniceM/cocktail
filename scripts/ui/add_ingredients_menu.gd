@@ -22,11 +22,13 @@ func _populate_liquors() -> void:
 		button.pressed.connect(_on_add_liquor_button_pressed.bind(liquor))
 		_add_liquor_list.add_child(button)
 
+
 # Switch buttons to disabled/enabled
 func set_disabled(disabled: bool = true) -> void:
 	for child in _add_liquor_list.get_children():
 		if child is Button:
 			child.disabled = disabled
+
 
 func _on_add_liquor_button_pressed(liquor: Liquor) -> void:
 	add_liquor.emit(liquor)

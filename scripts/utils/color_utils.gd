@@ -19,7 +19,7 @@ enum ColorName {
 # Check if a color matches a given color name
 # tolerance: degrees of hue variance allowed (default 30)
 static func matches_color_name(color: Color, color_name: ColorName, tolerance: float = 30.0) -> bool:
-	var hue = color.h * 360.0  # Godot's h is 0-1, convert to degrees
+	var hue = color.h * 360.0 # Godot's h is 0-1, convert to degrees
 	var saturation = color.s
 	var value = color.v
 
@@ -85,7 +85,7 @@ static func is_gradient_toward(layer_colors: Array[Color], target_color_name: Co
 		var distance = _hue_distance(current_hue, target_hue)
 
 		if distance > prev_distance:
-			return false  # Getting farther away
+			return false # Getting farther away
 		prev_distance = distance
 
 	return true
@@ -100,7 +100,7 @@ static func _get_color_name_hue(color_name: ColorName) -> float:
 		ColorName.BLUE: return 240.0
 		ColorName.PURPLE: return 280.0
 		ColorName.PINK: return 330.0
-	return -1.0  # Invalid
+	return -1.0 # Invalid
 
 static func _hue_distance(hue1: float, hue2: float) -> float:
 	var diff = abs(hue1 - hue2)
@@ -110,7 +110,7 @@ static func _hue_distance(hue1: float, hue2: float) -> float:
 
 # Get all matching color names for a given color
 # Every color will match at least one name (no NONE results)
-static func get_matching_color_names(color: Color, tolerance: float = 30.0) -> Array[ColorName]:
+static func get_matching_color_names(color: Color, tolerance: float = 20.0) -> Array[ColorName]:
 	var matches: Array[ColorName] = []
 	var hue = color.h * 360.0
 	var saturation = color.s
@@ -128,7 +128,7 @@ static func get_matching_color_names(color: Color, tolerance: float = 30.0) -> A
 		return matches
 
 	# 3. GRAY - desaturated colors (not white or black)
-	if saturation < 0.3:
+	if saturation < 0.2:
 		matches.append(ColorName.GRAY)
 		return matches
 
