@@ -41,7 +41,7 @@ func reset() -> void:
 # Returns [success, is_new_layer]
 func add_liquor(liquor: Liquor) -> Array[bool]:
 	if liquors_poured >= glass.capacity:
-		print("Glass is full!")
+		Log.msg(self, "Glass is full!")
 		return [false, false]
 
 	liquors_poured += 1
@@ -52,12 +52,12 @@ func add_liquor(liquor: Liquor) -> Array[bool]:
 		var new_layer = CocktailLayer.new()
 		layers.append(new_layer)
 		new_layer.add_liquor(liquor)
-		print("Adding liquor: %s to new layer" % liquor.name)
+		Log.msg(self, "Adding liquor: %s to new layer" % liquor.name)
 		_recalculate_flavor_stats()
 		return [true, true]
 	else:
 		layers[-1].add_liquor(liquor)
-		print("Adding liquor: %s to last layer" % liquor.name)
+		Log.msg(self, "Adding liquor: %s to last layer" % liquor.name)
 		_recalculate_flavor_stats()
 		return [true, false]
 
@@ -82,12 +82,16 @@ func mix() -> bool:
 	return true
 
 func add_special_ingredient(ingredient: SpecialIngredient) -> bool:
-	if special_ingredient != null:
-		return false
 	special_ingredient = ingredient
 	_recalculate_flavor_stats()
+	# Only 1 special ingredient allowed
+	if action_history.size() > 0 and action_history[-1].action == RecipeStep.Action.ADD_SPECIAL_INGREDIENT:
+		action_history.pop_back()
 	_record_action(RecipeStep.Action.ADD_SPECIAL_INGREDIENT, null, ingredient)
 	return true
+
+func is_full() -> bool:
+	return liquors_poured >= glass.capacity
 
 func _recalculate_flavor_stats() -> void:
 	flavor_stats = FlavorStats.new()
@@ -116,7 +120,7 @@ func _apply_glass_bonuses() -> void:
 func detect_signatures() -> void:
 	signatures = []
 	for sig in GameDataRegistry.all_signatures:
-		if sig.is_met(self ):
+		if sig.is_met(self):
 			signatures.append(sig)
 
 func get_reveal_rate(secret_type: SecretType) -> float:

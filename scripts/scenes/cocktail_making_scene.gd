@@ -31,6 +31,11 @@ const CAMERA_ZOOM_DURATION := 0.5
 # Debug
 @onready var debug_label: RichTextLabel = %DebugLabel
 
+
+# ============================================================================
+# Lifecycle
+# ============================================================================
+
 func _ready() -> void:
 	# Hide the glass until one is selected
 	glass_scene.visible = false
@@ -47,6 +52,9 @@ func _ready() -> void:
 	glass_selection_menu.glass_selected.connect(_on_glass_selected)
 	glass_selection_button.pressed.connect(_on_glass_selection_button_pressed)
 	add_ingredients_menu.add_liquor.connect(_on_add_liquor)
+	add_ingredients_menu.add_special_ingredient.connect(_on_add_special_ingredient)
+	add_ingredients_menu.next_pressed.connect(_on_next_pressed)
+	add_ingredients_menu.complete_pressed.connect(_on_complete_pressed)
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	mix_button.pressed.connect(_on_mix_button_pressed)
 
@@ -65,133 +73,82 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	update_debug_info()
 
-func update_debug_info() -> void:
-	var cocktail := GameSession.current_cocktail
-	debug_label.text = ""
-	if state_machine:
-		debug_label.text += "[color=#00FFFF][b][u]State Machine[/u][/b][/color]\n"
-		debug_label.text += "[color=#AAAAAA]State:[/color] %s\n" % CocktailMakingStateMachine.StateName.keys()[state_machine.current_state]
-		debug_label.text += "\n"
-	if cocktail:
-		debug_label.text += "[color=#00FFFF][b][u]Cocktail[/u][/b][/color]\n"
-		debug_label.text += "[color=#AAAAAA]Glass:[/color] %s\n" % cocktail.glass.name
-		debug_label.text += "[color=#AAAAAA]Liquors Poured:[/color] [color=#FFFF00]%s[/color] / %s\n" % [cocktail.liquors_poured, cocktail.glass.capacity]
-		debug_label.text += "[color=#AAAAAA]Layers:[/color] [color=#FFFF00]%s[/color]\n" % cocktail.layers.size()
-
-		# Layer breakdown
-		if cocktail.layers.size() > 0:
-			debug_label.text += "\n[color=#AAAAAA]Layer Breakdown:[/color]\n"
-			for i in range(cocktail.layers.size()):
-				var layer = cocktail.layers[i]
-				var dominant = layer.flavor_stats.get_dominant_flavor()
-				var dominant_value = layer.flavor_stats.get_value(dominant) if dominant else 0
-				var layer_color_hex = layer.color.to_html(false)
-				var color_names_enums = ColorUtils.get_matching_color_names(layer.color)
-				var color_names_str = "/".join(color_names_enums.map(func(e): return ColorUtils.ColorName.keys()[e]))
-
-				debug_label.text += "  [bgcolor=#%s]   [/bgcolor] " % layer_color_hex
-				debug_label.text += "[color=#CCCCCC]Layer %d:[/color] " % (i + 1)
-				if dominant:
-					debug_label.text += "[color=#00FF88]%s[/color] (%d) " % [dominant.name, dominant_value]
-				debug_label.text += "[color=#888888]%s[/color]\n" % color_names_str
-
-			# Layer colors sequence
-			debug_label.text += "\n[color=#AAAAAA]Color Sequence:[/color] "
-			for i in range(cocktail.layers.size()):
-				var layer = cocktail.layers[i]
-				var color_names_enums = ColorUtils.get_matching_color_names(layer.color)
-				var color_names_str = "/".join(color_names_enums.map(func(e): return ColorUtils.ColorName.keys()[e]))
-				var layer_color_hex = layer.color.to_html(false)
-				debug_label.text += "[bgcolor=#%s][color=#000000] %s [/color][/bgcolor]" % [layer_color_hex, color_names_str]
-				if i < cocktail.layers.size() - 1:
-					debug_label.text += " → "
-			debug_label.text += "\n"
-
-		debug_label.text += "\n[color=#AAAAAA]Total Flavor Stats:[/color]\n"
-		for flavor in cocktail.flavor_stats.stats:
-			var value = cocktail.flavor_stats.get_value(flavor)
-			if value != 0:
-				var color = "#00FF00" if value > 0 else "#FF0000"
-				debug_label.text += "  [color=%s]%s: %+d[/color]\n" % [color, flavor.name, value]
-
-		debug_label.text += "\n[color=#AAAAAA]Secret Reveal Rates:[/color]\n"
-		for secret_type in SecretTypeRegistry.get_all_secret_types():
-			var reveal_rate = cocktail.get_reveal_rate(secret_type)
-			if reveal_rate > 0:
-				debug_label.text += "  [color=#FFAA00]%s: %.0f%%[/color]\n" % [secret_type.name, reveal_rate * 100]
-
-		debug_label.text += "\n"
-
 # Route unhandled input event to the state machine
 # Probably not needed at first (control nodes will handle events themselves),
 # But I might need this for controller support
 func _unhandled_input(event: InputEvent) -> void:
 	state_machine.handle_input(event)
 
-# Block / Unlock interactivity while animations are running
+
+# ============================================================================
+# State Machine
+# ============================================================================
+
+func _on_state_changed(old_state: CocktailMakingStateMachine.StateName, new_state: CocktailMakingStateMachine.StateName) -> void:
+	_on_exit_state(old_state, new_state)
+	_on_enter_state(old_state, new_state)
+
+
+func _on_exit_state(old_state: CocktailMakingStateMachine.StateName, _new_state: CocktailMakingStateMachine.StateName) -> void:
+	match old_state:
+		CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
+			var cocktail := GameSession.current_cocktail
+			if cocktail and cocktail.is_full():
+				add_ingredients_menu.set_disabled(true)
+				add_ingredients_menu.set_next_button_enabled(true)
+			else:
+				add_ingredients_menu.set_disabled(false)
+
+
+func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state: CocktailMakingStateMachine.StateName) -> void:
+	match new_state:
+		CocktailMakingStateMachine.StateName.GLASS_SELECTION:
+			glass_selection_button.visible = false
+			reset_button.visible = false
+			mix_button.visible = false
+			_animate_camera_zoom(CAMERA_ZOOM_GLASS_SELECTION)
+			if old_state != CocktailMakingStateMachine.StateName.START:
+				_transition_menus(glass_selection_menu, add_ingredients_menu)
+				_animate_chart_out()
+			else:
+				_transition_menus(glass_selection_menu, null)
+			# Defer to ensure buttons are populated on first run
+			glass_selection_menu.animate_buttons_in.call_deferred()
+		CocktailMakingStateMachine.StateName.LIQUOR_SELECTION:
+			glass_selection_button.visible = true
+			reset_button.visible = true
+			mix_button.visible = true
+			_animate_camera_zoom(CAMERA_ZOOM_LIQUOR_SELECTION)
+			add_ingredients_menu.mode = add_ingredients_menu.Mode.LIQUORS
+			# Only transition menus when coming from glass selection, not from adding ingredient
+			if old_state == CocktailMakingStateMachine.StateName.GLASS_SELECTION:
+				_transition_menus(add_ingredients_menu, glass_selection_menu)
+				_animate_chart_in()
+			elif old_state == CocktailMakingStateMachine.StateName.REVIEW:
+				_transition_menus(add_ingredients_menu, null)
+		CocktailMakingStateMachine.StateName.SPECIAL_INGREDIENT_SELECTION:
+			glass_selection_button.visible = true
+			reset_button.visible = true
+			mix_button.visible = false
+			add_ingredients_menu.mode = add_ingredients_menu.Mode.SPECIAL_INGREDIENTS
+		CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
+			add_ingredients_menu.set_disabled(true)
+		CocktailMakingStateMachine.StateName.REVIEW:
+			glass_selection_button.visible = true
+			reset_button.visible = true
+			mix_button.visible = false
+			_transition_menus(null, add_ingredients_menu)
+
+
+# ============================================================================
+# Signal Callbacks
+# ============================================================================
+
 func _on_glass_animation_started() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.ADDING_INGREDIENT)
 
 func _on_glass_animation_finished() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
-
-# Add a liquor to the cocktail
-func _on_add_liquor(liquor: Liquor) -> void:
-	var cocktail := GameSession.current_cocktail
-	if cocktail == null:
-		return
-
-	var result = cocktail.add_liquor(liquor)
-	var success = result[0]
-	var is_new_layer = result[1]
-	# Update data
-	if success:
-		# Update UI
-		glass_scene.add_liquid(liquor.color, is_new_layer, true)
-		flavor_profile_chart.update_flavor_profile(cocktail.flavor_stats, true)
-		_update_mix_button()
-
-		# Check if glass is full - detect and show signatures
-		if cocktail.liquors_poured == cocktail.glass.capacity:
-			cocktail.detect_signatures()
-			signature_badges.show_signatures(cocktail.signatures)
-		GameSession.notify_cocktail_updated()
-
-func _on_reset_button_pressed() -> void:
-	var cocktail := GameSession.current_cocktail
-	if cocktail == null:
-		return
-
-	cocktail.reset()
-	glass_scene.reset()
-	flavor_profile_chart.reset()
-	signature_badges.hide_signatures()
-	_update_mix_button()
-	GameSession.notify_cocktail_updated()
-
-func _on_mix_button_pressed() -> void:
-	var cocktail := GameSession.current_cocktail
-	if cocktail == null:
-		return
-
-	var success = cocktail.mix()
-
-	if success:
-		# Update UI
-		glass_scene.mix(true)
-		_update_mix_button()
-
-		# Re-detect signatures if glass is full (mixing changes layer structure)
-		if cocktail.liquors_poured == cocktail.glass.capacity:
-			cocktail.detect_signatures()
-			signature_badges.show_signatures(cocktail.signatures)
-		GameSession.notify_cocktail_updated()
-
-
-func _update_mix_button() -> void:
-	var cocktail := GameSession.current_cocktail
-	mix_button.disabled = cocktail == null or cocktail.layers.size() <= 1
-
 
 func _on_glass_selected(glass: GlassType) -> void:
 	# Create Cocktail object with selected glass
@@ -216,6 +173,93 @@ func _on_glass_selection_button_pressed() -> void:
 	)
 
 
+func _on_add_liquor(liquor: Liquor) -> void:
+	var cocktail := GameSession.current_cocktail
+	if cocktail == null:
+		return
+
+	var result = cocktail.add_liquor(liquor)
+	var success = result[0]
+	var is_new_layer = result[1]
+	# Update data
+	if success:
+		# Update UI
+		glass_scene.add_liquid(liquor.color, is_new_layer, true)
+		flavor_profile_chart.update_flavor_profile(cocktail.flavor_stats, true)
+		_update_mix_button()
+
+		# Check if glass is full - detect and show signatures
+		if cocktail.is_full():
+			cocktail.detect_signatures()
+			signature_badges.show_signatures(cocktail.signatures)
+		GameSession.notify_cocktail_updated()
+
+
+func _on_add_special_ingredient(ingredient: SpecialIngredient) -> void:
+	var cocktail := GameSession.current_cocktail
+	if cocktail == null:
+		return
+
+	cocktail.add_special_ingredient(ingredient)
+	flavor_profile_chart.update_flavor_profile(cocktail.flavor_stats, true)
+	cocktail.detect_signatures()
+	signature_badges.show_signatures(cocktail.signatures)
+	GameSession.notify_cocktail_updated()
+
+
+func _on_next_pressed() -> void:
+	state_machine.change_state(CocktailMakingStateMachine.StateName.SPECIAL_INGREDIENT_SELECTION)
+
+
+func _on_complete_pressed() -> void:
+	state_machine.change_state(CocktailMakingStateMachine.StateName.REVIEW)
+
+
+func _on_reset_button_pressed() -> void:
+	var cocktail := GameSession.current_cocktail
+	if cocktail == null:
+		return
+
+	cocktail.reset()
+	glass_scene.reset()
+	flavor_profile_chart.reset()
+	signature_badges.hide_signatures()
+	_update_mix_button()
+
+	# If not in liquor selection, go there
+	if state_machine.current_state != CocktailMakingStateMachine.StateName.LIQUOR_SELECTION:
+		state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
+
+	GameSession.notify_cocktail_updated()
+
+func _on_mix_button_pressed() -> void:
+	var cocktail := GameSession.current_cocktail
+	if cocktail == null:
+		return
+
+	var success = cocktail.mix()
+
+	if success:
+		# Update UI
+		glass_scene.mix(true)
+		_update_mix_button()
+
+		# Re-detect signatures if glass is full (mixing changes layer structure)
+		if cocktail.is_full():
+			cocktail.detect_signatures()
+			signature_badges.show_signatures(cocktail.signatures)
+		GameSession.notify_cocktail_updated()
+
+
+func _update_mix_button() -> void:
+	var cocktail := GameSession.current_cocktail
+	mix_button.disabled = cocktail == null or cocktail.layers.size() <= 1
+
+
+# ============================================================================
+# Animations
+# ============================================================================
+
 func _animate_glass_in() -> void:
 	if _glass_tween:
 		_glass_tween.kill()
@@ -236,36 +280,6 @@ func _animate_glass_out(on_complete: Callable = Callable()) -> void:
 		if on_complete.is_valid():
 			on_complete.call()
 	)
-
-
-func _on_state_changed(old_state: CocktailMakingStateMachine.StateName, new_state: CocktailMakingStateMachine.StateName) -> void:
-	# Update UI visibility based on state
-	match new_state:
-		CocktailMakingStateMachine.StateName.GLASS_SELECTION:
-			glass_selection_button.visible = false
-			reset_button.visible = false
-			mix_button.visible = false
-			_animate_camera_zoom(CAMERA_ZOOM_GLASS_SELECTION)
-			if old_state != CocktailMakingStateMachine.StateName.START:
-				_transition_menus(glass_selection_menu, add_ingredients_menu)
-				_animate_chart_out()
-			else:
-				_transition_menus(glass_selection_menu, null)
-			# Defer to ensure buttons are populated on first run
-			glass_selection_menu.animate_buttons_in.call_deferred()
-		CocktailMakingStateMachine.StateName.LIQUOR_SELECTION:
-			glass_selection_button.visible = true
-			reset_button.visible = true
-			mix_button.visible = true
-			_animate_camera_zoom(CAMERA_ZOOM_LIQUOR_SELECTION)
-			# Only transition menus when coming from glass selection, not from adding ingredient
-			if old_state == CocktailMakingStateMachine.StateName.GLASS_SELECTION:
-				_transition_menus(add_ingredients_menu, glass_selection_menu)
-				_animate_chart_in()
-			elif old_state == CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
-				add_ingredients_menu.set_disabled(false)
-		CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
-			add_ingredients_menu.set_disabled(true)
 
 
 func _animate_camera_zoom(target_zoom: Vector2) -> void:
@@ -340,3 +354,65 @@ func _transition_menus(menu_in: Control, menu_out: Control) -> void:
 		if menu_in and menu_in.has_method("set_disabled"):
 			menu_in.set_disabled(false)
 	)
+
+
+# ============================================================================
+# Debug
+# ============================================================================
+
+func update_debug_info() -> void:
+	var cocktail := GameSession.current_cocktail
+	debug_label.text = ""
+	if state_machine:
+		debug_label.text += "[color=#00FFFF][b][u]State Machine[/u][/b][/color]\n"
+		debug_label.text += "[color=#AAAAAA]State:[/color] %s\n" % CocktailMakingStateMachine.StateName.keys()[state_machine.current_state]
+		debug_label.text += "\n"
+	if cocktail:
+		debug_label.text += "[color=#00FFFF][b][u]Cocktail[/u][/b][/color]\n"
+		debug_label.text += "[color=#AAAAAA]Glass:[/color] %s\n" % cocktail.glass.name
+		debug_label.text += "[color=#AAAAAA]Liquors Poured:[/color] [color=#FFFF00]%s[/color] / %s\n" % [cocktail.liquors_poured, cocktail.glass.capacity]
+		debug_label.text += "[color=#AAAAAA]Layers:[/color] [color=#FFFF00]%s[/color]\n" % cocktail.layers.size()
+
+		# Layer breakdown
+		if cocktail.layers.size() > 0:
+			debug_label.text += "\n[color=#AAAAAA]Layer Breakdown:[/color]\n"
+			for i in range(cocktail.layers.size()):
+				var layer = cocktail.layers[i]
+				var dominant = layer.flavor_stats.get_dominant_flavor()
+				var dominant_value = layer.flavor_stats.get_value(dominant) if dominant else 0
+				var layer_color_hex = layer.color.to_html(false)
+				var color_names_enums = ColorUtils.get_matching_color_names(layer.color)
+				var color_names_str = "/".join(color_names_enums.map(func(e): return ColorUtils.ColorName.keys()[e]))
+
+				debug_label.text += "  [bgcolor=#%s]   [/bgcolor] " % layer_color_hex
+				debug_label.text += "[color=#CCCCCC]Layer %d:[/color] " % (i + 1)
+				if dominant:
+					debug_label.text += "[color=#00FF88]%s[/color] (%d) " % [dominant.name, dominant_value]
+				debug_label.text += "[color=#888888]%s[/color]\n" % color_names_str
+
+			# Layer colors sequence
+			debug_label.text += "\n[color=#AAAAAA]Color Sequence:[/color] "
+			for i in range(cocktail.layers.size()):
+				var layer = cocktail.layers[i]
+				var color_names_enums = ColorUtils.get_matching_color_names(layer.color)
+				var color_names_str = "/".join(color_names_enums.map(func(e): return ColorUtils.ColorName.keys()[e]))
+				var layer_color_hex = layer.color.to_html(false)
+				debug_label.text += "[bgcolor=#%s][color=#000000] %s [/color][/bgcolor]" % [layer_color_hex, color_names_str]
+				if i < cocktail.layers.size() - 1:
+					debug_label.text += " → "
+			debug_label.text += "\n"
+
+		debug_label.text += "\n[color=#AAAAAA]Total Flavor Stats:[/color]\n"
+		for flavor in cocktail.flavor_stats.stats:
+			var value = cocktail.flavor_stats.get_value(flavor)
+			if value != 0:
+				var color = "#00FF00" if value > 0 else "#FF0000"
+				debug_label.text += "  [color=%s]%s: %+d[/color]\n" % [color, flavor.name, value]
+
+		debug_label.text += "\n[color=#AAAAAA]Secret Reveal Rates:[/color]\n"
+		for secret_type in SecretTypeRegistry.get_all_secret_types():
+			var reveal_rate = cocktail.get_reveal_rate(secret_type)
+			if reveal_rate > 0:
+				debug_label.text += "  [color=#FFAA00]%s: %.0f%%[/color]\n" % [secret_type.name, reveal_rate * 100]
+
+		debug_label.text += "\n"

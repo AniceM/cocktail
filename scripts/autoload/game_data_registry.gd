@@ -19,12 +19,13 @@ func _load_all_data() -> void:
 	_load_resources("res://resources/special_ingredients/", all_special_ingredients)
 	_load_resources("res://resources/recipes/", all_recipes)
 
-	print("Game data loaded:")
-	print("  - %d liquors" % all_liquors.size())
-	print("  - %d glasses" % all_glasses.size())
-	print("  - %d signatures" % all_signatures.size())
-	print("  - %d special ingredients" % all_special_ingredients.size())
-	print("  - %d recipes" % all_recipes.size())
+	Log.msg(self, "Game data loaded:\n  - %d liquors\n  - %d glasses\n  - %d signatures\n  - %d special ingredients\n  - %d recipes" % [
+		all_liquors.size(),
+		all_glasses.size(),
+		all_signatures.size(),
+		all_special_ingredients.size(),
+		all_recipes.size(),
+	])
 
 func _load_resources(path: String, target_array: Array) -> void:
 	target_array.clear()

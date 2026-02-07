@@ -1,12 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://d1pifdvndfi24"]
+[gd_scene format=3 uid="uid://d1pifdvndfi24"]
 
 [ext_resource type="Script" uid="uid://cd7rpw5e7f6jd" path="res://scripts/ui/add_ingredients_menu.gd" id="1_bcbpr"]
-[ext_resource type="PackedScene" uid="uid://33qrbtnnfjbg" path="res://scenes/add_liquor_button.tscn" id="3_1me88"]
+[ext_resource type="PackedScene" uid="uid://33qrbtnnfjbg" path="res://scenes/add_ingredient_button.tscn" id="3_1me88"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4ufa3"]
 font_size = 30
 
-[node name="AddIngredientsMenu" type="Control"]
+[node name="AddIngredientsMenu" type="Control" unique_id=2115019785]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 5.0
@@ -15,53 +15,61 @@ offset_right = 5.0
 offset_bottom = 5.0
 script = ExtResource("1_bcbpr")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1240903012]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1324186707]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 25
 
-[node name="PanelTitle" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="PanelTitle" type="Label" parent="MarginContainer/VBoxContainer" unique_id=910812982]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Ingredients"
 label_settings = SubResource("LabelSettings_4ufa3")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=1720882992]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(450, 550)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/ScrollContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=382487255]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="AddLiquorList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer"]
+[node name="AddIngredientList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer" unique_id=964512880]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-[node name="AddLiquorButton" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddLiquorList" instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1399721088 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="AddLiquorButton2" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddLiquorList" instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton2" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1729465349 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="AddLiquorButton3" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddLiquorList" instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton3" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=908977459 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="AddLiquorButton4" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddLiquorList" instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton4" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1481092814 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="AddLiquorButton5" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddLiquorList" instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton5" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1707832477 instance=ExtResource("3_1me88")]
 layout_mode = 2
+
+[node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1722698641]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Next"

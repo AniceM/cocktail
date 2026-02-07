@@ -188,7 +188,7 @@ func _calibrate_all_glasses() -> void:
 
 	if _cached_sprites.is_empty():
 		debug_info.append("No liquid sprites found")
-		print("LiquidShaderCalibrator: No liquid sprites found")
+		Log.msg(self, "No liquid sprites found")
 		return
 
 	for sprite in _cached_sprites:
@@ -200,7 +200,7 @@ func _calibrate_all_glasses() -> void:
 	# Apply all current parameter values to the newly found sprites
 	_apply_all_parameters()
 
-	print("LiquidShaderCalibrator: Calibrated %d glasses" % glasses_found)
+	Log.msg(self, "Calibrated %d glasses" % glasses_found)
 
 
 func _apply_all_parameters() -> void:
@@ -256,7 +256,7 @@ func _calibrate_glass(sprite: Sprite2D) -> String:
 	var info := "%s: bottom=%.3f, surface=%.3f" % [
 		sprite.name, bottom_y, center_y
 	]
-	print("LiquidShaderCalibrator: " + info)
+	Log.msg(self, info)
 	return info
 
 

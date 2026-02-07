@@ -134,7 +134,7 @@ func _ready() -> void:
 	# Set the initial liquid amount to 0
 	_set_liquid_amount(0, false)
 
-	print("Ellipse Center Y is " + str(base_shader.get_shader_parameter("ellipse_center_y")))
+	Log.msg(self, "Ellipse center Y is %s" % base_shader.get_shader_parameter("ellipse_center_y"))
 
 
 func set_glass(glass: GlassType) -> void:
@@ -218,7 +218,7 @@ func set_glass(glass: GlassType) -> void:
 
 	liquid_pour.configure_for_glass(jigger_local_y, stream_length)
 
-	print("Glass '%s' loaded: bottom=%.3f, capacity=%d" % [glass.name, glass_bottom_uv, glass.capacity])
+	Log.msg(self, "Glass '%s' loaded: bottom=%.3f, capacity=%d" % [glass.name, glass_bottom_uv, glass.capacity])
 
 
 func reset() -> void:

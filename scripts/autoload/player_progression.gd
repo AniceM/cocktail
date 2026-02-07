@@ -33,11 +33,11 @@ func _unlock_everything() -> void:
 		if !signature.name.contains("Purity"):
 			unlocked_signature_names.append(signature.name)
 
-	print("Player progression initialized (everything unlocked for testing)")
+	Log.msg(self, "Player progression initialized (everything unlocked for testing)")
 
 # Query methods - UI should use these
 func get_liquors() -> Array[Liquor]:
-	print("Unlocked liquors:", unlocked_liquor_names)
+	Log.msg(self, "Unlocked liquors: %s" % [unlocked_liquor_names])
 	return GameDataRegistry.all_liquors.filter(
 		func(liquor): return liquor.name in unlocked_liquor_names
 	)
