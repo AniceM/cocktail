@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://ch8605xklis8s"]
+
+[ext_resource type="Script" uid="uid://cim3w14q7ehgk" path="res://scripts/ui/cocktail_condition_container.gd" id="1_f843l"]
+[ext_resource type="Script" uid="uid://dfjvtr5kacxk6" path="res://scripts/resources/flavor.gd" id="2_g1v3n"]
+[ext_resource type="Resource" uid="uid://dqq43sfhndaps" path="res://resources/flavors/caustic.tres" id="3_4x0uk"]
+[ext_resource type="Script" uid="uid://dr747pycnab11" path="res://scripts/cocktail_system/conditions/flavor_condition.gd" id="3_vrj6w"]
+
+[sub_resource type="Resource" id="Resource_4x0uk"]
+script = ExtResource("3_vrj6w")
+min_flavors = Dictionary[ExtResource("2_g1v3n"), int]({
+ExtResource("3_4x0uk"): 5
+})
+description = "Caustic should be at least 5 or more."
+metadata/_custom_type_script = "uid://dr747pycnab11"
+
+[node name="CocktailConditionContainer" type="MarginContainer" unique_id=902699967]
+custom_minimum_size = Vector2(400, 0)
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
+script = ExtResource("1_f843l")
+cocktail_condition = SubResource("Resource_4x0uk")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2031434455]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CheckMark" type="ColorRect" parent="HBoxContainer" unique_id=408981105]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="Description" type="Label" parent="HBoxContainer" unique_id=1554461236]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Caustic should be 5 or more."

@@ -9,16 +9,12 @@ font_size = 30
 [node name="AddIngredientsMenu" type="Control" unique_id=2115019785]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 5.0
-offset_top = 5.0
-offset_right = 5.0
-offset_bottom = 5.0
 script = ExtResource("1_bcbpr")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1240903012]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 450.0
+offset_bottom = 673.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1324186707]
 layout_mode = 2

@@ -5,8 +5,10 @@ extends Node
 # Current session state (not saved, resets on game restart)
 signal current_cocktail_changed(cocktail: Cocktail)
 signal current_cocktail_updated(cocktail: Cocktail)
+signal customer_order_changed(conditions: Array[CocktailCondition])
 
 var current_cocktail: Cocktail = null
+var customer_order: Array[CocktailCondition] = []
 var current_character = null  # TODO: Type this when Character class exists
 var current_chapter = null  # TODO: Type this when Chapter class exists
 
@@ -27,8 +29,24 @@ func notify_cocktail_updated() -> void:
 	current_cocktail_updated.emit(current_cocktail)
 
 
+func set_customer_order(conditions: Array[CocktailCondition]) -> void:
+	customer_order = conditions
+	customer_order_changed.emit(customer_order)
+
+
+func clear_customer_order() -> void:
+	set_customer_order([])
+
+
+func are_all_conditions_met() -> bool:
+	if current_cocktail == null or customer_order.is_empty():
+		return false
+	return customer_order.all(func(condition): return condition.is_met(current_cocktail))
+
+
 # Helper to reset session (called when starting new game or returning to menu)
 func reset_session() -> void:
 	clear_current_cocktail()
+	clear_customer_order()
 	current_character = null
 	current_chapter = null

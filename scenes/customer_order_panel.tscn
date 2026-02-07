@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://dy3x7adci1o1h"]
+
+[ext_resource type="Script" uid="uid://c4j7nfnr6tcb8" path="res://scripts/ui/customer_order_panel.gd" id="1_57g18"]
+[ext_resource type="PackedScene" uid="uid://ch8605xklis8s" path="res://scenes/cocktail_condition_container.tscn" id="1_fjrrm"]
+
+[node name="CustomerOrderPanel" type="Control" unique_id=1223563773]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_57g18")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=737567028]
+layout_mode = 0
+offset_right = 500.0
+offset_bottom = 200.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=1801207032]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer" unique_id=23182727]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1279728702]
+layout_mode = 2
+text = "Customer Order"
+horizontal_alignment = 1
+
+[node name="ConditionsContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1197635653]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CocktailConditionContainer" parent="MarginContainer/PanelContainer/VBoxContainer/ConditionsContainer" unique_id=2041667009 instance=ExtResource("1_fjrrm")]
+layout_mode = 2
+
+[node name="CocktailConditionContainer2" parent="MarginContainer/PanelContainer/VBoxContainer/ConditionsContainer" unique_id=922631493 instance=ExtResource("1_fjrrm")]
+layout_mode = 2
+
+[node name="CocktailConditionContainer3" parent="MarginContainer/PanelContainer/VBoxContainer/ConditionsContainer" unique_id=1637939615 instance=ExtResource("1_fjrrm")]
+layout_mode = 2

@@ -37,6 +37,9 @@ const CAMERA_ZOOM_DURATION := 0.5
 # ============================================================================
 
 func _ready() -> void:
+	# Set up random customer order
+	_setup_customer_order()
+
 	# Hide the glass until one is selected
 	glass_scene.visible = false
 	# Hide buttons that shouldn't be visible at start
@@ -57,6 +60,7 @@ func _ready() -> void:
 	add_ingredients_menu.complete_pressed.connect(_on_complete_pressed)
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	mix_button.pressed.connect(_on_mix_button_pressed)
+	GameSession.current_cocktail_updated.connect(_on_cocktail_updated)
 
 	# Create State Machine
 	state_machine = CocktailMakingStateMachine.new(self)
@@ -131,6 +135,7 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 			reset_button.visible = true
 			mix_button.visible = false
 			add_ingredients_menu.mode = add_ingredients_menu.Mode.SPECIAL_INGREDIENTS
+			_update_complete_button_state()
 		CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
 			add_ingredients_menu.set_disabled(true)
 		CocktailMakingStateMachine.StateName.REVIEW:
@@ -186,7 +191,7 @@ func _on_add_liquor(liquor: Liquor) -> void:
 		# Update UI
 		glass_scene.add_liquid(liquor.color, is_new_layer, true)
 		flavor_profile_chart.update_flavor_profile(cocktail.flavor_stats, true)
-		_update_mix_button()
+		_update_mix_button_state()
 
 		# Check if glass is full - detect and show signatures
 		if cocktail.is_full():
@@ -220,16 +225,21 @@ func _on_reset_button_pressed() -> void:
 	if cocktail == null:
 		return
 
+	# Reset cocktail and UI
 	cocktail.reset()
 	glass_scene.reset()
 	flavor_profile_chart.reset()
 	signature_badges.hide_signatures()
-	_update_mix_button()
+	_update_mix_button_state()
 
 	# If not in liquor selection, go there
 	if state_machine.current_state != CocktailMakingStateMachine.StateName.LIQUOR_SELECTION:
 		state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
 
+	# Re-enable the menu in case it was disabled when glass was full
+	add_ingredients_menu.set_disabled(false)
+
+	# Notify cocktail updated
 	GameSession.notify_cocktail_updated()
 
 func _on_mix_button_pressed() -> void:
@@ -242,7 +252,7 @@ func _on_mix_button_pressed() -> void:
 	if success:
 		# Update UI
 		glass_scene.mix(true)
-		_update_mix_button()
+		_update_mix_button_state()
 
 		# Re-detect signatures if glass is full (mixing changes layer structure)
 		if cocktail.is_full():
@@ -251,9 +261,20 @@ func _on_mix_button_pressed() -> void:
 		GameSession.notify_cocktail_updated()
 
 
-func _update_mix_button() -> void:
+func _on_cocktail_updated(_cocktail: Cocktail) -> void:
+	_update_complete_button_state()
+
+
+func _update_mix_button_state() -> void:
 	var cocktail := GameSession.current_cocktail
 	mix_button.disabled = cocktail == null or cocktail.layers.size() <= 1
+
+
+func _update_complete_button_state() -> void:
+	# Only manage button state when in special ingredient selection
+	if state_machine.current_state != CocktailMakingStateMachine.StateName.SPECIAL_INGREDIENT_SELECTION:
+		return
+	add_ingredients_menu.set_next_button_enabled(GameSession.are_all_conditions_met())
 
 
 # ============================================================================
@@ -359,6 +380,42 @@ func _transition_menus(menu_in: Control, menu_out: Control) -> void:
 # ============================================================================
 # Debug
 # ============================================================================
+
+func _setup_customer_order() -> void:
+	var conditions: Array[CocktailCondition] = []
+
+	# Load flavor resources
+	var caustic = load("res://resources/flavors/caustic.tres") as Flavor
+	var volatile = load("res://resources/flavors/volatile.tres") as Flavor
+	var resonant = load("res://resources/flavors/resonant.tres") as Flavor
+	var drift = load("res://resources/flavors/drift.tres") as Flavor
+	var temporal = load("res://resources/flavors/temporal.tres") as Flavor
+	var abyss = load("res://resources/flavors/abyss.tres") as Flavor
+
+	var all_flavors = [caustic, volatile, resonant, drift, temporal, abyss]
+
+	# Create 2 random conditions
+	for i in range(2):
+		var rand_type = randi() % 2  # 0 = FlavorCondition, 1 = LayerCondition
+
+		if rand_type == 0:
+			# Create a random FlavorCondition
+			var condition = FlavorCondition.new()
+			var random_flavor = all_flavors[randi() % all_flavors.size()]
+			var random_value = randi_range(3, 7)
+			condition.min_flavors[random_flavor] = random_value
+			condition.description = "%s should be at least %d." % [random_flavor.name, random_value]
+			conditions.append(condition)
+		else:
+			# Create a random LayerCondition
+			var condition = LayerCondition.new()
+			var random_layers = randi_range(2, 4)
+			condition.min_layers = random_layers
+			condition.description = "Should have at least %d layers." % random_layers
+			conditions.append(condition)
+
+	GameSession.set_customer_order(conditions)
+
 
 func update_debug_info() -> void:
 	var cocktail := GameSession.current_cocktail

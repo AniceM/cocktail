@@ -56,7 +56,7 @@ func _populate_special_ingredients() -> void:
 	Log.msg(self, "Populating special ingredients")
 	_panel_title.text = "Special Ingredients"
 	_next_button.text = "Complete"
-	_next_button.disabled = false
+	# Note: Button state is managed by parent scene based on conditions
 	_clear_list()
 
 	_special_ingredient_group = ButtonGroup.new()
@@ -101,7 +101,6 @@ func _on_add_liquor_button_pressed(liquor: Liquor) -> void:
 func _on_special_ingredient_group_pressed(button: BaseButton) -> void:
 	if button.special_ingredient:
 		add_special_ingredient.emit(button.special_ingredient)
-	_next_button.disabled = false
 
 
 func _on_next_button_pressed() -> void:
