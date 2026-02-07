@@ -39,8 +39,10 @@ func clear_customer_order() -> void:
 
 
 func are_all_conditions_met() -> bool:
-	if current_cocktail == null or customer_order.is_empty():
+	if current_cocktail == null:
 		return false
+	if customer_order.is_empty():
+		return true
 	return customer_order.all(func(condition): return condition.is_met(current_cocktail))
 
 
