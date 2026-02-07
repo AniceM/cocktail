@@ -6,10 +6,12 @@ I am implementing a "cocktail mixing" minigame.
 
 ### Basic Mixing Flow
 
-1. **Select Glass** - Each has different capacity (3-6 slots) and special properties
-2. **Add Liquors** - Each liquor has flavor stats and a color
-3. **Mix or Layer** - Choose to combine liquors or keep them separate
-4. **Serve** - The final drink determines which secrets are highlighted during interrogation
+1. **Receive Order** - Customer may request specific conditions (optional, currently randomized for testing)
+2. **Select Glass** - Each has different capacity (3-6 slots) and special properties
+3. **Add Liquors** - Each liquor has flavor stats and a color
+4. **Mix or Layer** - Choose to combine liquors or keep them separate
+5. **Add Special Ingredient** - Optional, one per drink
+6. **Serve** - Must meet customer conditions (if any). Final drink determines which secrets are highlighted during interrogation
 
 ### Flavor Stats System
 
@@ -52,25 +54,30 @@ The glasses are defined as resources inside `./resources/glasses`.
 - Liquors added after mixing create a new layer on top
 - Each layer has its own color and combined flavor stats
 
+### Cocktail Conditions
+
+Conditions are checks that evaluate whether a cocktail meets certain requirements. Defined in `./resources/conditions/`.
+
+**Condition Types:**
+- **FlavorCondition**: Checks if cocktail has minimum flavor values (e.g., Caustic ≥ 5)
+- **LayerCondition**: Checks layer count requirements
+- **ColorCondition**: Checks cocktail color properties
+
+Conditions are used by both signatures (bonus effects) and customer orders (requirements to serve).
+
 ### Signatures
 
-Special combinations of statistics or color can provide bonus effects.
-A signature can be unlocked when the cocktail fulfills certains conditions:
+Signatures are special combinations that unlock bonus effects when their conditions are met. Each signature contains a list of cocktail conditions.
 
-1. Flavor-based
-   Signatures that can be unlocked when the entire cocktail has a certain flavor profile (For example +5 Caustic and +5 Volatile).
-2. Color-based
-   Signatures that can be unlocked when the cocktail has a certain color.
-3. Layer-based
-   Signatures that can be unlocked when the cocktail has a certain amount of layers.
+**Examples:**
+- 2 layers + Caustic 5+ and Volatile 5+ (flavor + layer conditions)
+- At least 3 layers with decrescendo Caustic values (layer + flavor pattern)
 
-Signatures can involve conditions of multiple types (ex: flavor-based and layer-based).
-For example:
+Signatures are defined as resources inside `./resources/signatures`.
 
-- 2 layers share same dominant flavor stat (5+)
-- At least 2 layers + Caustic value is decrescendo
+### Recipes
 
-The glasses are defined as resources inside `./resources/signatures`.
+Recipes are ordered lists of steps to create specific cocktails. Each step can specify actions like "add liquor X", "mix layers", "add special ingredient Y". Recipes help players recreate successful combinations.
 
 ## Connection to the bigger game
 
@@ -110,5 +117,5 @@ It's still very early in the development of the cocktail mixing mechanic, or the
 
 # Development Environment
 
-- Godot 4.5
+- Godot 4.6
 - VS Code Editor
