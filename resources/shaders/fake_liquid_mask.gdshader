@@ -3,6 +3,7 @@ shader_type canvas_item;
 // ============================================================================
 // Textures
 // ============================================================================
+group_uniforms Textures;
 // Mask texture determines the shape of the glass (white = fillable, black = empty)
 uniform sampler2D mask_texture : hint_default_white;
 // Signed Distance Field texture used for "distance to edge" calculations
@@ -12,6 +13,7 @@ uniform sampler2D sdf_texture : hint_default_white;
 // ============================================================================
 // Geometry & Shape
 // ============================================================================
+group_uniforms Geometry;
 uniform float glass_bottom_y : hint_range(0.0, 1.0) = 0.8; // Fixed UV Y of the glass bottom, set by script
 uniform bool auto_ellipse_width = false; // If true, calculates width from mask_texture
 uniform float ellipse_width_scale : hint_range(0.8, 1.0) = 1.0; // Scale factor for auto-calculated width (use < 1 to shrink ellipse from glass edges)
@@ -23,11 +25,13 @@ uniform float ellipse_radius_x : hint_range(0.0, 1.0) = 0.426; // Width of the l
 // Animation (Wobble & Wave/Splash)
 // ============================================================================
 // "Wobble" simulates the main liquid sloshing movement
+group_uniforms Wobble;
 uniform float wobble_strength : hint_range(0.0, 0.1) = 0.005;
 uniform float wobble_speed : hint_range(0.0, 10.0) = 2.0;
 uniform int wobble_ripple_count : hint_range(1, 8) = 1; // Number of wobble ripples across liquid width
 
 // "Splash" simulates ripples/waves during pouring
+group_uniforms Splash;
 uniform float splash_amplitude : hint_range(0.0, 0.1) = 0.0;
 uniform float splash_frequency : hint_range(1.0, 30.0) = 22.0;
 uniform float splash_speed : hint_range(0.5, 20.0) = 15.0;
@@ -36,6 +40,7 @@ uniform float wave_glow : hint_range(0.0, 5.0) = 4.0; // Brightness multiplier f
 
 // Noise / Texture
 // Adds a scrolling noise texture to simulate particles/pulp/ imperfection
+group_uniforms Noise;
 uniform bool enable_noise = true;
 uniform sampler2D noise_texture : hint_default_black, repeat_enable;
 uniform float noise_strength : hint_range(0.0, 1.0) = 0.1;
@@ -44,6 +49,7 @@ uniform vec2 noise_scroll_speed = vec2(0.05, 0.1);
 
 // Caustics (Simulated Light Refraction)
 // Creates animated light patterns like sunlight through water
+group_uniforms Caustics;
 uniform bool enable_caustics = true;
 uniform float caustic_strength : hint_range(0.0, 5.0) = 0.3;
 uniform float caustic_scale : hint_range(0.5, 10.0) = 6.0;
@@ -54,10 +60,12 @@ uniform float caustic_speed : hint_range(0.0, 2.0) = 0.25;
 // Visual Styling
 // ============================================================================
 // Base Color
+group_uniforms Color;
 uniform vec4 liquid_color : source_color = vec4(0.9, 0.5, 0.2, 1.0);
 
 // Surface & Specular
 // Highlights that appear on the top "surface ellipse" of the liquid
+group_uniforms Surface;
 uniform float top_highlight : hint_range(0.0, 0.5) = 0.25;
 uniform float top_highlight_falloff : hint_range(0.0, 1.0) = 0.3; // Distance range for surface highlight fade
 uniform vec4 specular_color : source_color = vec4(1.0, 1.0, 1.0, 0.5);
@@ -67,12 +75,14 @@ uniform float specular_falloff_y : hint_range(0.5, 5.0) = 1.5; // Vertical stret
 
 // Rim
 // The subtle line around the edge of the surface ellipse
+group_uniforms Rim;
 uniform vec4 rim_color : source_color = vec4(1.0, 0.8, 0.5, 1.0);
 uniform float rim_thickness : hint_range(0.0, 0.05) = 0.01;
 uniform float rim_blur : hint_range(0.001, 0.03) = 0.01;
 
 // Fresnel / Edge Glow
 // Glow appearing at the sides of the glass body
+group_uniforms Fresnel;
 uniform bool enable_fresnel = true;
 uniform vec4 fresnel_color : source_color = vec4(1.0, 1.0, 1.0, 0.588);
 uniform float fresnel_width : hint_range(0.0, 100.0) = 20.0;
@@ -80,6 +90,7 @@ uniform float fresnel_falloff : hint_range(0.1, 10.0) = 5.0;
 
 // Subsurface Scattering
 // Simulates light passing through thin liquid areas (backlight effect)
+group_uniforms Subsurface_Scattering;
 uniform bool enable_subsurface = true;
 uniform vec4 subsurface_color : source_color = vec4(0.113, 0.804, 0.894, 1.0);
 uniform float subsurface_strength : hint_range(0.0, 1.0) = 0.2;
@@ -87,6 +98,7 @@ uniform float subsurface_threshold : hint_range(0.0, 150.0) = 45.0; // Distance 
 
 // Darkening / Depth
 // Various darkening factors to make the liquid look 3D/volumetric
+group_uniforms Darkening;
 uniform float depth_darkening_range : hint_range(0.0, 1.0) = 0.1; // How far up from bottom the darkening extends (in UV units)
 uniform float depth_darkening_intensity : hint_range(0.0, 1.0) = 0.5; // How dark it gets at the bottom
 uniform float surface_darken_amount : hint_range(0.0, 1.0) = 0.25; // Darken the flat surface disc
@@ -97,12 +109,14 @@ uniform float center_darkening : hint_range(0.0, 1.0) = 0.1; // "Core" darkening
 // Layer Blending
 // ============================================================================
 // Fade the top of the fill to blend smoothly with layers above
+group_uniforms Layer_Blending;
 uniform float top_fade_height : hint_range(0.0, 0.5) = 0.0; // Height of fade zone from surface
 uniform bool top_fade_compensation = true; // If true, visually raises the liquid to compensate for transparency volume loss
 
 // ============================================================================
 // Layer Clipping (prevents color bleeding through transparent layers)
 // ============================================================================
+group_uniforms Layer_Clipping;
 uniform bool clip_enabled = false;
 uniform float clip_ellipse_center_y : hint_range(0.0, 1.5) = 1.5; // Center Y of the ellipse to clip against
 uniform float clip_ellipse_radius_x : hint_range(0.0, 1.0) = 0.5; // Radius X of the ellipse to clip against
@@ -111,6 +125,7 @@ uniform float clip_fade_height : hint_range(0.0, 0.5) = 0.0; // Soft fade below 
 // ============================================================================
 // Visibility Toggles
 // ============================================================================
+group_uniforms Visibility_Toggles;
 uniform bool show_ellipse = true; // Show the top surface
 uniform bool show_fill = true; // Show the volume below surface
 uniform bool show_top_rim = true; // Show rim on the upper half of the ellipse
