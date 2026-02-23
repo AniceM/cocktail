@@ -9,8 +9,8 @@ signal customer_order_changed(conditions: Array[CocktailCondition])
 
 var current_cocktail: Cocktail = null
 var customer_order: Array[CocktailCondition] = []
-var current_character = null  # TODO: Type this when Character class exists
-var current_chapter = null  # TODO: Type this when Chapter class exists
+var current_character = null # TODO: Type this when Character class exists
+var current_chapter = null # TODO: Type this when Chapter class exists
 
 func set_current_cocktail(cocktail: Cocktail) -> void:
 	if cocktail == current_cocktail:

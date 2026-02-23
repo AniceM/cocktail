@@ -1,15 +1,18 @@
 [gd_scene format=3 uid="uid://xvh17tek7uhl"]
 
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/scenes/cocktail_making_scene.gd" id="1_ac75x"]
-[ext_resource type="Texture2D" uid="uid://cf45gin4768bh" path="res://assets/environments/background.png" id="2_slgu4"]
+[ext_resource type="Texture2D" uid="uid://f862nshcvr6h" path="res://assets/environments/bg_nobar.png" id="3_vlt8w"]
 [ext_resource type="PackedScene" uid="uid://rubxbrjldnjr" path="res://scenes/flavor_profile_chart.tscn" id="4_ac75x"]
 [ext_resource type="PackedScene" uid="uid://d1pifdvndfi24" path="res://scenes/add_ingredients_menu.tscn" id="4_fcfq3"]
+[ext_resource type="Texture2D" uid="uid://chxsqnpo5804e" path="res://assets/environments/bg_barcounter.png" id="4_n01l7"]
 [ext_resource type="PackedScene" uid="uid://bt2ltrb4erqxi" path="res://scenes/glass_scene.tscn" id="5_b2ome"]
 [ext_resource type="PackedScene" uid="uid://b37dhsp4c70nr" path="res://scenes/glass_selection_menu.tscn" id="5_slgu4"]
 [ext_resource type="PackedScene" uid="uid://dy3x7adci1o1h" path="res://scenes/customer_order_panel.tscn" id="6_fcfq3"]
 [ext_resource type="PackedScene" uid="uid://tsexmwlm2tey" path="res://scenes/signature_badges_container.tscn" id="6_sc0oj"]
 [ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="6_vlt8w"]
 [ext_resource type="Shader" uid="uid://d32vhq8tv8k2u" path="res://resources/shaders/holographic_screen.gdshader" id="10_b2ome"]
+[ext_resource type="PackedScene" uid="uid://bosya4jk6l5bx" path="res://scenes/glass_capacity_indicator.tscn" id="12_wdjgb"]
+[ext_resource type="Script" uid="uid://1kohltni4a4b" path="res://scripts/ui/glass_capacity_indicator.gd" id="13_lb8u1"]
 
 [sub_resource type="Environment" id="Environment_b2ome"]
 background_mode = 3
@@ -59,8 +62,7 @@ environment = SubResource("Environment_b2ome")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=263267087]
 unique_name_in_owner = true
-position = Vector2(1147, 754)
-zoom = Vector2(2, 2)
+position = Vector2(1152, 648)
 
 [node name="OutlinePanel(TEST)" type="PanelContainer" parent="." unique_id=472810941]
 visible = false
@@ -84,10 +86,19 @@ follow_viewport_enabled = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 1696.0
+offset_bottom = 954.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_slgu4")
+scale = Vector2(0.576, 0.576)
+texture = ExtResource("3_vlt8w")
 metadata/_edit_lock_ = true
+
+[node name="TextureRect" type="TextureRect" parent="Background" unique_id=1292946325]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("4_n01l7")
 
 [node name="GlassScene" parent="." unique_id=2046183509 instance=ExtResource("5_b2ome")]
 unique_name_in_owner = true
@@ -165,6 +176,20 @@ visible = false
 layout_mode = 1
 offset_top = 200.0
 offset_bottom = 200.0
+
+[node name="GlassCapacityIndicator" parent="HUD/FullScreenControl" unique_id=1270339454 instance=ExtResource("12_wdjgb")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -191.0
+offset_bottom = -191.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("13_lb8u1")
 
 [node name="Buttons" type="HBoxContainer" parent="HUD/FullScreenControl" unique_id=1034310619]
 layout_mode = 1

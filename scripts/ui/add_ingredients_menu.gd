@@ -60,6 +60,7 @@ func _populate_special_ingredients() -> void:
 	_clear_list()
 
 	_special_ingredient_group = ButtonGroup.new()
+	_special_ingredient_group.allow_unpress = true
 	_special_ingredient_group.pressed.connect(_on_special_ingredient_group_pressed)
 
 	for ingredient in PlayerProgression.get_special_ingredients():
@@ -99,8 +100,10 @@ func _on_add_liquor_button_pressed(liquor: Liquor) -> void:
 
 
 func _on_special_ingredient_group_pressed(button: BaseButton) -> void:
-	if button.special_ingredient:
+	if button.button_pressed:
 		add_special_ingredient.emit(button.special_ingredient)
+	else:
+		add_special_ingredient.emit(null)
 
 
 func _on_next_button_pressed() -> void:

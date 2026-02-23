@@ -12,10 +12,14 @@ var _glass_tween: Tween
 var _menu_tween: Tween
 var _camera_tween: Tween
 var _chart_tween: Tween
+var _menu_home_x: Dictionary = {} # Stores original x positions so interrupted tweens don't corrupt the base
 const GLASS_BASE_SCALE := Vector2(0.3, 0.3) # Match scene default
 const MENU_SLIDE_OFFSET := 200.0 # Pixels to slide from
 const MENU_TRANSITION_DURATION := 0.35
-const CAMERA_ZOOM_GLASS_SELECTION := Vector2(1.8, 1.8)
+
+# Camera Position
+const CAMERA_POSITION := Vector2(1147.0, 754.0)
+const CAMERA_ZOOM_GLASS_SELECTION := Vector2(1.2, 1.2)
 const CAMERA_ZOOM_LIQUOR_SELECTION := Vector2(2.0, 2.0)
 const CAMERA_ZOOM_DURATION := 0.5
 
@@ -27,6 +31,7 @@ const CAMERA_ZOOM_DURATION := 0.5
 @onready var reset_button: Button = %ResetButton
 @onready var mix_button: Button = %MixButton
 @onready var signature_badges: Control = %SignatureBadgesContainer
+@onready var glass_capacity_indicator: Control = %GlassCapacityIndicator
 
 # Debug
 @onready var debug_label: RichTextLabel = %DebugLabel
@@ -40,14 +45,23 @@ func _ready() -> void:
 	# Set up random customer order
 	_setup_customer_order()
 
+	# Reset camera
+	camera.position = CAMERA_POSITION
+	camera.zoom = Vector2(1, 1)
+
 	# Hide the glass until one is selected
 	glass_scene.visible = false
 	# Hide buttons that shouldn't be visible at start
 	glass_selection_button.visible = false
 	reset_button.visible = false
 	mix_button.visible = false
-	# Hide flavor chart until liquor selection
+	# Hide flavor chart and capacity indicator until liquor selection
 	flavor_profile_chart.visible = false
+	glass_capacity_indicator.visible = false
+
+	# Store home x positions before any animations run
+	_menu_home_x[glass_selection_menu] = glass_selection_menu.position.x
+	_menu_home_x[add_ingredients_menu] = add_ingredients_menu.position.x
 
 	# Connect signals
 	glass_scene.animation_started.connect(_on_glass_animation_started)
@@ -63,16 +77,11 @@ func _ready() -> void:
 	GameSession.current_cocktail_updated.connect(_on_cocktail_updated)
 
 	# Create State Machine
-	state_machine = CocktailMakingStateMachine.new(self)
+	state_machine = CocktailMakingStateMachine.new(self )
 	state_machine.state_changed.connect(_on_state_changed)
 
 	# Start the flow
 	state_machine.change_state(CocktailMakingStateMachine.StateName.GLASS_SELECTION)
-
-	# Animate camera zoom from 1 to 2
-	# var tween = create_tween()
-	camera.zoom = Vector2(1, 1)
-	# tween.tween_property(camera, "zoom", Vector2(2, 2), 1.0)
 
 func _process(_delta: float) -> void:
 	update_debug_info()
@@ -110,6 +119,7 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 			glass_selection_button.visible = false
 			reset_button.visible = false
 			mix_button.visible = false
+			glass_capacity_indicator.visible = false
 			_animate_camera_zoom(CAMERA_ZOOM_GLASS_SELECTION)
 			if old_state != CocktailMakingStateMachine.StateName.START:
 				_transition_menus(glass_selection_menu, add_ingredients_menu)
@@ -122,6 +132,7 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 			glass_selection_button.visible = true
 			reset_button.visible = true
 			mix_button.visible = true
+			glass_capacity_indicator.visible = true
 			_animate_camera_zoom(CAMERA_ZOOM_LIQUOR_SELECTION)
 			add_ingredients_menu.mode = add_ingredients_menu.Mode.LIQUORS
 			# Only transition menus when coming from glass selection, not from adding ingredient
@@ -134,6 +145,7 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 			glass_selection_button.visible = true
 			reset_button.visible = true
 			mix_button.visible = false
+			glass_capacity_indicator.visible = false
 			add_ingredients_menu.mode = add_ingredients_menu.Mode.SPECIAL_INGREDIENTS
 			_update_complete_button_state()
 		CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
@@ -142,6 +154,7 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 			glass_selection_button.visible = true
 			reset_button.visible = true
 			mix_button.visible = false
+			glass_capacity_indicator.visible = false
 			_transition_menus(null, add_ingredients_menu)
 
 
@@ -359,19 +372,21 @@ func _transition_menus(menu_in: Control, menu_out: Control) -> void:
 			menu_in.set_disabled(true)
 		if menu_in.has_method("reset_scroll"):
 			menu_in.reset_scroll()
-		var in_base_x := menu_in.position.x
-		menu_in.position.x = in_base_x + MENU_SLIDE_OFFSET
+		var in_home_x: float = _menu_home_x.get(menu_in, menu_in.position.x)
+		menu_in.position.x = in_home_x + MENU_SLIDE_OFFSET
 		menu_in.modulate.a = 0.0
 		menu_in.visible = true
-		_menu_tween.tween_property(menu_in, "position:x", in_base_x, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+		_menu_tween.tween_property(menu_in, "position:x", in_home_x, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 		_menu_tween.tween_property(menu_in, "modulate:a", 1.0, MENU_TRANSITION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 
 	# After animation completes: hide menu_out, restore input on menu_in
 	_menu_tween.chain().tween_callback(func():
+		# Hide menu_out and snap it back to its home position
 		if menu_out:
 			menu_out.visible = false
-			menu_out.position.x -= MENU_SLIDE_OFFSET
+			menu_out.position.x = _menu_home_x.get(menu_out, menu_out.position.x - MENU_SLIDE_OFFSET)
 			menu_out.modulate.a = 1.0
+		# Enable input on menu_in
 		if menu_in and menu_in.has_method("set_disabled"):
 			menu_in.set_disabled(false)
 	)
@@ -396,7 +411,7 @@ func _setup_customer_order() -> void:
 
 	# Create 2 random conditions
 	for i in range(2):
-		var rand_type = randi() % 2  # 0 = FlavorCondition, 1 = LayerCondition
+		var rand_type = randi() % 2 # 0 = FlavorCondition, 1 = LayerCondition
 
 		if rand_type == 0:
 			# Create a random FlavorCondition
