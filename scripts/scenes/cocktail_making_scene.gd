@@ -10,18 +10,24 @@ var state_machine: CocktailMakingStateMachine
 # Animation
 var _glass_tween: Tween
 var _menu_tween: Tween
-var _camera_tween: Tween
 var _chart_tween: Tween
 var _menu_home_x: Dictionary = {} # Stores original x positions so interrupted tweens don't corrupt the base
 const GLASS_BASE_SCALE := Vector2(0.3, 0.3) # Match scene default
 const MENU_SLIDE_OFFSET := 200.0 # Pixels to slide from
 const MENU_TRANSITION_DURATION := 0.35
 
-# Camera Position
-const CAMERA_POSITION := Vector2(1147.0, 754.0)
-const CAMERA_ZOOM_GLASS_SELECTION := Vector2(1.2, 1.2)
-const CAMERA_ZOOM_LIQUOR_SELECTION := Vector2(2.0, 2.0)
-const CAMERA_ZOOM_DURATION := 0.5
+# Camera presets per state (position, zoom)
+const CAMERA_DEFAULT_POSITION := Vector2(1147.0, 648.0)
+const CAMERA_DEFAULT_ZOOM := Vector2(1.0, 1.0)
+const CAMERA_GLASS_SELECTION_POSITION := Vector2(1147.0, 754.0)
+const CAMERA_GLASS_SELECTION_ZOOM := Vector2(1.2, 1.2)
+const CAMERA_LIQUOR_SELECTION_POSITION := Vector2(1147.0, 810.0)
+const CAMERA_LIQUOR_SELECTION_ZOOM := Vector2(2.0, 2.0)
+const CAMERA_SPECIAL_INGREDIENT_POSITION := Vector2(1147.0, 790.0)
+const CAMERA_SPECIAL_INGREDIENT_ZOOM := Vector2(1.8, 1.8)
+const CAMERA_REVIEW_POSITION := Vector2(1250.0, 750.0)
+const CAMERA_REVIEW_ZOOM := Vector2(1.5, 1.5)
+const CAMERA_TRANSITION_DURATION := 0.5
 
 # UI
 @onready var glass_selection_menu: Control = %GlassSelectionMenu
@@ -45,9 +51,9 @@ func _ready() -> void:
 	# Set up random customer order
 	_setup_customer_order()
 
-	# Reset camera
-	camera.position = CAMERA_POSITION
-	camera.zoom = Vector2(1, 1)
+	# Reset camera to default (no animation)
+	camera.position = CAMERA_DEFAULT_POSITION
+	camera.zoom = CAMERA_DEFAULT_ZOOM
 
 	# Hide the glass until one is selected
 	glass_scene.visible = false
@@ -120,7 +126,7 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 			reset_button.visible = false
 			mix_button.visible = false
 			glass_capacity_indicator.visible = false
-			_animate_camera_zoom(CAMERA_ZOOM_GLASS_SELECTION)
+			camera.transition_to(CAMERA_GLASS_SELECTION_POSITION, CAMERA_GLASS_SELECTION_ZOOM, CAMERA_TRANSITION_DURATION)
 			if old_state != CocktailMakingStateMachine.StateName.START:
 				_transition_menus(glass_selection_menu, add_ingredients_menu)
 				_animate_chart_out()
@@ -133,7 +139,7 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 			reset_button.visible = true
 			mix_button.visible = true
 			glass_capacity_indicator.visible = true
-			_animate_camera_zoom(CAMERA_ZOOM_LIQUOR_SELECTION)
+			camera.transition_to(CAMERA_LIQUOR_SELECTION_POSITION, CAMERA_LIQUOR_SELECTION_ZOOM, CAMERA_TRANSITION_DURATION)
 			add_ingredients_menu.mode = add_ingredients_menu.Mode.LIQUORS
 			# Only transition menus when coming from glass selection, not from adding ingredient
 			if old_state == CocktailMakingStateMachine.StateName.GLASS_SELECTION:
@@ -146,15 +152,18 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 			reset_button.visible = true
 			mix_button.visible = false
 			glass_capacity_indicator.visible = false
+			camera.transition_to(CAMERA_SPECIAL_INGREDIENT_POSITION, CAMERA_SPECIAL_INGREDIENT_ZOOM, CAMERA_TRANSITION_DURATION)
 			add_ingredients_menu.mode = add_ingredients_menu.Mode.SPECIAL_INGREDIENTS
 			_update_complete_button_state()
 		CocktailMakingStateMachine.StateName.ADDING_INGREDIENT:
 			add_ingredients_menu.set_disabled(true)
+			camera.pulse_zoom(0.05, 1.0, 0.3)
 		CocktailMakingStateMachine.StateName.REVIEW:
 			glass_selection_button.visible = true
 			reset_button.visible = true
 			mix_button.visible = false
 			glass_capacity_indicator.visible = false
+			camera.transition_to(CAMERA_REVIEW_POSITION, CAMERA_REVIEW_ZOOM, CAMERA_TRANSITION_DURATION)
 			_transition_menus(null, add_ingredients_menu)
 
 
@@ -315,12 +324,6 @@ func _animate_glass_out(on_complete: Callable = Callable()) -> void:
 			on_complete.call()
 	)
 
-
-func _animate_camera_zoom(target_zoom: Vector2) -> void:
-	if _camera_tween:
-		_camera_tween.kill()
-	_camera_tween = create_tween()
-	_camera_tween.tween_property(camera, "zoom", target_zoom, CAMERA_ZOOM_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 
 
 func _animate_chart_in() -> void:
