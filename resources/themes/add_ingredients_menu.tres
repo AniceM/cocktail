@@ -1,38 +1,29 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://vxihg5pg2oef"]
+[gd_resource type="Theme" format=3 uid="uid://vxihg5pg2oef"]
 
-[ext_resource type="FontFile" uid="uid://cnqf20c7fw61p" path="res://assets/fonts/Homemade_Apple/HomemadeApple-Regular.ttf" id="1_e40sw"]
+[ext_resource type="FontFile" uid="uid://b20c0bh0brh67" path="res://assets/fonts/Oxanium/Oxanium-Regular.ttf" id="1_hnv77"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n2js2"]
-bg_color = Color(1.2408599, 1.2408599, 1.2408599, 0.15686275)
-border_width_left = 2
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kpu2g"]
+bg_color = Color(0.21734264, 0.4427318, 0.31676766, 0.25882354)
 border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.101960786, 0.08235294, 0.05882353, 1)
-corner_radius_top_left = 30
-corner_radius_top_right = 30
-corner_radius_bottom_right = 30
-corner_radius_bottom_left = 30
+border_color = Color(0.9867516, 0.9867516, 0.9867516, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e40sw"]
-bg_color = Color(0.6, 0.6, 0.6, 0)
-border_width_left = 2
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hnv77"]
+bg_color = Color(0.39, 0.39, 0.39, 0)
 border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.101960786, 0.08235294, 0.05882353, 1)
-corner_radius_top_left = 30
-corner_radius_top_right = 30
-corner_radius_bottom_right = 30
-corner_radius_bottom_left = 30
+border_color = Color(0.9867516, 0.9867516, 0.9867516, 1)
 
-[sub_resource type="FontVariation" id="FontVariation_n2js2"]
-base_font = ExtResource("1_e40sw")
-spacing_bottom = -12
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_78sqy"]
+bg_color = Color(0.2156, 0.44, 0.31284, 0.41960785)
+border_width_top = 2
+border_color = Color(0.9867516, 0.9867516, 0.9867516, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_kpu2g"]
+base_font = ExtResource("1_hnv77")
 
 [resource]
-Button/styles/hover = SubResource("StyleBoxFlat_n2js2")
-Button/styles/normal = SubResource("StyleBoxFlat_e40sw")
+Button/styles/hover = SubResource("StyleBoxFlat_kpu2g")
+Button/styles/normal = SubResource("StyleBoxFlat_hnv77")
+Button/styles/pressed = SubResource("StyleBoxFlat_78sqy")
 Label/colors/font_color = Color(0.101960786, 0.08235294, 0.05882353, 1)
 Label/font_sizes/font_size = 25
-Label/fonts/font = SubResource("FontVariation_n2js2")
+Label/fonts/font = SubResource("FontVariation_kpu2g")

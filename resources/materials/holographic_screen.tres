@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://d1fbhxaofl2uq"]
+
+[ext_resource type="Shader" uid="uid://d32vhq8tv8k2u" path="res://resources/shaders/holographic_screen.gdshader" id="1_x1uhy"]
+
+[resource]
+shader = ExtResource("1_x1uhy")
+shader_parameter/bg_color = Color(0, 0.37916675, 0.65, 0.39215687)
+shader_parameter/accent_color = Color(0, 1, 0.8, 1)
+shader_parameter/color_shift_amount = 0.02
+shader_parameter/scanline_count = 150.0
+shader_parameter/scanline_intensity = 0.02000000095
+shader_parameter/scanline_speed = -5.0
+shader_parameter/flicker_speed = 40.0
+shader_parameter/flicker_intensity = 0.01
+shader_parameter/edge_glow_width = 0.0550000026125
+shader_parameter/edge_glow_intensity = 0.2000000095
+shader_parameter/noise_intensity = 0.03
+shader_parameter/glitch_chance = 0.10000000475
+shader_parameter/glitch_strength = 0.01

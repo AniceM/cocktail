@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bqhxn57ygn74d" path="res://scripts/scenes/cocktail_making_scene.gd" id="1_ac75x"]
 [ext_resource type="Script" uid="uid://bkoa73tp32ya7" path="res://scripts/utils/camera_2d.gd" id="2_lb8u1"]
+[ext_resource type="PackedScene" uid="uid://3v4trbtpjihr" path="res://scenes/holographic_panel.tscn" id="3_lb8u1"]
 [ext_resource type="Texture2D" uid="uid://f862nshcvr6h" path="res://assets/environments/bg_nobar.png" id="3_vlt8w"]
 [ext_resource type="PackedScene" uid="uid://rubxbrjldnjr" path="res://scenes/flavor_profile_chart.tscn" id="4_ac75x"]
 [ext_resource type="PackedScene" uid="uid://d1pifdvndfi24" path="res://scenes/add_ingredients_menu.tscn" id="4_fcfq3"]
@@ -11,7 +12,6 @@
 [ext_resource type="PackedScene" uid="uid://dy3x7adci1o1h" path="res://scenes/customer_order_panel.tscn" id="6_fcfq3"]
 [ext_resource type="PackedScene" uid="uid://tsexmwlm2tey" path="res://scenes/signature_badges_container.tscn" id="6_sc0oj"]
 [ext_resource type="Texture2D" uid="uid://ca2vmghphar5j" path="res://assets/utensils/jigger.png" id="6_vlt8w"]
-[ext_resource type="Shader" uid="uid://d32vhq8tv8k2u" path="res://resources/shaders/holographic_screen.gdshader" id="10_b2ome"]
 [ext_resource type="PackedScene" uid="uid://bosya4jk6l5bx" path="res://scenes/glass_capacity_indicator.tscn" id="12_wdjgb"]
 [ext_resource type="Script" uid="uid://1kohltni4a4b" path="res://scripts/ui/glass_capacity_indicator.gd" id="13_lb8u1"]
 
@@ -20,40 +20,6 @@ background_mode = 3
 glow_intensity = 1.0
 glow_bloom = 0.52
 glow_blend_mode = 0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n01l7"]
-draw_center = false
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.6651851, 0.9309246, 1, 0.90000004)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_b2ome"]
-shader = ExtResource("10_b2ome")
-shader_parameter/bg_color = Color(0, 0.6, 1, 0.8)
-shader_parameter/accent_color = Color(0, 1, 0.8, 1)
-shader_parameter/color_shift_amount = 0.02
-shader_parameter/scanline_count = 150.0
-shader_parameter/scanline_intensity = 0.02000000095
-shader_parameter/scanline_speed = -5.0
-shader_parameter/flicker_speed = 40.0
-shader_parameter/flicker_intensity = 0.01
-shader_parameter/edge_glow_width = 0.0550000026125
-shader_parameter/edge_glow_intensity = 0.2000000095
-shader_parameter/noise_intensity = 0.03
-shader_parameter/glitch_chance = 0.10000000475
-shader_parameter/glitch_strength = 0.01
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vlt8w"]
-corner_radius_top_left = 9
-corner_radius_top_right = 9
-corner_radius_bottom_right = 9
-corner_radius_bottom_left = 9
 
 [node name="CocktailMakingScene" type="Node2D" unique_id=715446421]
 script = ExtResource("1_ac75x")
@@ -66,19 +32,8 @@ unique_name_in_owner = true
 position = Vector2(1152, 648)
 script = ExtResource("2_lb8u1")
 
-[node name="OutlinePanel(TEST)" type="PanelContainer" parent="." unique_id=472810941]
+[node name="HolographicPanel" parent="." unique_id=972801329 instance=ExtResource("3_lb8u1")]
 visible = false
-offset_left = 963.0
-offset_top = 180.0
-offset_right = 1693.0
-offset_bottom = 678.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_n01l7")
-
-[node name="ShaderPanel" type="PanelContainer" parent="OutlinePanel(TEST)" unique_id=2029642999]
-material = SubResource("ShaderMaterial_b2ome")
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_vlt8w")
-metadata/_edit_lock_ = true
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=215811529]
 layer = -1
@@ -97,10 +52,11 @@ texture = ExtResource("3_vlt8w")
 metadata/_edit_lock_ = true
 
 [node name="TextureRect" type="TextureRect" parent="Background" unique_id=1292946325]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1920.0
+offset_bottom = 1080.0
 scale = Vector2(1.2, 1.2)
 texture = ExtResource("4_n01l7")
+metadata/_edit_lock_ = true
 
 [node name="GlassScene" parent="." unique_id=2046183509 instance=ExtResource("5_b2ome")]
 unique_name_in_owner = true
@@ -174,7 +130,6 @@ grow_vertical = 2
 
 [node name="SignatureBadgesContainer" parent="HUD/FullScreenControl" unique_id=264998897 instance=ExtResource("6_sc0oj")]
 unique_name_in_owner = true
-visible = false
 layout_mode = 1
 offset_top = 200.0
 offset_bottom = 200.0

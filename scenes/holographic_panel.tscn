@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://3v4trbtpjihr"]
+
+[ext_resource type="Material" uid="uid://d1fbhxaofl2uq" path="res://resources/materials/holographic_screen.tres" id="1_3ycy6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n01l7"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.6651851, 0.9309246, 1, 0.90000004)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vlt8w"]
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[node name="HolographicPanel" type="PanelContainer" unique_id=972801329]
+offset_right = 730.0
+offset_bottom = 498.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_n01l7")
+
+[node name="ShaderPanel" type="PanelContainer" parent="." unique_id=1630205269]
+material = ExtResource("1_3ycy6")
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vlt8w")
+metadata/_edit_lock_ = true

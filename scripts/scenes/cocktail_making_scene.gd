@@ -195,6 +195,9 @@ func _auto_select_glass() -> void:
 
 
 func _on_glass_selected(glass: GlassType) -> void:
+	var current := GameSession.current_cocktail
+	if current and current.glass == glass:
+		return
 	# Create or replace Cocktail object with selected glass
 	GameSession.set_current_cocktail(Cocktail.new(glass))
 	glass_scene.set_glass(glass)

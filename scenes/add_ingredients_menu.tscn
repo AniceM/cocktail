@@ -1,71 +1,103 @@
 [gd_scene format=3 uid="uid://d1pifdvndfi24"]
 
 [ext_resource type="Script" uid="uid://cd7rpw5e7f6jd" path="res://scripts/ui/add_ingredients_menu.gd" id="1_bcbpr"]
+[ext_resource type="Theme" uid="uid://vxihg5pg2oef" path="res://resources/themes/add_ingredients_menu.tres" id="1_wrjbj"]
+[ext_resource type="PackedScene" uid="uid://3v4trbtpjihr" path="res://scenes/holographic_panel.tscn" id="2_rdx3b"]
 [ext_resource type="PackedScene" uid="uid://33qrbtnnfjbg" path="res://scenes/add_ingredient_button.tscn" id="3_1me88"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wrjbj"]
+content_margin_top = 20.0
+
 [sub_resource type="LabelSettings" id="LabelSettings_4ufa3"]
-font_size = 30
+font_size = 40
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wrjbj"]
+bg_color = Color(0.39, 0.39, 0.39, 0)
+border_color = Color(0.9867516, 0.9867516, 0.9867516, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iukm6"]
+bg_color = Color(0.2156, 0.44, 0.31284, 0.41960785)
+border_color = Color(0.9867516, 0.9867516, 0.9867516, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1j87c"]
+bg_color = Color(0.21734264, 0.4427318, 0.31676766, 0.25882354)
+border_color = Color(0.9867516, 0.9867516, 0.9867516, 1)
 
 [node name="AddIngredientsMenu" type="Control" unique_id=2115019785]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_bcbpr")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1240903012]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1153701524]
 layout_mode = 0
-offset_right = 450.0
-offset_bottom = 673.0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 15
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1324186707]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1240903012]
+layout_mode = 2
+theme = ExtResource("1_wrjbj")
+
+[node name="HolographicPanel" parent="VBoxContainer/MarginContainer" unique_id=972801329 instance=ExtResource("2_rdx3b")]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer" unique_id=1324186707]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 25
 
-[node name="PanelTitle" type="Label" parent="MarginContainer/VBoxContainer" unique_id=910812982]
+[node name="PanelTitle" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer" unique_id=910812982]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_wrjbj")
 text = "Ingredients"
 label_settings = SubResource("LabelSettings_4ufa3")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=1720882992]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer/VBoxContainer" unique_id=1720882992]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(450, 550)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=382487255]
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/ScrollContainer" unique_id=382487255]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="AddIngredientList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer" unique_id=964512880]
+[node name="AddIngredientList" type="VBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/ScrollContainer/CenterContainer" unique_id=964512880]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-[node name="AddIngredientButton" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1399721088 instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton" parent="VBoxContainer/MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1399721088 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="AddIngredientButton2" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1729465349 instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton2" parent="VBoxContainer/MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1729465349 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="AddIngredientButton3" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=908977459 instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton3" parent="VBoxContainer/MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=908977459 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="AddIngredientButton4" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1481092814 instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton4" parent="VBoxContainer/MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1481092814 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="AddIngredientButton5" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1707832477 instance=ExtResource("3_1me88")]
+[node name="AddIngredientButton5" parent="VBoxContainer/MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/AddIngredientList" unique_id=1707832477 instance=ExtResource("3_1me88")]
 layout_mode = 2
 
-[node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1722698641]
+[node name="HolographicPanel" parent="VBoxContainer" unique_id=211139155 instance=ExtResource("2_rdx3b")]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="NextButton" type="Button" parent="VBoxContainer/HolographicPanel" unique_id=1722698641]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_wrjbj")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_iukm6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1j87c")
 text = "Next"

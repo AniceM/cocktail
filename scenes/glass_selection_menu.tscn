@@ -41,8 +41,8 @@ metadata/_custom_type_script = "uid://c8cabvh1xp8vh"
 [node name="CarouselControl" type="Control" parent="MarginContainer/VBoxContainer/CarouselContainer" unique_id=1850238216]
 unique_name_in_owner = true
 anchors_preset = 0
-offset_left = 24.000011
-offset_right = 24.000011
+offset_left = 24.000002
+offset_right = 24.000002
 
 [node name="GlassButton" parent="MarginContainer/VBoxContainer/CarouselContainer/CarouselControl" unique_id=267305741 instance=ExtResource("1_bmtyy")]
 z_index = 1

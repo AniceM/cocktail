@@ -1,18 +1,29 @@
 [gd_scene format=3 uid="uid://33qrbtnnfjbg"]
 
+[ext_resource type="Theme" uid="uid://vxihg5pg2oef" path="res://resources/themes/add_ingredients_menu.tres" id="1_l8q1u"]
 [ext_resource type="Script" uid="uid://cx8x0vxrvy5q3" path="res://scripts/ui/add_ingredient_button.gd" id="1_mhim0"]
 [ext_resource type="Resource" uid="uid://dt8e8153g8nkx" path="res://resources/special_ingredients/stardust_bitters.tres" id="2_mhim0"]
-[ext_resource type="Texture2D" uid="uid://c18f5tbtxj21e" path="res://assets/utensils/temporary/bottle.png" id="3_y0on6"]
 [ext_resource type="PackedScene" uid="uid://dthjdr2uef2ib" path="res://scenes/flavor_stat_info.tscn" id="4_645dr"]
+[ext_resource type="Texture2D" uid="uid://3b4vdkhqchf2" path="res://assets/images/bottle_icon.png" id="4_y0on6"]
+[ext_resource type="FontFile" uid="uid://byu5i20of6doc" path="res://assets/fonts/Oxanium/Oxanium-Bold.ttf" id="5_y0on6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_645dr"]
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="FontVariation" id="FontVariation_62e5o"]
+base_font = ExtResource("5_y0on6")
 
 [sub_resource type="LabelSettings" id="LabelSettings_axpdx"]
+font = SubResource("FontVariation_62e5o")
 font_size = 20
 
 [node name="AddIngredientButton" type="Button" unique_id=788102067]
-custom_minimum_size = Vector2(350, 150)
+custom_minimum_size = Vector2(400, 200)
 offset_right = 350.0
 offset_bottom = 150.0
 size_flags_horizontal = 3
+theme = ExtResource("1_l8q1u")
 script = ExtResource("1_mhim0")
 special_ingredient = ExtResource("2_mhim0")
 
@@ -23,45 +34,61 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 5
+theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
+theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 5
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1010986422]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 40
 
 [node name="IngredientIcon" type="TextureRect" parent="MarginContainer/HBoxContainer" unique_id=1133116075]
 unique_name_in_owner = true
-self_modulate = Color(0.8533072, 0.3540417, 0, 1)
-custom_minimum_size = Vector2(60, 120)
+custom_minimum_size = Vector2(80, 140)
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = ExtResource("3_y0on6")
+texture = ExtResource("4_y0on6")
 expand_mode = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=1550905978]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer" unique_id=1718635236]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/MarginContainer" unique_id=1550905978]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="IngredientName" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=639201776]
+[node name="IngredientName" type="Label" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=639201776]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_645dr")
 text = "Chrono Gin"
 label_settings = SubResource("LabelSettings_axpdx")
 
-[node name="FlavorStatsContainer" type="GridContainer" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=704416622]
+[node name="FlavorStatsContainer" type="GridContainer" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=704416622]
 unique_name_in_owner = true
 layout_mode = 2
-columns = 2
 
-[node name="FlavorStatIcon" parent="MarginContainer/HBoxContainer/VBoxContainer/FlavorStatsContainer" unique_id=43189886 instance=ExtResource("4_645dr")]
+[node name="FlavorStatIcon" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/FlavorStatsContainer" unique_id=43189886 instance=ExtResource("4_645dr")]
 layout_mode = 2
 
-[node name="FlavorStatIcon2" parent="MarginContainer/HBoxContainer/VBoxContainer/FlavorStatsContainer" unique_id=1909818116 instance=ExtResource("4_645dr")]
+[node name="FlavorStatIcon2" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/FlavorStatsContainer" unique_id=1909818116 instance=ExtResource("4_645dr")]
 layout_mode = 2
 
-[node name="FlavorStatIcon3" parent="MarginContainer/HBoxContainer/VBoxContainer/FlavorStatsContainer" unique_id=336148303 instance=ExtResource("4_645dr")]
+[node name="FlavorStatIcon3" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/FlavorStatsContainer" unique_id=336148303 instance=ExtResource("4_645dr")]
+layout_mode = 2
+
+[node name="FlavorStatIcon4" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/FlavorStatsContainer" unique_id=127007911 instance=ExtResource("4_645dr")]
+layout_mode = 2
+
+[node name="FlavorStatIcon5" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/FlavorStatsContainer" unique_id=1661300529 instance=ExtResource("4_645dr")]
+layout_mode = 2
+
+[node name="FlavorStatIcon6" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/FlavorStatsContainer" unique_id=302436783 instance=ExtResource("4_645dr")]
 layout_mode = 2

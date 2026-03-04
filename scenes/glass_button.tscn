@@ -4,11 +4,27 @@
 [ext_resource type="Texture2D" uid="uid://cwvbpdr04yew6" path="res://assets/utensils/glasses/highball/highball_glass_front.png" id="1_rp51d"]
 [ext_resource type="Texture2D" uid="uid://duab4sew53qge" path="res://assets/utensils/glasses/highball/highball_glass_back.png" id="2_4syws"]
 [ext_resource type="Resource" uid="uid://bmih0fbkyl0py" path="res://resources/glasses/chronos_coupe.tres" id="2_7wjfa"]
+[ext_resource type="PackedScene" uid="uid://3v4trbtpjihr" path="res://scenes/holographic_panel.tscn" id="3_11mrc"]
+[ext_resource type="FontFile" uid="uid://b20c0bh0brh67" path="res://assets/fonts/Oxanium/Oxanium-Regular.ttf" id="6_tfe4q"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_s7xys"]
+font = ExtResource("6_tfe4q")
+font_size = 20
 
 [node name="GlassButton" type="Button" unique_id=267305741]
 custom_minimum_size = Vector2(200, 200)
 script = ExtResource("1_4syws")
 glass = ExtResource("2_7wjfa")
+
+[node name="HolographicPanel" parent="." unique_id=972801329 instance=ExtResource("3_11mrc")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=343205992]
 layout_mode = 1
@@ -60,4 +76,5 @@ stretch_mode = 5
 unique_name_in_owner = true
 layout_mode = 2
 text = "Aether Highball"
+label_settings = SubResource("LabelSettings_s7xys")
 horizontal_alignment = 1
