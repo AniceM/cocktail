@@ -53,7 +53,9 @@ func _process(delta: float) -> void:
 		# Distance from selected (shared by both modes for falloff effects)
 		var dist: float
 
-		# Positioning
+		# Positioning – all coordinates are relative to this container's center
+		var center := size / 2.0
+
 		if circular:
 			var wrapped_offset := _wrap_offset(index - selected_index, child_count)
 			dist = absf(wrapped_offset)
@@ -62,7 +64,7 @@ func _process(delta: float) -> void:
 			var angle := (wrapped_offset / float(child_count)) * TAU
 			var x := sin(angle) * radius
 			var y := (1.0 - cos(angle)) * depth
-			var target_pos := Vector2(x, y) - child.size / 2.0
+			var target_pos := center + Vector2(x, y) - child.size / 2.0
 			child.position = child.position.lerp(target_pos, t)
 		else:
 			dist = absf(float(index - selected_index))
@@ -75,7 +77,7 @@ func _process(delta: float) -> void:
 				# Use current (lerping) scale so positions track actual visual edges
 				var prev_visual_right := prev.position.x + prev.size.x * 0.5 * (1.0 + prev.scale.x)
 				target_x = prev_visual_right + spacing - child.size.x * 0.5 * (1.0 - child.scale.x)
-			child.position = Vector2(target_x, -child.size.y / 2.0)
+			child.position = Vector2(target_x, center.y - child.size.y / 2.0)
 
 		# Scaling
 		child.pivot_offset = child.size / 2.0
@@ -92,7 +94,7 @@ func _process(delta: float) -> void:
 		else:
 			child.z_index = - roundi(dist)
 
-	# Scroll container to center selection
+	# Scroll container to center selection within this container's width
 	if circular:
 		items_container.position.x = lerpf(items_container.position.x, 0.0, t)
 	else:
@@ -105,7 +107,7 @@ func _process(delta: float) -> void:
 			var cur_s := clampf(1.0 - scale_falloff * absf(float(idx - selected_index)), scale_min, 1.0)
 			eq_x = eq_x + prev_c.size.x * 0.5 * (1.0 + prev_s) + spacing - cur_c.size.x * 0.5 * (1.0 - cur_s)
 		var selected_child: Control = items_container.get_child(selected_index)
-		var scroll_target := - (eq_x + selected_child.size.x / 2.0)
+		var scroll_target := size.x / 2.0 - (eq_x + selected_child.size.x / 2.0)
 		items_container.position.x = lerpf(items_container.position.x, scroll_target, t)
 
 

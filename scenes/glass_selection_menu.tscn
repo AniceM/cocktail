@@ -1,17 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://b37dhsp4c70nr"]
+[gd_scene format=3 uid="uid://b37dhsp4c70nr"]
 
 [ext_resource type="PackedScene" uid="uid://cxc30n76bxc7g" path="res://scenes/glass_button.tscn" id="1_bmtyy"]
 [ext_resource type="Script" uid="uid://cldc457mlddyo" path="res://scripts/ui/glass_selection_menu.gd" id="1_pkh1g"]
+[ext_resource type="Script" uid="uid://c8cabvh1xp8vh" path="res://scripts/ui/carousel_container.gd" id="2_d0t3b"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bmtyy"]
 font_size = 30
 
-[node name="GlassSelectionMenu" type="Control"]
+[node name="GlassSelectionMenu" type="Control" unique_id=1553417756]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_pkh1g")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=230755692]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -20,52 +21,121 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1579044133]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=6213017]
 layout_mode = 2
 text = "Select Glass Type"
 label_settings = SubResource("LabelSettings_bmtyy")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
+[node name="CarouselContainer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1270904339 node_paths=PackedStringArray("items_container")]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+script = ExtResource("2_d0t3b")
+items_container = NodePath("CarouselControl")
+metadata/_custom_type_script = "uid://c8cabvh1xp8vh"
+
+[node name="CarouselControl" type="Control" parent="MarginContainer/VBoxContainer/CarouselContainer" unique_id=1850238216]
 unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 24.000011
+offset_right = 24.000011
+
+[node name="GlassButton" parent="MarginContainer/VBoxContainer/CarouselContainer/CarouselControl" unique_id=267305741 instance=ExtResource("1_bmtyy")]
+z_index = 1
+layout_mode = 0
+offset_top = 25.0
+offset_right = 200.0
+offset_bottom = 225.0
+pivot_offset = Vector2(100, 100)
+
+[node name="GlassButton2" parent="MarginContainer/VBoxContainer/CarouselContainer/CarouselControl" unique_id=1246829130 instance=ExtResource("1_bmtyy")]
+modulate = Color(1, 1, 1, 0.65)
+z_index = -1
+layout_mode = 0
+offset_left = 194.99982
+offset_top = 25.0
+offset_right = 395.00122
+offset_bottom = 225.0
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(100.0007, 100)
+
+[node name="GlassButton3" parent="MarginContainer/VBoxContainer/CarouselContainer/CarouselControl" unique_id=1790035711 instance=ExtResource("1_bmtyy")]
+modulate = Color(1, 1, 1, 0.3)
+z_index = -2
+layout_mode = 0
+offset_left = 340.00085
+offset_top = 25.0
+offset_right = 540.0016
+offset_bottom = 225.0
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(100.00037, 100)
+
+[node name="GlassButton4" parent="MarginContainer/VBoxContainer/CarouselContainer/CarouselControl" unique_id=775059531 instance=ExtResource("1_bmtyy")]
+modulate = Color(1, 1, 1, 0)
+z_index = -3
+layout_mode = 0
+offset_left = 435.00085
+offset_top = 25.0
+offset_right = 635.0023
+offset_bottom = 225.0
+scale = Vector2(0.25, 0.25)
+pivot_offset = Vector2(100.00073, 100)
+
+[node name="GlassButton5" parent="MarginContainer/VBoxContainer/CarouselContainer/CarouselControl" unique_id=199212200 instance=ExtResource("1_bmtyy")]
+modulate = Color(1, 1, 1, 0)
+z_index = -4
+layout_mode = 0
+offset_left = 490.00116
+offset_top = 25.0
+offset_right = 690.0025
+offset_bottom = 225.0
+scale = Vector2(0.1, 0.1)
+pivot_offset = Vector2(100.00067, 100)
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer" unique_id=201763654]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=416820624]
+unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(450, 550)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/ScrollContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=1799963119]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer"]
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer" unique_id=1474891896]
 unique_name_in_owner = true
 layout_mode = 2
 columns = 2
 
-[node name="GlassButton" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" instance=ExtResource("1_bmtyy")]
+[node name="GlassButton" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" unique_id=392264316 instance=ExtResource("1_bmtyy")]
 layout_mode = 2
 
-[node name="GlassButton2" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" instance=ExtResource("1_bmtyy")]
+[node name="GlassButton2" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" unique_id=1483997412 instance=ExtResource("1_bmtyy")]
 layout_mode = 2
 
-[node name="GlassButton3" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" instance=ExtResource("1_bmtyy")]
+[node name="GlassButton3" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" unique_id=1120146744 instance=ExtResource("1_bmtyy")]
 layout_mode = 2
 
-[node name="GlassButton4" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" instance=ExtResource("1_bmtyy")]
+[node name="GlassButton4" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" unique_id=1555891482 instance=ExtResource("1_bmtyy")]
 layout_mode = 2
 
-[node name="GlassButton5" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" instance=ExtResource("1_bmtyy")]
+[node name="GlassButton5" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" unique_id=426098098 instance=ExtResource("1_bmtyy")]
 layout_mode = 2
 
-[node name="GlassButton6" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" instance=ExtResource("1_bmtyy")]
+[node name="GlassButton6" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" unique_id=1379710017 instance=ExtResource("1_bmtyy")]
 layout_mode = 2
 
-[node name="GlassButton7" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" instance=ExtResource("1_bmtyy")]
+[node name="GlassButton7" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" unique_id=1480072267 instance=ExtResource("1_bmtyy")]
 layout_mode = 2
 
-[node name="GlassButton8" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" instance=ExtResource("1_bmtyy")]
+[node name="GlassButton8" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer/GridContainer" unique_id=1916918534 instance=ExtResource("1_bmtyy")]
 layout_mode = 2

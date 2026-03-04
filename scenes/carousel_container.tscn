@@ -10,7 +10,6 @@ offset_top = 500.0
 offset_right = 500.0
 offset_bottom = 500.0
 script = ExtResource("1_k4f7s")
-circular = true
 radius = 162.58
 depth = -98.8
 opacity_falloff = 0.268
@@ -19,123 +18,124 @@ items_container = NodePath("Control")
 
 [node name="Control" type="Control" parent="." unique_id=238205481]
 anchors_preset = 0
+offset_left = -532.5097
+offset_right = -532.5097
 
 [node name="Panel" type="Panel" parent="Control" unique_id=1168104634]
-modulate = Color(1, 1, 1, 4.233963e-23)
-z_index = -4
+modulate = Color(1, 1, 1, 1e-45)
+z_index = -6
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = 20.56173
-offset_top = -278.73114
-offset_right = 170.56256
-offset_bottom = -78.73016
-scale = Vector2(0.10000006, 0.10000006)
+offset_top = -100.00049
+offset_right = 150.00082
+offset_bottom = 100.00049
+scale = Vector2(0.10000001, 0.10000001)
 pivot_offset = Vector2(75.00041, 100.00049)
 
 [node name="Panel2" type="Panel" parent="Control" unique_id=2101207557]
-modulate = Color(1, 1, 1, 3.7853092e-24)
+modulate = Color(1, 1, 1, 1e-45)
 z_index = -5
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = -74.99994
-offset_top = -297.5999
-offset_right = 75.00006
-offset_bottom = -97.59958
-scale = Vector2(0.10000006, 0.10000006)
+offset_left = 35.000454
+offset_top = -100.00017
+offset_right = 185.00046
+offset_bottom = 100.00017
+scale = Vector2(0.10000001, 0.10000001)
 pivot_offset = Vector2(75, 100.00017)
 
 [node name="Panel3" type="Panel" parent="Control" unique_id=20799466]
-modulate = Color(1, 1, 1, 4.1066467e-25)
+modulate = Color(1, 1, 1, 1e-45)
 z_index = -4
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = -170.56207
-offset_top = -278.73114
-offset_right = -20.56192
-offset_bottom = -78.73111
-scale = Vector2(0.10000006, 0.10000006)
+offset_left = 70.00039
+offset_top = -100.000015
+offset_right = 220.00055
+offset_bottom = 100.000015
+scale = Vector2(0.10000001, 0.10000001)
 pivot_offset = Vector2(75.00008, 100.000015)
 
 [node name="Panel4" type="Panel" parent="Control" unique_id=856060851]
-modulate = Color(1, 1, 1, 0.19599988)
+modulate = Color(1, 1, 1, 0.196)
 z_index = -3
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = -229.62317
-offset_top = -229.33128
-offset_right = -79.62213
-offset_bottom = -29.330704
-scale = Vector2(0.24999988, 0.24999988)
+offset_left = 116.250084
+offset_top = -100.00029
+offset_right = 266.25113
+offset_bottom = 100.00029
+scale = Vector2(0.24999999, 0.24999999)
 pivot_offset = Vector2(75.00052, 100.00029)
 
 [node name="Panel5" type="Panel" parent="Control" unique_id=497964091]
-modulate = Color(1, 1, 1, 0.46399975)
+modulate = Color(1, 1, 1, 0.464)
 z_index = -2
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = -229.6256
-offset_top = -168.26924
-offset_right = -79.619705
-offset_bottom = 31.730759
-scale = Vector2(0.49999976, 0.49999976)
-pivot_offset = Vector2(75.002945, 100)
+offset_left = 192.49927
+offset_top = -100.0
+offset_right = 342.50513
+offset_bottom = 100.0
+scale = Vector2(0.49999997, 0.49999997)
+pivot_offset = Vector2(75.00293, 100)
 
 [node name="Panel6" type="Panel" parent="Control" unique_id=1807481248]
-modulate = Color(1, 1, 1, 0.7319995)
+modulate = Color(1, 1, 1, 0.73199993)
 z_index = -1
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = -170.56567
-offset_top = -118.86919
-offset_right = -20.558807
-offset_bottom = 81.13081
-scale = Vector2(0.7499995, 0.7499995)
+offset_left = 306.2528
+offset_top = -100.0
+offset_right = 456.25967
+offset_bottom = 100.0
+scale = Vector2(0.74999994, 0.74999994)
 pivot_offset = Vector2(75.00343, 100)
 
 [node name="Panel7" type="Panel" parent="Control" unique_id=710829558]
-modulate = Color(1, 1, 1, 0.9999995)
+modulate = Color(1, 1, 1, 0.99999994)
 z_index = 1
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = -75.00113
-offset_top = -100.00037
-offset_right = 75.00101
-offset_bottom = 100.000244
-scale = Vector2(0.9999995, 0.9999995)
-pivot_offset = Vector2(75.00107, 100.000305)
+offset_left = 457.50882
+offset_top = -100.000305
+offset_right = 607.5109
+offset_bottom = 100.000305
+scale = Vector2(0.99999994, 0.99999994)
+pivot_offset = Vector2(75.00105, 100.000305)
 
 [node name="Panel8" type="Panel" parent="Control" unique_id=1685190968]
-modulate = Color(1, 1, 1, 0.73200047)
+modulate = Color(1, 1, 1, 0.73200005)
 z_index = -1
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = 20.559608
-offset_top = -118.86931
-offset_right = 170.5646
-offset_bottom = 81.13118
-scale = Vector2(0.7500005, 0.7500005)
+offset_left = 608.7603
+offset_top = -100.000244
+offset_right = 758.7653
+offset_bottom = 100.000244
+scale = Vector2(0.75000006, 0.75000006)
 pivot_offset = Vector2(75.0025, 100.000244)
 
 [node name="Panel9" type="Panel" parent="Control" unique_id=1778849198]
-modulate = Color(1, 1, 1, 0.46400023)
+modulate = Color(1, 1, 1, 0.46400002)
 z_index = -2
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = 79.62216
-offset_top = -168.26955
-offset_right = 229.62326
-offset_bottom = 31.731552
-scale = Vector2(0.5000005, 0.5000005)
+offset_left = 722.5144
+offset_top = -100.00055
+offset_right = 872.5155
+offset_bottom = 100.00055
+scale = Vector2(0.50000006, 0.50000006)
 pivot_offset = Vector2(75.00055, 100.00055)
 
 [node name="Panel10" type="Panel" parent="Control" unique_id=1829176120]
-modulate = Color(1, 1, 1, 0.19600011)
+modulate = Color(1, 1, 1, 0.19600001)
 z_index = -3
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 0
-offset_left = 79.622284
-offset_top = -229.33104
-offset_right = 229.62314
-offset_bottom = -29.33046
-scale = Vector2(0.25000024, 0.25000024)
+offset_left = 798.7649
+offset_top = -100.00029
+offset_right = 948.76575
+offset_bottom = 100.00029
+scale = Vector2(0.25000003, 0.25000003)
 pivot_offset = Vector2(75.00043, 100.00029)

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="GlassType" load_steps=2 format=3 uid="uid://csx3x2ujjdwxg"]
+[gd_resource type="Resource" script_class="GlassType" format=3 uid="uid://csx3x2ujjdwxg"]
 
 [ext_resource type="Script" uid="uid://duqlr7id17gbq" path="res://scripts/resources/glass_type.gd" id="1_botsj"]
 

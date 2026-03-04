@@ -31,6 +31,7 @@ const CAMERA_TRANSITION_DURATION := 0.5
 
 # UI
 @onready var glass_selection_menu: Control = %GlassSelectionMenu
+@onready var continue_button: Button = %ContinueButton
 @onready var glass_selection_button: Button = %GlassSelectionButton
 @onready var add_ingredients_menu: Control = %AddIngredientsMenu
 @onready var flavor_profile_chart: Control = %FlavorProfileChart
@@ -58,6 +59,7 @@ func _ready() -> void:
 	# Hide the glass until one is selected
 	glass_scene.visible = false
 	# Hide buttons that shouldn't be visible at start
+	continue_button.visible = false
 	glass_selection_button.visible = false
 	reset_button.visible = false
 	mix_button.visible = false
@@ -73,6 +75,7 @@ func _ready() -> void:
 	glass_scene.animation_started.connect(_on_glass_animation_started)
 	glass_scene.animation_finished.connect(_on_glass_animation_finished)
 	glass_selection_menu.glass_selected.connect(_on_glass_selected)
+	continue_button.pressed.connect(_on_continue_button_pressed)
 	glass_selection_button.pressed.connect(_on_glass_selection_button_pressed)
 	add_ingredients_menu.add_liquor.connect(_on_add_liquor)
 	add_ingredients_menu.add_special_ingredient.connect(_on_add_special_ingredient)
@@ -122,6 +125,7 @@ func _on_exit_state(old_state: CocktailMakingStateMachine.StateName, _new_state:
 func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state: CocktailMakingStateMachine.StateName) -> void:
 	match new_state:
 		CocktailMakingStateMachine.StateName.GLASS_SELECTION:
+			continue_button.visible = true
 			glass_selection_button.visible = false
 			reset_button.visible = false
 			mix_button.visible = false
@@ -134,7 +138,10 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 				_transition_menus(glass_selection_menu, null)
 			# Defer to ensure buttons are populated on first run
 			glass_selection_menu.animate_buttons_in.call_deferred()
+			# Auto-select the currently focused glass in the carousel
+			_auto_select_glass()
 		CocktailMakingStateMachine.StateName.LIQUOR_SELECTION:
+			continue_button.visible = false
 			glass_selection_button.visible = true
 			reset_button.visible = true
 			mix_button.visible = true
@@ -174,16 +181,27 @@ func _on_enter_state(old_state: CocktailMakingStateMachine.StateName, new_state:
 func _on_glass_animation_started() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.ADDING_INGREDIENT)
 
+
 func _on_glass_animation_finished() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
 
+
+func _auto_select_glass() -> void:
+	# Wait one frame so queue_free'd editor buttons are fully removed
+	await get_tree().process_frame
+	var glass: GlassType = glass_selection_menu.get_selected_glass()
+	if glass:
+		_on_glass_selected(glass)
+
+
 func _on_glass_selected(glass: GlassType) -> void:
-	# Create Cocktail object with selected glass
+	# Create or replace Cocktail object with selected glass
 	GameSession.set_current_cocktail(Cocktail.new(glass))
 	glass_scene.set_glass(glass)
-	# Animate glass appearing
 	_animate_glass_in()
-	# Transition to liquor selection
+
+
+func _on_continue_button_pressed() -> void:
 	state_machine.change_state(CocktailMakingStateMachine.StateName.LIQUOR_SELECTION)
 
 
@@ -323,7 +341,6 @@ func _animate_glass_out(on_complete: Callable = Callable()) -> void:
 		if on_complete.is_valid():
 			on_complete.call()
 	)
-
 
 
 func _animate_chart_in() -> void:
